@@ -7,7 +7,8 @@ using UnityEngine.Tilemaps;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, undo, reset;
-    [SerializeField] public Object wallPrefab;
+    [SerializeField] public GameObject wallPrefab;
+    [SerializeField] public GameObject plantPrefab;
     [SerializeField] public string[] wallNames;
 
     public static GameManager Inst;

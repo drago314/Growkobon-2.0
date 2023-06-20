@@ -63,6 +63,17 @@ public class PlayerMovement : MonoBehaviour
                 }
                 player.Move(moveDir);   
             }
+
+            Vector2Int desiredPlantGrowth = goalPos + moveDir;
+            while (state.GetPlantAtPos(desiredPlantGrowth) != null)
+            {
+                desiredPlantGrowth += moveDir;
+            }
+            if (state.GetWallAtPos(desiredPlantGrowth) == null)
+            {
+                GameObject newPlant = Instantiate(GameManager.Inst.plantPrefab, new Vector3(desiredPlantGrowth.x, desiredPlantGrowth.y, 0), Quaternion.identity);
+                state.AddObject(newPlant.GetComponent<TLObject>(), desiredPlantGrowth);
+            }
         }
         else
         {
