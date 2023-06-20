@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameState 
 {
     private Dictionary<(int, int), TLObject[]> stateDict; //TODO good name
+
     public GameState(TLObject[] TLObjects)
     {
         stateDict = new Dictionary<(int, int), TLObject[]>();
