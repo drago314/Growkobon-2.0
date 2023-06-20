@@ -4,4 +4,8 @@ using UnityEngine;
 
 public class TLObject : MonoBehaviour
 {
+    public void Test()
+    {
+
+    }
 }

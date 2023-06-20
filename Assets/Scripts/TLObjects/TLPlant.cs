@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class TLPlant : TLObject
 {
-    // Start is called before the first frame update
-    void Start()
+    public void Move(Vector2Int moveDir)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        gameObject.transform.position = gameObject.transform.position + new Vector3(moveDir.x, moveDir.y, 0);
+        Vector2Int curPos = new Vector2Int((int)transform.position.x, (int)transform.position.y);
+        GameManager.Inst.currentState.MoveRelative(this, moveDir);
     }
 }

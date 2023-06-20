@@ -15,24 +15,60 @@ public class PlayerMovement : MonoBehaviour
 
     private void MoveUp(InputAction.CallbackContext obj)
     {
-        Move(new Vector2(0, 1));
+        Move(new Vector2Int(0, 1));
     }
 
     private void MoveDown(InputAction.CallbackContext obj)
     {
-        Move(new Vector2(0, -1));
+        Move(new Vector2Int(0, -1));
     }
     private void MoveRight(InputAction.CallbackContext obj)
     {
-        Move(new Vector2(1, 0));
+        Move(new Vector2Int(1, 0));
     }
     private void MoveLeft(InputAction.CallbackContext obj)
     {
-        Move(new Vector2(-1, 0));
+        Move(new Vector2Int(-1, 0));
     }
 
-    private void Move(Vector2 moveDir)
+    private void Move(Vector2Int moveDir)
     {
-        gameObject.transform.position = gameObject.transform.position + new Vector3(moveDir.x, moveDir.y, 0);
+        GameState state = GameManager.Inst.currentState;
+        TLPlayer player = this.GetComponent<TLPlayer>();
+        Vector2Int curPos = state.GetPosOf(player);
+        Vector2Int goalPos = curPos + moveDir;
+        // 2
+        if (state.GetWallAtPos(goalPos) != null)
+            return;
+
+        //6 
+        //print("goal pos: " + goalPos);
+        if (state.GetPlantAtPos(goalPos) != null)
+        {
+            TLPlant[] plantGroup = state.GetPlantGroupAtPos(goalPos);
+            bool canMove = true;
+            foreach (var plant in plantGroup)
+            {
+                if (state.GetWallAtPos(state.GetPosOf(plant) + moveDir) != null)
+                {
+                    canMove = false;
+                    break;
+                }
+            }
+            if (canMove)
+            {
+                foreach (var plant in plantGroup)
+                {
+                    plant.Move(moveDir);
+                }
+                player.Move(moveDir);   
+            }
+        }
+        else
+        {
+            player.Move(moveDir);
+        }
+
+        print(state.ToString());                                
     }
 }

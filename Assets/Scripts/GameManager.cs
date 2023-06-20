@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Inst;
 
     public GameState initialGameState;
+    public GameState currentState;
 
     private void Awake()
     {
@@ -25,8 +26,6 @@ public class GameManager : MonoBehaviour
         BoundsInt bounds = tileMap.cellBounds;
         foreach (Vector3Int tilePos in tileMap.cellBounds.allPositionsWithin)
         {
-            print(tilePos);
-            print(tileMap.CellToLocal(tilePos));
             foreach (var wallName in wallNames)
             {
                 if (tileMap.GetTile(tilePos) != null && wallName.Equals(tileMap.GetTile(tilePos).name))
@@ -35,6 +34,7 @@ public class GameManager : MonoBehaviour
         }
         
         initialGameState = new GameState(FindObjectsByType<TLObject>(FindObjectsSortMode.None));
+        currentState = initialGameState;
     }
 
     public void DEBUG(string message)
