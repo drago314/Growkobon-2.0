@@ -102,9 +102,12 @@ public class GameManager : MonoBehaviour
     public void Reset(InputAction.CallbackContext obj)
     {
         print("Begin Reset: " + stateList.Count);
-        GenerateState(initialGameState);
-        stateList.Add(initialGameState);
-        currentState = new GameState(initialGameState);
+        if (!currentState.Equals(initialGameState))
+        {
+            GenerateState(initialGameState);
+            stateList.Add(initialGameState);
+            currentState = new GameState(initialGameState);
+        }
         print("End Reset: " + stateList.Count);
     }
 
