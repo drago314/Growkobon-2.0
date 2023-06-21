@@ -25,7 +25,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         stateList = new List<GameState>();
-
+        undo.action.performed += Undo;
+        reset.action.performed += Reset;
 
         var TlObjectList = new List<TLObject>();
 
@@ -58,7 +59,7 @@ public class GameManager : MonoBehaviour
         currentState = new GameState(initialGameState);
     }
 
-    public void GenerateCurrentState()
+    public void GenerateState(GameState state)
     {
         var TLAnimators = FindObjectsByType<TLAnimator>(FindObjectsSortMode.None);
         foreach (var TLanim in TLAnimators)
@@ -66,16 +67,38 @@ public class GameManager : MonoBehaviour
             Destroy(TLanim.gameObject);
         }
 
-        foreach (var TLObj in currentState.GetAllTLObjects())
+        foreach (var TLObj in state.GetAllTLObjects())
         {
             if (TLObj is TLPlayer)
                 Instantiate(playerPrefab, new Vector3(TLObj.curPos.x, TLObj.curPos.y, 0), Quaternion.identity);
             if (TLObj is TLPlant)
                 Instantiate(plantPrefab, new Vector3(TLObj.curPos.x, TLObj.curPos.y, 0), Quaternion.identity);
         }
+    }
 
+    public void GenerateCurrentState()
+    {
+        GenerateState(currentState);
         stateList.Add(currentState);
         currentState = new GameState(currentState);
+    }
+
+    public void Undo(InputAction.CallbackContext obj)
+    {
+        if (stateList.Count > 0)
+        {
+            var lastState = stateList[stateList.Count - 1];
+            stateList.RemoveAt(stateList.Count - 1);
+            GenerateState(lastState);
+            currentState = new GameState(lastState);
+        }
+    }
+
+    public void Reset(InputAction.CallbackContext obj)
+    {
+        GenerateState(initialGameState);
+        stateList.Add(initialGameState);
+        currentState = new GameState(initialGameState);
     }
 
     public void DEBUG(string message)
