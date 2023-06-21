@@ -34,7 +34,7 @@ public class PlayerMovement : MonoBehaviour
     private void Move(Vector2Int moveDir)
     {
         GameState state = GameManager.Inst.currentState;
-        TLPlayer player = this.GetComponent<TLPlayer>();
+        TLPlayer player = state.GetPlayer();
         Vector2Int curPos = state.GetPosOf(player);
         Vector2Int goalPos = curPos + moveDir;
         // 2
@@ -59,9 +59,9 @@ public class PlayerMovement : MonoBehaviour
             {
                 foreach (var plant in plantGroup)
                 {
-                    plant.Move(moveDir);
+                    state.MoveRelative(plant, moveDir);
                 }
-                player.Move(moveDir);   
+                state.MoveRelative(player, moveDir);   
             }
 
             Vector2Int desiredPlantGrowth = goalPos + moveDir;
@@ -71,15 +71,15 @@ public class PlayerMovement : MonoBehaviour
             }
             if (state.GetWallAtPos(desiredPlantGrowth) == null)
             {
-                GameObject newPlant = Instantiate(GameManager.Inst.plantPrefab, new Vector3(desiredPlantGrowth.x, desiredPlantGrowth.y, 0), Quaternion.identity);
-                state.AddObject(newPlant.GetComponent<TLObject>(), desiredPlantGrowth);
+                state.AddObject(new TLPlant(desiredPlantGrowth));
             }
         }
         else
         {
-            player.Move(moveDir);
+            state.MoveRelative(player, moveDir);
         }
 
+        GameManager.Inst.GenerateCurrentState();
         print(state.ToString());                                
     }
 }

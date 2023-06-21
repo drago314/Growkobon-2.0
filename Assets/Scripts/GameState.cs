@@ -4,16 +4,25 @@ using UnityEngine;
 
 public class GameState 
 {
-    private Dictionary<(int, int), List<TLObject>> posToTLObj;
-    private Dictionary<TLObject, Vector2Int> TLObjToPos;
+    protected Dictionary<(int, int), List<TLObject>> posToTLObj;
 
-    public GameState(TLObject[] TLObjects)
+    public GameState(List<TLObject> TLObjects)
     {
         posToTLObj = new Dictionary<(int, int), List<TLObject>>();
-        TLObjToPos = new Dictionary<TLObject, Vector2Int>();
         foreach (var TLObj in TLObjects)
         {
-            AddObject(TLObj, new Vector2Int((int) TLObj.transform.position.x, (int)TLObj.transform.position.y));
+            if (TLObj is TLPlayer)
+            {
+                AddObject(new TLPlayer(TLObj.curPos));
+            }
+            else if (TLObj is TLPlant)
+            {
+                AddObject(new TLPlant(TLObj.curPos));
+            }
+            else if (TLObj is TLWall)
+            {
+                AddObject(new TLWall(TLObj.curPos));    
+            }
         }
 
         //DEBUG
@@ -28,8 +37,19 @@ public class GameState
         }*/
     }
 
-    public GameState(GameState prevState)
-    { 
+    public GameState(GameState prevState) : this (prevState.GetAllTLObjects()) {}
+
+    public List<TLObject> GetAllTLObjects()
+    {
+        var list = new List<TLObject>();
+        foreach (var objList in posToTLObj.Values)
+        {
+            foreach (var obj in objList)
+            {
+                list.Add(obj);
+            }
+        }
+        return list;
     }
 
     public List<TLObject> GetTLObjectsAtPos(Vector2Int pos)
@@ -64,7 +84,22 @@ public class GameState
 
     public Vector2Int GetPosOf(TLObject TLObj)
     {
-        return TLObjToPos[TLObj];
+        return TLObj.curPos;
+    }
+
+    public TLPlayer GetPlayer()
+    {
+        foreach (var value in posToTLObj.Values)
+        {
+            foreach (var obj in value)
+            {
+                if (obj is TLPlayer)
+                    return (TLPlayer) obj;
+            }
+        }
+
+        GameManager.Inst.DEBUG("NO PLAYER FOUND");
+        return null;
     }
 
     public TLPlant[] GetPlantGroupOf(TLPlant plant)
@@ -106,9 +141,9 @@ public class GameState
             return null;
     }
 
-    public void AddObject(TLObject TLObj, Vector2Int pos)
+    public void AddObject(TLObject TLObj)
     {
-        (int, int) posTuple = ((int)TLObj.transform.position.x, (int)TLObj.transform.position.y);
+        (int, int) posTuple = (TLObj.curPos.x, TLObj.curPos.y);
 
         if (posToTLObj.ContainsKey(posTuple))
         {
@@ -120,14 +155,11 @@ public class GameState
             key.Add(TLObj);
             posToTLObj.Add(posTuple, key);
         }
-
-        TLObjToPos.Add(TLObj, pos);
     }
 
     public void RemoveObject(TLObject TLObj)
     {
         posToTLObj[(GetPosOf(TLObj).x, GetPosOf(TLObj).y)].Remove(TLObj);
-        TLObjToPos.Remove(TLObj);
     }
 
     public void MoveRelative(TLObject obj, Vector2Int posChange)
@@ -140,25 +172,21 @@ public class GameState
     {
         //GameManager.Inst.DEBUG("ORIGINAL " + obj.gameObject.name + ": " + GetPosOf(obj).x + " " + GetPosOf(obj).y);
         RemoveObject(obj);
-        AddObject(obj, newPos);
+        obj.curPos = newPos;
+        AddObject(obj);
         //GameManager.Inst.DEBUG("FINAL " + obj.gameObject.name + ": " + GetPosOf(obj).x + " " + GetPosOf(obj).y);
     }
 
     public override string ToString()
     {
-        string result = "TLOBJ TO POS:\n";
-        foreach (var kvp in TLObjToPos)
-        {
-            result += "Obj: " + kvp.Key.name + " Value: " + kvp.Value + "\n";
-        }
+        string result = "POS TO TLOBJ:\n";
 
-        result += "POS TO TLOBJ:\n";
         foreach (var kvp in posToTLObj)
         {
             result += "Obj: " + kvp.Key.Item1 + " " + kvp.Key.Item2 + " Value:";
             foreach (var TLObj in kvp.Value)
             {
-                result += " " + TLObj.name;
+                result += " " + TLObj.GetName();
             }
             result += "\n";
         }

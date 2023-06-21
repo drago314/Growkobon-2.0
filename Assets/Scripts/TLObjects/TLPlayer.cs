@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class TLPlayer : TLObject
 {
-    public void Move(Vector2Int moveDir)
+    public TLPlayer(Vector2Int curPos) : base(curPos)
     {
-        gameObject.transform.position = gameObject.transform.position + new Vector3(moveDir.x, moveDir.y, 0);
-        Vector2Int curPos = new Vector2Int((int)transform.position.x, (int)transform.position.y);
-        GameManager.Inst.currentState.MoveRelative(this, moveDir);
     }
+
+    public override string GetName() { return "Player"; }
 }
