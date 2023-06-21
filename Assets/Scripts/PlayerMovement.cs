@@ -33,13 +33,18 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move(Vector2Int moveDir)
     {
-        print("Begin Move: " + GameManager.Inst.stateList.Count);
+        //print("Begin Move: " + GameManager.Inst.stateList.Count);
         GameState state = GameManager.Inst.currentState;
         TLPlayer player = state.GetPlayer();
         Vector2Int curPos = state.GetPosOf(player);
         Vector2Int goalPos = curPos + moveDir;
+
+        print(state.ToString());
+
         // 2
         if (state.GetWallAtPos(goalPos) != null)
+            return;
+        if (state.GetDoorAtPos(goalPos) != null && !state.GetDoorAtPos(goalPos).IsOpen())
             return;
 
         //6 
@@ -50,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
             bool canMove = true;
             foreach (var plant in plantGroup)
             {
-                if (state.GetWallAtPos(state.GetPosOf(plant) + moveDir) != null)
+                if (state.GetWallAtPos(state.GetPosOf(plant) + moveDir) != null || state.GetDoorAtPos(state.GetPosOf(plant) + moveDir) != null)
                 {
                     canMove = false;
                     break;
@@ -70,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 desiredPlantGrowth += moveDir;
             }
-            if (state.GetWallAtPos(desiredPlantGrowth) == null)
+            if (state.GetWallAtPos(desiredPlantGrowth) == null && state.GetDoorAtPos(desiredPlantGrowth) == null)
             {
                 state.AddObject(new TLPlant(desiredPlantGrowth));
             }
@@ -81,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         GameManager.Inst.GenerateCurrentState();
-        //print(state.ToString());
-        print("End Move: " + GameManager.Inst.stateList.Count);
+        print(state.ToString());
+        //print("End Move: " + GameManager.Inst.stateList.Count);
     }
 }

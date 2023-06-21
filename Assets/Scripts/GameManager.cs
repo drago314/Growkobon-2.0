@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, undo, reset;
     [SerializeField] public GameObject playerPrefab;
     [SerializeField] public GameObject plantPrefab;
+    [SerializeField] public GameObject doorPrefab;
+    [SerializeField] public GameObject potPrefab;
     [SerializeField] public string[] wallNames;
 
     public static GameManager Inst;
@@ -45,6 +47,12 @@ public class GameManager : MonoBehaviour
         }
 
         var TLAnimators = FindObjectsByType<TLAnimator>(FindObjectsSortMode.None);
+
+        foreach (var anim in TLAnimators)
+        {
+            print(anim.GetType().ToString() + ": " + anim.transform.position.x + " " + anim.transform.position.y);
+        }
+
         foreach (var TLanim in TLAnimators)
         {
             Vector2Int pos = new Vector2Int((int)TLanim.gameObject.transform.position.x, (int)TLanim.gameObject.transform.position.y);
@@ -52,6 +60,10 @@ public class GameManager : MonoBehaviour
                 TlObjectList.Add(new TLPlayer(pos));
             if (TLanim is PlantAnimator)
                 TlObjectList.Add(new TLPlant(pos));
+            if (TLanim is DoorAnimator)
+                TlObjectList.Add(new TLDoor(pos));
+            if (TLanim is PotAnimator)
+                TlObjectList.Add(new TLPot(pos));
         }
 
         initialGameState = new GameState(TlObjectList);
@@ -64,7 +76,8 @@ public class GameManager : MonoBehaviour
         var TLAnimators = FindObjectsByType<TLAnimator>(FindObjectsSortMode.None);
         foreach (var TLanim in TLAnimators)
         {
-            Destroy(TLanim.gameObject);
+            if (TLanim is not DoorAnimator && TLanim is not PotAnimator)
+                Destroy(TLanim.gameObject);
         }
 
         foreach (var TLObj in state.GetAllTLObjects())
@@ -88,7 +101,7 @@ public class GameManager : MonoBehaviour
 
     public void Undo(InputAction.CallbackContext obj)
     {
-        print("Begin Undo: " + stateList.Count);
+        //print("Begin Undo: " + stateList.Count);
         if (stateList.Count >= 2)
         {
             var lastState = stateList[stateList.Count - 2];
@@ -96,19 +109,19 @@ public class GameManager : MonoBehaviour
             stateList.RemoveAt(stateList.Count - 1);
             currentState = new GameState(lastState);
         }
-        print("End Undo: " + stateList.Count);
+        //print("End Undo: " + stateList.Count);
     }
 
     public void Reset(InputAction.CallbackContext obj)
     {
-        print("Begin Reset: " + stateList.Count);
+        //print("Begin Reset: " + stateList.Count);
         if (!currentState.Equals(initialGameState))
         {
             GenerateState(initialGameState);
             stateList.Add(initialGameState);
             currentState = new GameState(initialGameState);
         }
-        print("End Reset: " + stateList.Count);
+        //print("End Reset: " + stateList.Count);
     }
 
     public void DEBUG(string message)

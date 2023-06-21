@@ -11,6 +11,7 @@ public class GameState
         posToTLObj = new Dictionary<(int, int), List<TLObject>>();
         foreach (var TLObj in TLObjects)
         {
+            //TODO MAKE BETTER
             if (TLObj is TLPlayer)
             {
                 AddObject(new TLPlayer(TLObj.curPos));
@@ -22,6 +23,14 @@ public class GameState
             else if (TLObj is TLWall)
             {
                 AddObject(new TLWall(TLObj.curPos));    
+            }
+            else if (TLObj is TLDoor)
+            {
+                AddObject(new TLDoor(TLObj.curPos));
+            }
+            else if (TLObj is TLPot)
+            {
+                AddObject(new TLPot(TLObj.curPos));
             }
         }
 
@@ -50,6 +59,29 @@ public class GameState
             }
         }
         return list;
+    }
+
+    public TLPlayer GetPlayer()
+    {
+        foreach (var obj in GetAllTLObjects())
+        {
+            if (obj is TLPlayer)
+                return (TLPlayer)obj;
+        }
+
+        GameManager.Inst.DEBUG("NO PLAYER FOUND");
+        return null;
+    }
+
+    public List<TLPot> GetAllTLPots()
+    {
+        List<TLPot> potList = new List<TLPot>();
+        foreach (var obj in GetAllTLObjects())
+        {
+            if (obj is TLPot)
+                potList.Add((TLPot)obj);
+        }
+        return potList;
     }
 
     public List<TLObject> GetTLObjectsAtPos(Vector2Int pos)
@@ -82,24 +114,21 @@ public class GameState
         return null;
     }
 
+    public TLDoor GetDoorAtPos(Vector2Int pos)
+    {
+        if (GetTLObjectsAtPos(pos) == null)
+            return null;
+        foreach (var TLObj in GetTLObjectsAtPos(pos))
+        {
+            if (TLObj is TLDoor)
+                return (TLDoor)TLObj;
+        }
+        return null;
+    }
+
     public Vector2Int GetPosOf(TLObject TLObj)
     {
         return TLObj.curPos;
-    }
-
-    public TLPlayer GetPlayer()
-    {
-        foreach (var value in posToTLObj.Values)
-        {
-            foreach (var obj in value)
-            {
-                if (obj is TLPlayer)
-                    return (TLPlayer) obj;
-            }
-        }
-
-        GameManager.Inst.DEBUG("NO PLAYER FOUND");
-        return null;
     }
 
     public TLPlant[] GetPlantGroupOf(TLPlant plant)
