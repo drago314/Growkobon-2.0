@@ -177,6 +177,26 @@ public class GameState
         //GameManager.Inst.DEBUG("FINAL " + obj.gameObject.name + ": " + GetPosOf(obj).x + " " + GetPosOf(obj).y);
     }
 
+    public bool Equals(GameState state)
+    {
+        foreach (var TLObj in GetAllTLObjects())
+        {
+            bool found = false;
+            foreach (var TLObj2 in state.GetAllTLObjects())
+            {
+                if (TLObj.Equals(TLObj2))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (found == false)
+                return false;
+        }
+
+        return true;
+    }
+
     public override string ToString()
     {
         string result = "POS TO TLOBJ:\n";

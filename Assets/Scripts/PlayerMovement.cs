@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move(Vector2Int moveDir)
     {
+        print("Begin Move: " + GameManager.Inst.stateList.Count);
         GameState state = GameManager.Inst.currentState;
         TLPlayer player = state.GetPlayer();
         Vector2Int curPos = state.GetPosOf(player);
@@ -80,6 +81,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         GameManager.Inst.GenerateCurrentState();
-        print(state.ToString());                                
+        //print(state.ToString());
+        print("End Move: " + GameManager.Inst.stateList.Count);
     }
 }

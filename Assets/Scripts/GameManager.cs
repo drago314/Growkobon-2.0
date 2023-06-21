@@ -78,27 +78,34 @@ public class GameManager : MonoBehaviour
 
     public void GenerateCurrentState()
     {
-        GenerateState(currentState);
-        stateList.Add(currentState);
-        currentState = new GameState(currentState);
+        if (!currentState.Equals(stateList[stateList.Count - 1]))
+        {
+            GenerateState(currentState);
+            stateList.Add(currentState);
+            currentState = new GameState(currentState);
+        }
     }
 
     public void Undo(InputAction.CallbackContext obj)
     {
-        if (stateList.Count > 0)
+        print("Begin Undo: " + stateList.Count);
+        if (stateList.Count >= 2)
         {
-            var lastState = stateList[stateList.Count - 1];
-            stateList.RemoveAt(stateList.Count - 1);
+            var lastState = stateList[stateList.Count - 2];
             GenerateState(lastState);
+            stateList.RemoveAt(stateList.Count - 1);
             currentState = new GameState(lastState);
         }
+        print("End Undo: " + stateList.Count);
     }
 
     public void Reset(InputAction.CallbackContext obj)
     {
+        print("Begin Reset: " + stateList.Count);
         GenerateState(initialGameState);
         stateList.Add(initialGameState);
         currentState = new GameState(initialGameState);
+        print("End Reset: " + stateList.Count);
     }
 
     public void DEBUG(string message)

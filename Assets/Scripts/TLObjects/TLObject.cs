@@ -12,4 +12,9 @@ public class TLObject
     }
 
     public virtual string GetName() { return "Generic"; }
+
+    public virtual bool Equals(TLObject obj)
+    {
+        return obj.GetName().Equals(this.GetName()) && obj.curPos.Equals(this.curPos);
+    }
 }
