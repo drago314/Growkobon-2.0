@@ -8,5 +8,9 @@ public class TLPlayer : TLObject
     {
     }
 
+    public TLPlayer(TLPlayer obj) : base(obj)
+    {
+    }
+
     public override string GetName() { return "Player"; }
 }

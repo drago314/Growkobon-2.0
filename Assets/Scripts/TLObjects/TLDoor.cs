@@ -8,6 +8,10 @@ public class TLDoor : TLObject
     {
     }
 
+    public TLDoor(TLDoor obj) : base(obj)
+    {
+    }
+
     public bool IsOpen()
     {
         var pots = GameManager.Inst.currentState.GetAllTLPots();

@@ -8,5 +8,9 @@ public class TLWall : TLObject
     {
     }
 
+    public TLWall(TLWall obj) : base(obj)
+    {
+    }
+
     public override string GetName() { return "Wall"; }
 }

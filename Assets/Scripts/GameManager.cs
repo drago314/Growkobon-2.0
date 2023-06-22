@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] public GameObject doorPrefab;
     [SerializeField] public GameObject potPrefab;
     [SerializeField] public string[] wallNames;
+    [SerializeField] public string[] doorNames;
 
     public static GameManager Inst;
 
@@ -32,26 +33,46 @@ public class GameManager : MonoBehaviour
 
         var TlObjectList = new List<TLObject>();
 
-        var tileMap = FindObjectOfType<Tilemap>();
-        BoundsInt bounds = tileMap.cellBounds;
-        foreach (Vector3Int tilePos in tileMap.cellBounds.allPositionsWithin)
+        var tileMaps = FindObjectsOfType<Tilemap>();
+
+        foreach (var tileMap in tileMaps)
         {
-            foreach (var wallName in wallNames)
+            if (tileMap.gameObject.name != "Background Tilemap")
             {
-                if (tileMap.GetTile(tilePos) != null && wallName.Equals(tileMap.GetTile(tilePos).name))
+                BoundsInt bounds = tileMap.cellBounds;
+                foreach (Vector3Int tilePos in tileMap.cellBounds.allPositionsWithin)
                 {
-                    Vector3 pos = tileMap.CellToLocal(tilePos);
-                    TlObjectList.Add(new TLWall(new Vector2Int((int) pos.x, (int) pos.y)));
+                    if (tileMap.GetTile(tilePos) != null)
+                        print(tileMap.GetTile(tilePos).name);
+
+                    foreach (var wallName in wallNames)
+                    {
+                        if (tileMap.GetTile(tilePos) != null && wallName.Equals(tileMap.GetTile(tilePos).name))
+                        {
+                            Vector3 pos = tileMap.CellToLocal(tilePos);
+                            TlObjectList.Add(new TLWall(new Vector2Int((int)pos.x, (int)pos.y)));
+                        }
+                    }
+                    foreach (var doorName in doorNames)
+                    {
+                        if (tileMap.GetTile(tilePos) != null && doorName.Equals(tileMap.GetTile(tilePos).name))
+                        {
+                            Vector3 pos = tileMap.CellToLocal(tilePos);
+                            TlObjectList.Add(new TLDoor(new Vector2Int((int)pos.x, (int)pos.y)));
+                        }
+                    }
                 }
             }
         }
 
         var TLAnimators = FindObjectsByType<TLAnimator>(FindObjectsSortMode.None);
 
+        /*
         foreach (var anim in TLAnimators)
         {
             print(anim.GetType().ToString() + ": " + anim.transform.position.x + " " + anim.transform.position.y);
         }
+        */
 
         foreach (var TLanim in TLAnimators)
         {
@@ -60,8 +81,6 @@ public class GameManager : MonoBehaviour
                 TlObjectList.Add(new TLPlayer(pos));
             if (TLanim is PlantAnimator)
                 TlObjectList.Add(new TLPlant(pos));
-            if (TLanim is DoorAnimator)
-                TlObjectList.Add(new TLDoor(pos));
             if (TLanim is PotAnimator)
                 TlObjectList.Add(new TLPot(pos));
         }
@@ -69,7 +88,7 @@ public class GameManager : MonoBehaviour
         initialGameState = new GameState(TlObjectList);
         stateList.Add(initialGameState);
         currentState = new GameState(initialGameState);
-    }
+    }       
 
     public void GenerateState(GameState state)
     {

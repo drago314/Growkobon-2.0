@@ -11,6 +11,11 @@ public class TLObject
         curPos = pos;
     }
 
+    public TLObject(TLObject obj)
+    {
+        curPos = obj.curPos;
+    }
+
     public virtual string GetName() { return "Generic"; }
 
     public virtual bool Equals(TLObject obj)

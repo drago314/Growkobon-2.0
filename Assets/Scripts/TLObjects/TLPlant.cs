@@ -8,5 +8,9 @@ public class TLPlant : TLObject
     {
     }
 
+    public TLPlant(TLPlant obj) : base(obj)
+    {
+    }
+
     public override string GetName() { return "Plant"; }
 }

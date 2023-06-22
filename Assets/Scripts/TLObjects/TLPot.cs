@@ -8,9 +8,12 @@ public class TLPot : TLObject
     {
     }
 
+    public TLPot(TLPot obj) : base(obj)
+    {
+    }
+
     public int IsFull()
     {
-        GameManager.Inst.DEBUG((GameManager.Inst.currentState.GetPlantAtPos(curPos) != null).ToString());
         if (GameManager.Inst.currentState.GetPlantAtPos(curPos) != null)
             return 1;
         else
