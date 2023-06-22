@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        var TLAnimators = FindObjectsByType<TLAnimator>(FindObjectsSortMode.None);
+        var TLAnimators = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
 
         /*
         foreach (var anim in TLAnimators)
@@ -77,11 +77,11 @@ public class GameManager : MonoBehaviour
         foreach (var TLanim in TLAnimators)
         {
             Vector2Int pos = new Vector2Int((int)TLanim.gameObject.transform.position.x, (int)TLanim.gameObject.transform.position.y);
-            if (TLanim is PlayerAnimator)
+            if (TLanim is PlayerSignature)
                 TlObjectList.Add(new TLPlayer(pos));
-            if (TLanim is PlantAnimator)
+            if (TLanim is PlantSignature)
                 TlObjectList.Add(new TLPlant(pos));
-            if (TLanim is PotAnimator)
+            if (TLanim is PotSignature)
                 TlObjectList.Add(new TLPot(pos));
         }
 
@@ -92,11 +92,10 @@ public class GameManager : MonoBehaviour
 
     public void GenerateState(GameState state)
     {
-        var TLAnimators = FindObjectsByType<TLAnimator>(FindObjectsSortMode.None);
+        var TLAnimators = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
         foreach (var TLanim in TLAnimators)
         {
-            if (TLanim is not DoorAnimator && TLanim is not PotAnimator)
-                Destroy(TLanim.gameObject);
+            Destroy(TLanim.gameObject);
         }
 
         foreach (var TLObj in state.GetAllTLObjects())
@@ -105,6 +104,8 @@ public class GameManager : MonoBehaviour
                 Instantiate(playerPrefab, new Vector3(TLObj.curPos.x, TLObj.curPos.y, 0), Quaternion.identity);
             if (TLObj is TLPlant)
                 Instantiate(plantPrefab, new Vector3(TLObj.curPos.x, TLObj.curPos.y, 0), Quaternion.identity);
+            if (TLObj is TLPot)
+                Instantiate(potPrefab, new Vector3(TLObj.curPos.x, TLObj.curPos.y, 0), Quaternion.identity);
         }
     }
 

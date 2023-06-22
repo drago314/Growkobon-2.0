@@ -85,7 +85,7 @@ public class PlayerMovement : MonoBehaviour
             state.MoveRelative(player, moveDir);
         }
 
-        GameManager.Inst.GenerateCurrentState();
+        GameManager.Inst.GenerateCurrentState(); //TODO Delete
         print(state.ToString());
         //print("End Move: " + GameManager.Inst.stateList.Count);
     }
