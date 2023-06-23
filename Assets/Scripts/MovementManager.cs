@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class MovementManager : MonoBehaviour
 {
     public event System.Action OnMoveBegin;
+    public event System.Action OnMoveEnd;
     public event System.Action<MoveAction> OnPlayerMove;
     public event System.Action<MoveAction> OnPlantMove;
     public event System.Action<GrowAction> OnPlantGrow;
@@ -98,6 +99,7 @@ public class MovementManager : MonoBehaviour
             state.MoveRelative(player, moveDir);
         }
 
+        OnMoveEnd?.Invoke();
         GameManager.Inst.EndMove();
         //print(state.ToString());
         //print("End Move: " + GameManager.Inst.stateList.Count);

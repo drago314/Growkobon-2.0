@@ -88,6 +88,8 @@ public class GameManager : MonoBehaviour
                 TlObjectList.Add(new TLPlant(pos));
             if (TLSig is PotSignature)
                 TlObjectList.Add(new TLPot(pos));
+            if (TLSig is DoorSignature)
+                TlObjectList.Add(new TLDoor(pos));
         }
 
         initialGameState = new GameState(TlObjectList);
@@ -101,7 +103,8 @@ public class GameManager : MonoBehaviour
         var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
         foreach (var TLSig in TLSignatures)
         {
-            Destroy(TLSig.gameObject);
+            if (TLSig is MoveableObjectSignature)
+                Destroy(TLSig.gameObject);
         }
 
         foreach (var TLObj in state.GetAllTLObjects())
@@ -110,8 +113,6 @@ public class GameManager : MonoBehaviour
                 animator.InstantiatePlayer((TLPlayer)TLObj);
             if (TLObj is TLPlant)
                 animator.InstantiatePlant((TLPlant)TLObj);
-            if (TLObj is TLPot)
-                animator.InstantiatePot((TLPot)TLObj);
         }
     }
 

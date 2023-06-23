@@ -28,9 +28,9 @@ public class PlantAnimator : MonoBehaviour
 
     private void OnMoveBegin()
     {
+        animator.SetTrigger("Idle");
         plant = GameManager.Inst.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
     }
-
 
     private void OnPlantMove(MoveAction move)
     {
