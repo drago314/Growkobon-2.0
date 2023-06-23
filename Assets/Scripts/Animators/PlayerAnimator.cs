@@ -23,7 +23,6 @@ public class PlayerAnimator : MonoBehaviour
     private void OnPlayerMove(MoveAction move)
     {
         PlayerFaceDir(move.moveDir);
-
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
     }
 

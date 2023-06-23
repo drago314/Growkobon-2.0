@@ -86,6 +86,10 @@ public class MovementManager : MonoBehaviour
                 OnPlayerMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, player));
                 state.MoveRelative(player, moveDir);
             }
+            else
+            {
+                OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player));
+            }
             GrowPlant(goalPos, moveDir);
         }
         else
@@ -95,7 +99,7 @@ public class MovementManager : MonoBehaviour
         }
 
         GameManager.Inst.EndMove();
-        print(state.ToString());
+        //print(state.ToString());
         //print("End Move: " + GameManager.Inst.stateList.Count);
     }
 

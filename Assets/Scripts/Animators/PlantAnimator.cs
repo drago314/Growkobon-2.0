@@ -47,7 +47,6 @@ public class PlantAnimator : MonoBehaviour
 
     public void Grow(Vector2Int growDir)
     {
-        print("hi");
         animator.SetTrigger("GrowUp");
     }
 }
