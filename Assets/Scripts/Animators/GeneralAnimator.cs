@@ -22,11 +22,13 @@ public class GeneralAnimator : MonoBehaviour
     public void GrowPlant(GrowAction grow)
     {
         var plantAnimator = Instantiate(plantPrefab, new Vector3Int(grow.newPos.x, grow.newPos.y, 0), Quaternion.identity).GetComponent<PlantAnimator>();
+        plantAnimator.Grow(grow.moveDir);
     }
 
     public void InstantiatePlant(TLPlant plant)
     {
         var plantAnimator = Instantiate(plantPrefab, new Vector3Int(plant.curPos.x, plant.curPos.y, 0), Quaternion.identity).GetComponent<PlantAnimator>();
+        plantAnimator.Instantiate();
     }
 
     public void InstantiatePot(TLPot pot)

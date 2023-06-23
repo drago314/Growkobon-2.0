@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1452838871744156416}
   - component: {fileID: 7456747215725147225}
   - component: {fileID: 3385020481439996327}
+  - component: {fileID: 3102812127941855568}
   m_Layer: 0
   m_Name: Plant
   m_TagString: Player
@@ -75,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 1689597903
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1698744389, guid: f8fe7212ca972fa4f81b1ec5754cf3a3, type: 3}
+  m_Sprite: {fileID: -849164450, guid: ab059f8d9f246b542a066d42237121dd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -110,3 +111,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acef1ccc332b0f94aad733d33c02c19d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 3102812127941855568}
+--- !u!95 &3102812127941855568
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3967567610578681259}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e5d43d6dbcc6a0641aed087e98cfef1c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

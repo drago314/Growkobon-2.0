@@ -1,15 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class MovementManager : MonoBehaviour
 {
-    public event Action OnMoveBegin;
-    public event Action<MoveAction> OnPlayerMove;
-    public event Action<MoveAction> OnPlantMove;
-    public event Action<GrowAction> OnPlantGrow;
+    public event System.Action OnMoveBegin;
+    public event System.Action<MoveAction> OnPlayerMove;
+    public event System.Action<MoveAction> OnPlantMove;
+    public event System.Action<GrowAction> OnPlantGrow;
 
     private void Start()
     {

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlantAnimator : MonoBehaviour
 {
+    [SerializeField] private Animator animator;
+
     TLPlant plant;
 
     private void Start()
@@ -36,5 +38,16 @@ public class PlantAnimator : MonoBehaviour
             return;
 
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
+    }
+
+    public void Instantiate()
+    {
+        animator.SetTrigger("Idle");
+    }
+
+    public void Grow(Vector2Int growDir)
+    {
+        print("hi");
+        animator.SetTrigger("GrowUp");
     }
 }
