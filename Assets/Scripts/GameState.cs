@@ -126,6 +126,18 @@ public class GameState
         return null;
     }
 
+    public TLPot GetPotAtPos(Vector2Int pos)
+    {
+        if (GetTLObjectsAtPos(pos) == null)
+            return null;
+        foreach (var TLObj in GetTLObjectsAtPos(pos))
+        {
+            if (TLObj is TLPot)
+                return (TLPot)TLObj;
+        }
+        return null;
+    }
+
     public Vector2Int GetPosOf(TLObject TLObj)
     {
         return TLObj.curPos;

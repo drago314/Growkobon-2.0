@@ -13,6 +13,9 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Inst;
 
+    public event System.Action OnUndoEnd;
+    public event System.Action OnResetEnd;
+
     public GameState initialGameState;
     public GameState currentState;
     public List<GameState> stateList;
@@ -145,6 +148,8 @@ public class GameManager : MonoBehaviour
             stateList.RemoveAt(stateList.Count - 1);
             currentState = new GameState(lastState);
         }
+
+        OnUndoEnd?.Invoke();
         //print("End Undo: " + stateList.Count);
     }
 
@@ -157,6 +162,8 @@ public class GameManager : MonoBehaviour
             stateList.Add(initialGameState);
             currentState = new GameState(initialGameState);
         }
+
+        OnResetEnd?.Invoke();
         //print("End Reset: " + stateList.Count);
     }
 
