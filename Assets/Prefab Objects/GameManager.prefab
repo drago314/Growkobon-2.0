@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2971636088457720204}
   - component: {fileID: 4777826634627551701}
   - component: {fileID: 3077985321389285311}
+  - component: {fileID: 8565691529311702107}
   - component: {fileID: 561370031755289853}
   m_Layer: 0
   m_Name: GameManager
@@ -32,7 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4777826634627551701
 MonoBehaviour:
@@ -52,16 +53,14 @@ MonoBehaviour:
   moveLeft: {fileID: -1243338697533458188, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   undo: {fileID: -6953554902921529626, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   reset: {fileID: 9029940788691076395, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
-  playerPrefab: {fileID: 8086639633654412458, guid: 0d292bdb0a638854da6bc1b676c5c58d, type: 3}
-  plantPrefab: {fileID: 3967567610578681259, guid: 81cfa803b11c2d142b9317f8a6347a97, type: 3}
-  doorPrefab: {fileID: 3024802575711785968, guid: c20ed994fb643844a9b3a354e23dd8c6, type: 3}
-  potPrefab: {fileID: 21466899836634667, guid: a65e5083952639c4983db8ceacbdfee0, type: 3}
   wallNames:
   - TX Tileset Grass_32
   - Growkoban_Sprites_with_Player_3
   - Separated_Flowers_16
   - Separated_Flowers_23
-  doorNames: []
+  doorNames:
+  - Separated_Flowers_17
+  animator: {fileID: 8565691529311702107}
 --- !u!114 &3077985321389285311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,6 +73,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2037500dd60994648a52b7e14fd72568, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8565691529311702107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4848350101653444800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8915c28bfbf13c4a80cb6af5ec3883d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 8086639633654412458, guid: 0d292bdb0a638854da6bc1b676c5c58d, type: 3}
+  plantPrefab: {fileID: 3967567610578681259, guid: 81cfa803b11c2d142b9317f8a6347a97, type: 3}
+  potPrefab: {fileID: 21466899836634667, guid: a65e5083952639c4983db8ceacbdfee0, type: 3}
 --- !u!114 &561370031755289853
 MonoBehaviour:
   m_ObjectHideFlags: 0

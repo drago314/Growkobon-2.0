@@ -232,12 +232,15 @@ public class GameState
 
         foreach (var kvp in posToTLObj)
         {
-            result += "Obj: " + kvp.Key.Item1 + " " + kvp.Key.Item2 + " Value:";
-            foreach (var TLObj in kvp.Value)
+            if (kvp.Value.Count > 0)
             {
-                result += " " + TLObj.GetName();
+                result += "Obj: " + kvp.Key.Item1 + " " + kvp.Key.Item2 + " Value:";
+                foreach (var TLObj in kvp.Value)
+                {
+                    result += " " + TLObj.GetName();
+                }
+                result += "\n";
             }
-            result += "\n";
         }
         return result;
     }

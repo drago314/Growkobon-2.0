@@ -7,12 +7,9 @@ using UnityEngine.Tilemaps;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, undo, reset;
-    [SerializeField] public GameObject playerPrefab;
-    [SerializeField] public GameObject plantPrefab;
-    [SerializeField] public GameObject doorPrefab;
-    [SerializeField] public GameObject potPrefab;
     [SerializeField] public string[] wallNames;
     [SerializeField] public string[] doorNames;
+    [SerializeField] public GeneralAnimator animator;
 
     public static GameManager Inst;
 
@@ -22,10 +19,18 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        Inst = this; // TODO fix
+        if (Inst == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            Inst = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    private void Start()
+    private void OnEnable()
     {
         stateList = new List<GameState>();
         undo.action.performed += Undo;
@@ -42,8 +47,8 @@ public class GameManager : MonoBehaviour
                 BoundsInt bounds = tileMap.cellBounds;
                 foreach (Vector3Int tilePos in tileMap.cellBounds.allPositionsWithin)
                 {
-                    if (tileMap.GetTile(tilePos) != null)
-                        print(tileMap.GetTile(tilePos).name);
+                    //if (tileMap.GetTile(tilePos) != null)
+                    //    print(tileMap.GetTile(tilePos).name);
 
                     foreach (var wallName in wallNames)
                     {
@@ -65,7 +70,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        var TLAnimators = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
+        var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
 
         /*
         foreach (var anim in TLAnimators)
@@ -74,14 +79,14 @@ public class GameManager : MonoBehaviour
         }
         */
 
-        foreach (var TLanim in TLAnimators)
+        foreach (var TLSig in TLSignatures)
         {
-            Vector2Int pos = new Vector2Int((int)TLanim.gameObject.transform.position.x, (int)TLanim.gameObject.transform.position.y);
-            if (TLanim is PlayerSignature)
+            Vector2Int pos = new Vector2Int((int)TLSig.gameObject.transform.position.x, (int)TLSig.gameObject.transform.position.y);
+            if (TLSig is PlayerSignature)
                 TlObjectList.Add(new TLPlayer(pos));
-            if (TLanim is PlantSignature)
+            if (TLSig is PlantSignature)
                 TlObjectList.Add(new TLPlant(pos));
-            if (TLanim is PotSignature)
+            if (TLSig is PotSignature)
                 TlObjectList.Add(new TLPot(pos));
         }
 
@@ -90,22 +95,23 @@ public class GameManager : MonoBehaviour
         currentState = new GameState(initialGameState);
     }       
 
-    public void GenerateState(GameState state)
+    public void GenerateState(GameState state) 
     {
-        var TLAnimators = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
-        foreach (var TLanim in TLAnimators)
+        // TODO Add MoveableTLObject class
+        var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
+        foreach (var TLSig in TLSignatures)
         {
-            Destroy(TLanim.gameObject);
+            Destroy(TLSig.gameObject);
         }
 
         foreach (var TLObj in state.GetAllTLObjects())
         {
             if (TLObj is TLPlayer)
-                Instantiate(playerPrefab, new Vector3(TLObj.curPos.x, TLObj.curPos.y, 0), Quaternion.identity);
+                animator.InstantiatePlayer((TLPlayer)TLObj);
             if (TLObj is TLPlant)
-                Instantiate(plantPrefab, new Vector3(TLObj.curPos.x, TLObj.curPos.y, 0), Quaternion.identity);
+                animator.InstantiatePlant((TLPlant)TLObj);
             if (TLObj is TLPot)
-                Instantiate(potPrefab, new Vector3(TLObj.curPos.x, TLObj.curPos.y, 0), Quaternion.identity);
+                animator.InstantiatePot((TLPot)TLObj);
         }
     }
 
@@ -114,6 +120,15 @@ public class GameManager : MonoBehaviour
         if (!currentState.Equals(stateList[stateList.Count - 1]))
         {
             GenerateState(currentState);
+            stateList.Add(currentState);
+            currentState = new GameState(currentState);
+        }
+    }
+
+    public void EndMove()
+    {
+        if (!currentState.Equals(stateList[stateList.Count - 1]))
+        {
             stateList.Add(currentState);
             currentState = new GameState(currentState);
         }
