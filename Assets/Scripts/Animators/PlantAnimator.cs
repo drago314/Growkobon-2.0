@@ -19,7 +19,7 @@ public class PlantAnimator : MonoBehaviour
         GameManager.Inst.OnResetEnd += AfterResetOrUndo;
         GameManager.Inst.OnUndoEnd += AfterResetOrUndo;
         plant = GameManager.Inst.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-
+        
         Idle();
     }
 

@@ -10,6 +10,8 @@ public class MovementManager : MonoBehaviour
     public event System.Action<MoveAction> OnPlayerMove;
     public event System.Action<MoveAction> OnPlantMove;
     public event System.Action<GrowAction> OnPlantGrow;
+    public event System.Action<Vector2Int> OnDoorClose;
+    public event System.Action<Vector2Int> OnDoorOpen;
 
     private void Start()
     {
@@ -48,6 +50,12 @@ public class MovementManager : MonoBehaviour
         Vector2Int goalPos = curPos + moveDir;
 
         player.directionFacing = moveDir;
+        Dictionary<TLDoor, bool> originalDoorStates = new Dictionary<TLDoor, bool>();
+        foreach (var door in state.GetAllTLDoors())
+        {
+            originalDoorStates.Add(door, door.IsOpen());
+        }
+
 
         //print(state.ToString());
 
@@ -99,8 +107,22 @@ public class MovementManager : MonoBehaviour
             state.MoveRelative(player, moveDir);
         }
 
+        //10
+        foreach (var kvp in originalDoorStates)
+        {
+            if (kvp.Key.IsOpen() != kvp.Value)
+            {
+                if (kvp.Key.IsOpen())
+                    OnDoorOpen?.Invoke(kvp.Key.curPos);
+                else
+                    OnDoorClose?.Invoke(kvp.Key.curPos);
+            }
+        }
+
+        //11
         OnMoveEnd?.Invoke();
         GameManager.Inst.EndMove();
+        
         //print(state.ToString());
         //print("End Move: " + GameManager.Inst.stateList.Count);
     }

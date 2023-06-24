@@ -84,6 +84,17 @@ public class GameState
         return potList;
     }
 
+    public List<TLDoor> GetAllTLDoors()
+    {
+        List<TLDoor> doorList = new List<TLDoor>();
+        foreach (var obj in GetAllTLObjects())
+        {
+            if (obj is TLDoor)
+                doorList.Add((TLDoor)obj);
+        }
+        return doorList;
+
+    }
     public List<TLObject> GetTLObjectsAtPos(Vector2Int pos)
     {
         if (!posToTLObj.ContainsKey((pos.x, pos.y)))
