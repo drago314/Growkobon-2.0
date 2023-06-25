@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6518114960266708047}
   - component: {fileID: 1006860828080029932}
   m_Layer: 0
-  m_Name: DL Door
+  m_Name: DR Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 1689597903
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1047785553, guid: 0f26cc9b0671864409036675bcd8b804, type: 3}
+  m_Sprite: {fileID: -446001199, guid: 9c86bf1f64e524c488703cc0cf166968, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -122,7 +122,7 @@ Animator:
   m_GameObject: {fileID: 892762191897537780}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a064d98b7f6972a46a3ab458b13f4f21, type: 2}
+  m_Controller: {fileID: 9100000, guid: f55717d05bf43594c94ec840333e7090, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

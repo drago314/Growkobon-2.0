@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0f26cc9b0671864409036675bcd8b804
+guid: 9c86bf1f64e524c488703cc0cf166968
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -136,7 +136,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: DL_Exit_v2_0
+      name: DR_Exit_v3_0
       rect:
         serializedVersion: 2
         x: 0
@@ -150,14 +150,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 85090fb9696eb4f46850c21a109bb766
-      internalID: 1047785553
+      spriteID: f6a370583ea9ea24fb03489d2224947b
+      internalID: -446001199
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DL_Exit_v2_1
+      name: DR_Exit_v3_1
       rect:
         serializedVersion: 2
         x: 32
@@ -171,14 +171,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2abf238163768014e90f135d7d260559
-      internalID: -1541971763
+      spriteID: 4d49697644de51a4d9761458d028e993
+      internalID: 1897673460
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DL_Exit_v2_2
+      name: DR_Exit_v3_2
       rect:
         serializedVersion: 2
         x: 0
@@ -192,14 +192,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 91f13ab010413d64db392946879c0d54
-      internalID: 291416397
+      spriteID: b1be9b444b134c14fa3740cdf5b49ccf
+      internalID: -1016704225
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DL_Exit_v2_3
+      name: DR_Exit_v3_3
       rect:
         serializedVersion: 2
         x: 32
@@ -213,14 +213,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fa1a9ebd771ba3c4392557c9062b00dc
-      internalID: 1532595787
+      spriteID: b21f10e8db99bcb43be0d5eb08182349
+      internalID: 907420805
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DL_Exit_v2_4
+      name: DR_Exit_v3_4
       rect:
         serializedVersion: 2
         x: 0
@@ -234,14 +234,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 43cc2814eb7c0e54fb4fd8cab3d9f6e6
-      internalID: -86381646
+      spriteID: 9f1a9fd6caa43a541a667ce80fb652cf
+      internalID: 1189139508
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DL_Exit_v2_5
+      name: DR_Exit_v3_5
       rect:
         serializedVersion: 2
         x: 32
@@ -255,8 +255,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c6ed82077a52b9c469ed60bf1b1e3606
-      internalID: -1932783804
+      spriteID: 7a43625ef2ec7074bbd73a3db35d7bf1
+      internalID: 1833081032
       vertices: []
       indices: 
       edges: []
@@ -272,12 +272,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      DL_Exit_v2_0: 1047785553
-      DL_Exit_v2_1: -1541971763
-      DL_Exit_v2_2: 291416397
-      DL_Exit_v2_3: 1532595787
-      DL_Exit_v2_4: -86381646
-      DL_Exit_v2_5: -1932783804
+      DR_Exit_v3_0: -446001199
+      DR_Exit_v3_1: 1897673460
+      DR_Exit_v3_2: -1016704225
+      DR_Exit_v3_3: 907420805
+      DR_Exit_v3_4: 1189139508
+      DR_Exit_v3_5: 1833081032
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
