@@ -58,6 +58,7 @@ MonoBehaviour:
   - Growkoban_Sprites_with_Player_3
   - Separated_Flowers_16
   - Separated_Flowers_23
+  - Fence
   doorNames:
   - Separated_Flowers_17
   animator: {fileID: 8565691529311702107}

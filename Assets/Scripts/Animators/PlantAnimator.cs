@@ -10,6 +10,8 @@ public class PlantAnimator : MonoBehaviour
  
     TLPlant plant;
 
+    private bool growing;
+
     private void Start()
     {
         MovementManager manager = GameManager.Inst.gameObject.GetComponent<MovementManager>();
@@ -19,8 +21,9 @@ public class PlantAnimator : MonoBehaviour
         GameManager.Inst.OnResetEnd += AfterResetOrUndo;
         GameManager.Inst.OnUndoEnd += AfterResetOrUndo;
         plant = GameManager.Inst.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-        
-        Idle();
+
+        if (!growing)
+            Idle();
     }
 
     private void OnDestroy()
@@ -74,6 +77,7 @@ public class PlantAnimator : MonoBehaviour
 
     public void Grow(Vector2Int growDir)
     {
+        growing = true;
         animator.SetTrigger("GrowUp");
     }
 }
