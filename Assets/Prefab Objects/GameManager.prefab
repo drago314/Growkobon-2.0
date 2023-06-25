@@ -59,6 +59,22 @@ MonoBehaviour:
   - Separated_Flowers_16
   - Separated_Flowers_23
   - Fence
+  - Fences_1
+  - Fences_2
+  - Fences_3
+  - Fences_4
+  - Fences_5
+  - Fences_6
+  - Fences_7
+  - Fences_8
+  - Fences_9
+  - Fences_10
+  - Fences_11
+  - Fences_12
+  - Fences_13
+  - Fences_14
+  - Fences_15
+  - Fences_0
   doorNames:
   - Separated_Flowers_17
   animator: {fileID: 8565691529311702107}

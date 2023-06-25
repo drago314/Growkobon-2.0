@@ -12,12 +12,10 @@ SpriteAtlasAsset:
   m_ImporterData:
     packables:
     - {fileID: 2800000, guid: ab059f8d9f246b542a066d42237121dd, type: 3}
-    - {fileID: 2800000, guid: 059f934ce7a94d04f8309e7897cea635, type: 3}
     - {fileID: 2800000, guid: 80aa01ea0dbb84442aa1d73aff2e4f46, type: 3}
-    - {fileID: 2800000, guid: ccf92d1639decfd4eb90015a204f51e4, type: 3}
-    - {fileID: 2800000, guid: 8505f85659893eb4ba0ed1134114cb1e, type: 3}
-    - {fileID: 2800000, guid: 3557049c015886542b0c6150cf6f9715, type: 3}
-    - {fileID: 2800000, guid: 17486c59f0c324d4688611f83ed04d2c, type: 3}
-    - {fileID: 2800000, guid: 9ff023c6cea91314ea07194825cbe7be, type: 3}
     - {fileID: 2800000, guid: 39de6d825e636784da53a96190d9e321, type: 3}
+    - {fileID: 2800000, guid: 41f94a575a4ed184aa6afa0680a9e49f, type: 3}
+    - {fileID: 2800000, guid: ffa8a37522142714b8e6a519f35f6774, type: 3}
+    - {fileID: 2800000, guid: 7643a595a4ac8f245b48df075b48d9c6, type: 3}
+    - {fileID: 2800000, guid: 8f2cbe5cd252c45479bcea910a14c20e, type: 3}
   m_IsVariant: 0
