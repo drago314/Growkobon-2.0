@@ -75,6 +75,7 @@ MonoBehaviour:
   - Fences_14
   - Fences_15
   - Fences_0
+  - CustomTileFence
   doorNames:
   - Separated_Flowers_17
   animator: {fileID: 8565691529311702107}
