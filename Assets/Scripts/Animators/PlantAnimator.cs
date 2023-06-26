@@ -78,6 +78,13 @@ public class PlantAnimator : MonoBehaviour
     public void Grow(Vector2Int growDir)
     {
         growing = true;
-        animator.SetTrigger("GrowUp");
+        if (growDir == Vector2Int.up)
+            animator.SetTrigger("GrowUp");
+        else if (growDir == Vector2Int.right)
+            animator.SetTrigger("GrowRIGHT");
+        else if (growDir == Vector2Int.left)
+            animator.SetTrigger("GrowLEFT");
+        else if (growDir == Vector2Int.down)
+            animator.SetTrigger("GrowDOWN");
     }
 }
