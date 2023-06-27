@@ -78,6 +78,8 @@ MonoBehaviour:
   - CustomTileFence
   doorNames:
   - Separated_Flowers_17
+  potNames:
+  - Pots_v3_0
   animator: {fileID: 8565691529311702107}
 --- !u!114 &3077985321389285311
 MonoBehaviour:

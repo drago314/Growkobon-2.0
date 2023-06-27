@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, undo, reset;
     [SerializeField] public string[] wallNames;
     [SerializeField] public string[] doorNames;
+    [SerializeField] public string[] potNames;
     [SerializeField] public GeneralAnimator animator;
 
     public static GameManager Inst;
@@ -69,6 +70,14 @@ public class GameManager : MonoBehaviour
                             TlObjectList.Add(new TLDoor(new Vector2Int((int)pos.x, (int)pos.y)));
                         }
                     }
+                    foreach (var potName in potNames)
+                    {
+                        if (tileMap.GetTile(tilePos) != null && potName.Equals(tileMap.GetTile(tilePos).name))
+                        {
+                            Vector3 pos = tileMap.CellToLocal(tilePos);
+                            TlObjectList.Add(new TLPot(new Vector2Int((int)pos.x, (int)pos.y)));
+                        }
+                    }
                 }
             }
         }
@@ -89,8 +98,6 @@ public class GameManager : MonoBehaviour
                 TlObjectList.Add(new TLPlayer(pos));
             if (TLSig is PlantSignature)
                 TlObjectList.Add(new TLPlant(pos));
-            if (TLSig is PotSignature)
-                TlObjectList.Add(new TLPot(pos));
             if (TLSig is DoorSignature)
                 TlObjectList.Add(new TLDoor(pos));
         }
