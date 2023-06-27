@@ -44,6 +44,7 @@ public class FenceTile : Tile
         return m_SpritesURDL[index];
     }
 
+#if UNITY_EDITOR
     [MenuItem("Assets/Create/2D/Custom Tiles/Variable Tile")]
     public static void CreateVariableTile()
     {
@@ -52,4 +53,5 @@ public class FenceTile : Tile
 
         AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<FenceTile>(), path);
     }
+#endif
 }
