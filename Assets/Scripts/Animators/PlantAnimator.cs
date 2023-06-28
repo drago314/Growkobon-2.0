@@ -1,29 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 
 public class PlantAnimator : MonoBehaviour
 {
     [SerializeField] private Animator animator;
- 
-    TLPlant plant;
+    [SerializeField] private List<Sprite> potOverlays;
+    [SerializeField] private GameObject potOverlayChild;
 
-    private bool growing;
+    private TLPlant plant;
+    private SpriteRenderer potOverlay;
+    private SpriteRenderer spriteRenderer;
+
+    private bool growCalled = false;
+    private bool instantiateCalled = false;
+    double timer = 0;
+
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.color = new Color(1f, 1f, 1f, 0f);
+    }
 
     private void Start()
     {
         MovementManager manager = GameManager.Inst.gameObject.GetComponent<MovementManager>();
         manager.OnMoveBegin += OnMoveBegin;
         manager.OnPlantMove += OnPlantMove;
-        manager.OnMoveEnd += OnMoveEnd;
-        GameManager.Inst.OnResetEnd += AfterResetOrUndo;
-        GameManager.Inst.OnUndoEnd += AfterResetOrUndo;
+        manager.OnMoveEnd += UpdatePlantInPot;
         plant = GameManager.Inst.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        potOverlay = potOverlayChild.GetComponent<SpriteRenderer>();
 
-        if (!growing)
-            Idle();
+        StartCoroutine(WaitTilGrown());
     }
 
     private void OnDestroy()
@@ -33,9 +42,7 @@ public class PlantAnimator : MonoBehaviour
             MovementManager manager = GameManager.Inst.gameObject.GetComponent<MovementManager>();
             manager.OnMoveBegin -= OnMoveBegin;
             manager.OnPlantMove -= OnPlantMove;
-            manager.OnMoveEnd -= OnMoveEnd;
-            GameManager.Inst.OnResetEnd -= AfterResetOrUndo;
-            GameManager.Inst.OnUndoEnd -= AfterResetOrUndo;
+            manager.OnMoveEnd -= UpdatePlantInPot;
         }
     }
 
@@ -44,23 +51,6 @@ public class PlantAnimator : MonoBehaviour
         plant = GameManager.Inst.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
     }
 
-    private void OnMoveEnd()
-    {
-        Idle();
-    }
-
-    private void AfterResetOrUndo()
-    {
-        Idle();
-    }
-
-    private void Idle()
-    {
-        if (GameManager.Inst.currentState.GetPotAtPos(plant.curPos) != null)
-            animator.SetTrigger("InPot");
-        else
-            animator.SetTrigger("Idle");
-    }
 
     private void OnPlantMove(MoveAction move)
     {
@@ -72,12 +62,14 @@ public class PlantAnimator : MonoBehaviour
 
     public void Instantiate()
     {
+        instantiateCalled = true;
         animator.SetTrigger("Idle");
+        GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
     }
 
     public void Grow(Vector2Int growDir)
     {
-        growing = true;
+        growCalled = true;
         if (growDir == Vector2Int.up)
             animator.SetTrigger("GrowUp");
         else if (growDir == Vector2Int.right)
@@ -86,5 +78,35 @@ public class PlantAnimator : MonoBehaviour
             animator.SetTrigger("GrowLEFT");
         else if (growDir == Vector2Int.down)
             animator.SetTrigger("GrowDOWN");
+        GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+    }
+
+    private IEnumerator WaitTilGrown()
+    {
+
+        yield return new WaitUntil(ReadyToContinue);
+        if (!growCalled && !instantiateCalled)
+            Instantiate();
+        yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
+        UpdatePlantInPot();
+    }
+
+    private bool ReadyToContinue()
+    {
+        timer += Time.deltaTime;
+        return growCalled || instantiateCalled || timer > 0.1;
+    }
+
+    private void UpdatePlantInPot()
+    {
+        if (GameManager.Inst.currentState.GetPotAtPos(plant.curPos) == null)
+        {
+            potOverlay.color = new Color(1f, 1f, 1f, 0f);
+        }
+        else
+        {
+            potOverlay.color = new Color(1f, 1f, 1f, 1f);
+            potOverlay.sprite = potOverlays[0];
+        }
     }
 }

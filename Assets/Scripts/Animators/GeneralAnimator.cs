@@ -6,7 +6,6 @@ public class GeneralAnimator : MonoBehaviour
 {
     [SerializeField] public GameObject playerPrefab;
     [SerializeField] public GameObject plantPrefab;
-    [SerializeField] public GameObject potPrefab;
 
     private void Start()
     {
@@ -30,9 +29,4 @@ public class GeneralAnimator : MonoBehaviour
         var plantAnimator = Instantiate(plantPrefab, new Vector3Int(plant.curPos.x, plant.curPos.y, 0), Quaternion.identity).GetComponent<PlantAnimator>();
         plantAnimator.Instantiate();
     }
-
-    public void InstantiatePot(TLPot pot)
-    {
-        Instantiate(potPrefab, new Vector3Int(pot.curPos.x, pot.curPos.y, 0), Quaternion.identity);
-    }    
 }

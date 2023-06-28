@@ -130,9 +130,9 @@ public class GameManager : MonoBehaviour
     {
         if (!currentState.Equals(stateList[stateList.Count - 1]))
         {
-            GenerateState(currentState);
             stateList.Add(currentState);
             currentState = new GameState(currentState);
+            GenerateState(currentState);
         }
     }
 
@@ -151,9 +151,9 @@ public class GameManager : MonoBehaviour
         if (stateList.Count >= 2)
         {
             var lastState = stateList[stateList.Count - 2];
-            GenerateState(lastState);
             stateList.RemoveAt(stateList.Count - 1);
             currentState = new GameState(lastState);
+            GenerateState(currentState);
         }
 
         OnUndoEnd?.Invoke();
@@ -165,9 +165,9 @@ public class GameManager : MonoBehaviour
         //print("Begin Reset: " + stateList.Count);
         if (!currentState.Equals(initialGameState))
         {
-            GenerateState(initialGameState);
             stateList.Add(initialGameState);
             currentState = new GameState(initialGameState);
+            GenerateState(currentState);
         }
 
         OnResetEnd?.Invoke();
