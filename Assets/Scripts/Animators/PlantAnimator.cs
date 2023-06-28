@@ -83,7 +83,7 @@ public class PlantAnimator : MonoBehaviour
 
     private IEnumerator WaitTilGrown()
     {
-
+        // TODO, makes plants wait before showing up on level start which is sorta bad
         yield return new WaitUntil(ReadyToContinue);
         if (!growCalled && !instantiateCalled)
             Instantiate();
