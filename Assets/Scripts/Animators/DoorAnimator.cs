@@ -13,23 +13,23 @@ public class DoorAnimator : MonoBehaviour
 
     private void Start()
     {
-        MovementManager manager = GameManager.Inst.gameObject.GetComponent<MovementManager>();
-        door = GameManager.Inst.currentState.GetDoorAtPos(new Vector2Int((int) transform.position.x, (int) transform.position.y));
+        MovementManager manager = GameManager.Inst.movementManager;
+        door = GameManager.Inst.movementManager.currentState.GetDoorAtPos(new Vector2Int((int) transform.position.x, (int) transform.position.y));
         manager.OnMoveEnd += OnMoveEnd;
         manager.OnMoveBegin += OnMoveBegin;
-        GameManager.Inst.undo.action.performed += OnUndoOrReset;
-        GameManager.Inst.reset.action.performed += OnUndoOrReset;
+        GameManager.Inst.movementManager.OnUndoEnd += OnUndoOrResetEnd;
+        GameManager.Inst.movementManager.OnResetEnd += OnUndoOrResetEnd;
     }
 
     private void OnDestroy()
     {
         if (GameManager.Inst != null)
         {
-            MovementManager manager = GameManager.Inst.gameObject.GetComponent<MovementManager>();
+            MovementManager manager = GameManager.Inst.movementManager;
             manager.OnMoveBegin -= OnMoveBegin;
             manager.OnMoveEnd -= OnMoveEnd;
-            GameManager.Inst.undo.action.performed -= OnUndoOrReset;
-            GameManager.Inst.reset.action.performed -= OnUndoOrReset;
+            GameManager.Inst.movementManager.OnUndoEnd -= OnUndoOrResetEnd;
+            GameManager.Inst.movementManager.OnResetEnd -= OnUndoOrResetEnd;
         }
     }
 
@@ -40,6 +40,7 @@ public class DoorAnimator : MonoBehaviour
 
     private void OnMoveEnd()
     {
+        GameManager.Inst.DEBUG("move end    ");
         if (door.IsOpen() != doorOpen)
         {
             if (door.IsOpen())
@@ -49,8 +50,9 @@ public class DoorAnimator : MonoBehaviour
         }
     }
 
-    private void OnUndoOrReset(InputAction.CallbackContext obj)
+    private void OnUndoOrResetEnd()
     {
+        GameManager.Inst.DEBUG("undid or reset: " + door.IsOpen().ToString());
         if (door.IsOpen())
             animator.SetTrigger("InstantOpen");
         else

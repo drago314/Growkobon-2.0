@@ -12,12 +12,16 @@ public class PlayerAnimator : MonoBehaviour
     private void Start()
     {
         GameManager.Inst.gameObject.GetComponent<MovementManager>().OnPlayerMove += OnPlayerMove;
+        GameManager.Inst.gameObject.GetComponent<MapManager>().OnPlayerMove += OnPlayerMove;
     }
 
     private void OnDestroy()
     {
         if (GameManager.Inst != null)
+        {
             GameManager.Inst.gameObject.GetComponent<MovementManager>().OnPlayerMove -= OnPlayerMove;
+            GameManager.Inst.gameObject.GetComponent<MapManager>().OnPlayerMove -= OnPlayerMove;
+        }
     }
 
     private void OnPlayerMove(MoveAction move)

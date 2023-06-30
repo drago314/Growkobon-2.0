@@ -14,7 +14,7 @@ public class TLDoor : TLObject
 
     public bool IsOpen()
     {
-        var pots = GameManager.Inst.currentState.GetAllTLPots();
+        var pots = GameManager.Inst.movementManager.currentState.GetAllTLPots();
         foreach (var pot in pots)
         {
             if (pot.IsFull() != 1)

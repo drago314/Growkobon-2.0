@@ -3,23 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, undo, reset;
+    [SerializeField] public PlayerInput inputManager;
     [SerializeField] public string[] wallNames;
     [SerializeField] public string[] doorNames;
     [SerializeField] public string[] potNames;
     [SerializeField] public GeneralAnimator animator;
 
     public static GameManager Inst;
-
-    public event System.Action OnUndoEnd;
-    public event System.Action OnResetEnd;
-
-    public GameState initialGameState;
-    public GameState currentState;
-    public List<GameState> stateList;
+    public MovementManager movementManager;
 
     private void Awake()
     {
@@ -36,9 +31,13 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
-        stateList = new List<GameState>();
-        undo.action.performed += Undo;
-        reset.action.performed += Reset;
+        movementManager = GetComponent<MovementManager>();
+        SetMovementManagerFromScene();
+    }       
+
+    private void SetMovementManagerFromScene()
+    {
+        movementManager.stateList = new List<GameState>();
 
         var TlObjectList = new List<TLObject>();
 
@@ -102,76 +101,26 @@ public class GameManager : MonoBehaviour
                 TlObjectList.Add(new TLDoor(pos));
         }
 
-        initialGameState = new GameState(TlObjectList);
-        stateList.Add(initialGameState);
-        currentState = new GameState(initialGameState);
-    }       
-
-    public void GenerateState(GameState state) 
-    {
-        // TODO Add MoveableTLObject class
-        var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
-        foreach (var TLSig in TLSignatures)
-        {
-            if (TLSig is MoveableObjectSignature)
-                Destroy(TLSig.gameObject);
-        }
-
-        foreach (var TLObj in state.GetAllTLObjects())
-        {
-            if (TLObj is TLPlayer)
-                animator.InstantiatePlayer((TLPlayer)TLObj);
-            if (TLObj is TLPlant)
-                animator.InstantiatePlant((TLPlant)TLObj);
-        }
+        movementManager.initialGameState = new GameState(TlObjectList);
+        movementManager.stateList.Add(movementManager.initialGameState);
+        movementManager.currentState = new GameState(movementManager.initialGameState);
     }
 
-    public void GenerateCurrentState()
+    public void StartLevel(int levelNumber)
     {
-        if (!currentState.Equals(stateList[stateList.Count - 1]))
-        {
-            stateList.Add(currentState);
-            currentState = new GameState(currentState);
-            GenerateState(currentState);
-        }
+        inputManager.SwitchCurrentActionMap("Gameplay");
+        LoadScene("World 1 Level " + levelNumber);
     }
 
-    public void EndMove()
+    public void FinishLevel()
     {
-        if (!currentState.Equals(stateList[stateList.Count - 1]))
-        {
-            stateList.Add(currentState);
-            currentState = new GameState(currentState);
-        }
+        inputManager.SwitchCurrentActionMap("World Map");
+        LoadScene("World 1 Map");
     }
 
-    public void Undo(InputAction.CallbackContext obj)
+    public void LoadScene(string name)
     {
-        //print("Begin Undo: " + stateList.Count);
-        if (stateList.Count >= 2)
-        {
-            var lastState = stateList[stateList.Count - 2];
-            stateList.RemoveAt(stateList.Count - 1);
-            currentState = new GameState(lastState);
-            GenerateState(currentState);
-        }
-
-        OnUndoEnd?.Invoke();
-        //print("End Undo: " + stateList.Count);
-    }
-
-    public void Reset(InputAction.CallbackContext obj)
-    {
-        //print("Begin Reset: " + stateList.Count);
-        if (!currentState.Equals(initialGameState))
-        {
-            stateList.Add(initialGameState);
-            currentState = new GameState(initialGameState);
-            GenerateState(currentState);
-        }
-
-        OnResetEnd?.Invoke();
-        //print("End Reset: " + stateList.Count);
+        SceneManager.LoadScene(name);
     }
 
     public void DEBUG(string message)

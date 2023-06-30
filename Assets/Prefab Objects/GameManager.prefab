@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2971636088457720204}
   - component: {fileID: 4777826634627551701}
   - component: {fileID: 3077985321389285311}
+  - component: {fileID: 5490834138412588229}
   - component: {fileID: 8565691529311702107}
   - component: {fileID: 561370031755289853}
   m_Layer: 0
@@ -47,12 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d30101abe78497f40bb4285a9240d216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveUp: {fileID: -6737352863954743828, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
-  moveDown: {fileID: 357779603669613348, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
-  moveRight: {fileID: -4140952004102833554, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
-  moveLeft: {fileID: -1243338697533458188, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
-  undo: {fileID: -6953554902921529626, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
-  reset: {fileID: 9029940788691076395, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  inputManager: {fileID: 561370031755289853}
   wallNames:
   - TX Tileset Grass_32
   - Growkoban_Sprites_with_Player_3
@@ -81,6 +77,7 @@ MonoBehaviour:
   potNames:
   - Pots_v3_0
   animator: {fileID: 8565691529311702107}
+  movementManager: {fileID: 0}
 --- !u!114 &3077985321389285311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,6 +90,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2037500dd60994648a52b7e14fd72568, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveUp: {fileID: -6737352863954743828, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  moveDown: {fileID: 357779603669613348, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  moveRight: {fileID: -4140952004102833554, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  moveLeft: {fileID: -1243338697533458188, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  undo: {fileID: -6953554902921529626, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  reset: {fileID: 9029940788691076395, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+--- !u!114 &5490834138412588229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4848350101653444800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93736465f18602d458978f477f2579ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveUp: {fileID: 5536412998195584913, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  moveDown: {fileID: 4929436957986363429, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  moveRight: {fileID: -5645837413309641247, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  moveLeft: {fileID: 8464485211255316129, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  enter: {fileID: -6591409340151360113, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
 --- !u!114 &8565691529311702107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +127,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 8086639633654412458, guid: 0d292bdb0a638854da6bc1b676c5c58d, type: 3}
   plantPrefab: {fileID: 3967567610578681259, guid: 81cfa803b11c2d142b9317f8a6347a97, type: 3}
-  potPrefab: {fileID: 21466899836634667, guid: a65e5083952639c4983db8ceacbdfee0, type: 3}
 --- !u!114 &561370031755289853
 MonoBehaviour:
   m_ObjectHideFlags: 0

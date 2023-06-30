@@ -29,7 +29,7 @@ public class PlantAnimator : MonoBehaviour
         manager.OnMoveBegin += OnMoveBegin;
         manager.OnPlantMove += OnPlantMove;
         manager.OnMoveEnd += UpdatePlantInPot;
-        plant = GameManager.Inst.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        plant = GameManager.Inst.movementManager.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
         potOverlay = potOverlayChild.GetComponent<SpriteRenderer>();
 
         StartCoroutine(WaitTilGrown());
@@ -48,7 +48,7 @@ public class PlantAnimator : MonoBehaviour
 
     private void OnMoveBegin()
     {
-        plant = GameManager.Inst.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        plant = GameManager.Inst.movementManager.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
     }
 
 
@@ -99,7 +99,7 @@ public class PlantAnimator : MonoBehaviour
 
     private void UpdatePlantInPot()
     {
-        if (GameManager.Inst.currentState.GetPotAtPos(plant.curPos) == null)
+        if (GameManager.Inst.movementManager.currentState.GetPotAtPos(plant.curPos) == null)
         {
             potOverlay.color = new Color(1f, 1f, 1f, 0f);
         }

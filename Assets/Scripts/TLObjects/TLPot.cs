@@ -14,7 +14,7 @@ public class TLPot : TLObject
 
     public int IsFull()
     {
-        if (GameManager.Inst.currentState.GetPlantAtPos(curPos) != null)
+        if (GameManager.Inst.movementManager.currentState.GetPlantAtPos(curPos) != null)
             return 1;
         else
             return 0;

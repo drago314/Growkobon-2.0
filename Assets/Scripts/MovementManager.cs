@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 
 public class MovementManager : MonoBehaviour
 {
+    [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, undo, reset;
+
     public event System.Action OnMoveBegin;
     public event System.Action OnMoveEnd;
     public event System.Action<MoveAction> OnPlayerMove;
@@ -12,13 +14,31 @@ public class MovementManager : MonoBehaviour
     public event System.Action<GrowAction> OnPlantGrow;
     public event System.Action<Vector2Int> OnDoorClose;
     public event System.Action<Vector2Int> OnDoorOpen;
+    public event System.Action OnUndoEnd;
+    public event System.Action OnResetEnd;
+
+    public GameState initialGameState;
+    public GameState currentState;
+    public List<GameState> stateList;
 
     private void Start()
     {
-        GameManager.Inst.moveUp.action.performed += MoveUp;
-        GameManager.Inst.moveDown.action.performed += MoveDown;
-        GameManager.Inst.moveRight.action.performed += MoveRight;
-        GameManager.Inst.moveLeft.action.performed += MoveLeft;
+        moveUp.action.performed += MoveUp;
+        moveDown.action.performed += MoveDown;
+        moveRight.action.performed += MoveRight;
+        moveLeft.action.performed += MoveLeft;
+        undo.action.performed += Undo;
+        reset.action.performed += Reset;
+    }
+
+    private void OnDestroy()
+    {
+        moveUp.action.performed -= MoveUp;
+        moveDown.action.performed -= MoveDown;
+        moveRight.action.performed -= MoveRight;
+        moveLeft.action.performed -= MoveLeft;
+        undo.action.performed -= Undo;
+        reset.action.performed -= Reset;
     }
 
     private void MoveUp(InputAction.CallbackContext obj)
@@ -44,14 +64,13 @@ public class MovementManager : MonoBehaviour
         //print("Begin Move: " + GameManager.Inst.stateList.Count);
         OnMoveBegin?.Invoke();
 
-        GameState state = GameManager.Inst.currentState;
-        TLPlayer player = state.GetPlayer();
-        Vector2Int curPos = state.GetPosOf(player);
+        TLPlayer player = currentState.GetPlayer();
+        Vector2Int curPos = currentState.GetPosOf(player);
         Vector2Int goalPos = curPos + moveDir;
 
         player.directionFacing = moveDir;
         Dictionary<TLDoor, bool> originalDoorStates = new Dictionary<TLDoor, bool>();
-        foreach (var door in state.GetAllTLDoors())
+        foreach (var door in currentState.GetAllTLDoors())
         {
             originalDoorStates.Add(door, door.IsOpen());
         }
@@ -60,26 +79,26 @@ public class MovementManager : MonoBehaviour
         //print(state.ToString());
 
         // 2
-        if (state.GetWallAtPos(goalPos) != null)
+        if (currentState.GetWallAtPos(goalPos) != null)
         {
-            OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player));
+            OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player, currentState));
             return;
         }
-        if (state.GetDoorAtPos(goalPos) != null && !state.GetDoorAtPos(goalPos).IsOpen())
+        if (currentState.GetDoorAtPos(goalPos) != null && !currentState.GetDoorAtPos(goalPos).IsOpen())
         {
-            OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player));
+            OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player, currentState));
             return;
         }
 
         //6 
         //print("goal pos: " + goalPos);
-        if (state.GetPlantAtPos(goalPos) != null)
+        if (currentState.GetPlantAtPos(goalPos) != null)
         {
-            TLPlant[] plantGroup = state.GetPlantGroupAtPos(goalPos);
+            TLPlant[] plantGroup = currentState.GetPlantGroupAtPos(goalPos);
             bool canMove = true;
             foreach (var plant in plantGroup)
             {
-                if (state.GetWallAtPos(state.GetPosOf(plant) + moveDir) != null || state.GetDoorAtPos(state.GetPosOf(plant) + moveDir) != null)
+                if (currentState.GetWallAtPos(currentState.GetPosOf(plant) + moveDir) != null || currentState.GetDoorAtPos(currentState.GetPosOf(plant) + moveDir) != null)
                 {
                     canMove = false;
                     break;
@@ -89,22 +108,22 @@ public class MovementManager : MonoBehaviour
             {
                 foreach (var plant in plantGroup)
                 {
-                    OnPlantMove?.Invoke(new MoveAction(plant.curPos, plant.curPos + moveDir, moveDir, plant));
-                    state.MoveRelative(plant, moveDir);
+                    OnPlantMove?.Invoke(new MoveAction(plant.curPos, plant.curPos + moveDir, moveDir, plant, currentState));
+                    currentState.MoveRelative(plant, moveDir);
                 }
-                OnPlayerMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, player));
-                state.MoveRelative(player, moveDir);
+                OnPlayerMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, player, currentState));
+                currentState.MoveRelative(player, moveDir);
             }
             else
             {
-                OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player));
+                OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player, currentState));
             }
             GrowPlant(goalPos, moveDir);
         }
         else
         {
-            OnPlayerMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, player));
-            state.MoveRelative(player, moveDir);
+            OnPlayerMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, player, currentState));
+            currentState.MoveRelative(player, moveDir);
         }
 
         //10
@@ -121,26 +140,99 @@ public class MovementManager : MonoBehaviour
 
         //11
         OnMoveEnd?.Invoke();
-        GameManager.Inst.EndMove();
-        
+        EndMove();
+
+        if (currentState.GetDoorAtPos(currentState.GetPosOf(player)) != null)
+        {
+            GameManager.Inst.FinishLevel();
+        }
+
         //print(state.ToString());
         //print("End Move: " + GameManager.Inst.stateList.Count);
     }
 
     private void GrowPlant(Vector2Int goalPos, Vector2Int moveDir)
     {
-        GameState state = GameManager.Inst.currentState;
-
         Vector2Int desiredPlantGrowth = goalPos + moveDir;
-        while (state.GetPlantAtPos(desiredPlantGrowth) != null)
+        while (currentState.GetPlantAtPos(desiredPlantGrowth) != null)
         {
             desiredPlantGrowth += moveDir;
         }
-        if (state.GetWallAtPos(desiredPlantGrowth) == null && state.GetDoorAtPos(desiredPlantGrowth) == null)
+        if (currentState.GetWallAtPos(desiredPlantGrowth) == null && currentState.GetDoorAtPos(desiredPlantGrowth) == null)
         {
             TLPlant plant = new TLPlant(desiredPlantGrowth);
-            OnPlantGrow?.Invoke(new GrowAction(desiredPlantGrowth, moveDir, plant));
-            state.AddObject(plant);
+            OnPlantGrow?.Invoke(new GrowAction(desiredPlantGrowth, moveDir, plant, currentState));
+            currentState.AddObject(plant);
+        }
+    }
+
+
+
+    public void Undo(InputAction.CallbackContext obj)
+    {
+        //print("Begin Undo: " + stateList.Count);
+        if (stateList.Count >= 2)
+        {
+            var lastState = stateList[stateList.Count - 2];
+            stateList.RemoveAt(stateList.Count - 1);
+            currentState = new GameState(lastState);
+            GenerateState(currentState);
+        }
+
+        OnUndoEnd?.Invoke();
+        //print("End Undo: " + stateList.Count);
+    }
+
+    public void Reset(InputAction.CallbackContext obj)
+    {
+        //print("Begin Reset: " + stateList.Count);
+        if (!currentState.Equals(initialGameState))
+        {
+            stateList.Add(initialGameState);
+            currentState = new GameState(initialGameState);
+            GenerateState(currentState);
+        }
+
+        OnResetEnd?.Invoke();
+        //print("End Reset: " + stateList.Count);
+    }
+
+    //TODO FIX ALL THIS SHIT BY MOVING IT TO GENERAL ANIMATOR
+    private void GenerateState(GameState state)
+    {
+        // TODO Add MoveableTLObject class
+        var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
+        foreach (var TLSig in TLSignatures)
+        {
+            if (TLSig is MoveableObjectSignature)
+                Destroy(TLSig.gameObject);
+        }
+
+        foreach (var TLObj in state.GetAllTLObjects())
+        {
+            if (TLObj is TLPlayer)
+                GameManager.Inst.animator.InstantiatePlayer((TLPlayer)TLObj);
+            if (TLObj is TLPlant)
+                GameManager.Inst.animator.InstantiatePlant((TLPlant)TLObj);
+        }
+    }
+
+    private void GenerateCurrentState()
+    {
+        if (!currentState.Equals(stateList[stateList.Count - 1]))
+        {
+            stateList.Add(currentState);
+            currentState = new GameState(currentState);
+            GenerateState(currentState);
+        }
+    }
+
+    public void EndMove()
+    {
+        if (!currentState.Equals(stateList[stateList.Count - 1]))
+        {
+            stateList.Add(currentState);
+            currentState = new GameState(currentState);
         }
     }
 }
