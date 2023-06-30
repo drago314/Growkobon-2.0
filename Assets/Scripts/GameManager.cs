@@ -32,7 +32,8 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         movementManager = GetComponent<MovementManager>();
-        SetMovementManagerFromScene();
+        if (SceneManager.GetActiveScene().name.Contains("Level"))
+            SetMovementManagerFromScene();
     }       
 
     private void SetMovementManagerFromScene()
@@ -110,6 +111,7 @@ public class GameManager : MonoBehaviour
     {
         inputManager.SwitchCurrentActionMap("Gameplay");
         LoadScene("World 1 Level " + levelNumber);
+        SetMovementManagerFromScene();
     }
 
     public void FinishLevel()

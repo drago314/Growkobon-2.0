@@ -10,6 +10,14 @@ public class GeneralAnimator : MonoBehaviour
     private void Start()
     {
         gameObject.GetComponent<MovementManager>().OnPlantGrow += GrowPlant;
+        GameManager.Inst.movementManager.OnResetEnd += GenerateState;
+        GameManager.Inst.movementManager.OnUndoEnd += GenerateState;
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.Inst.movementManager.OnResetEnd -= GenerateState;
+        GameManager.Inst.movementManager.OnUndoEnd -= GenerateState;
     }
 
     public void InstantiatePlayer(TLPlayer player)
@@ -28,5 +36,24 @@ public class GeneralAnimator : MonoBehaviour
     {
         var plantAnimator = Instantiate(plantPrefab, new Vector3Int(plant.curPos.x, plant.curPos.y, 0), Quaternion.identity).GetComponent<PlantAnimator>();
         plantAnimator.Instantiate();
+    }
+
+    private void GenerateState()
+    {
+        // TODO Add MoveableTLObject class
+        var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
+        foreach (var TLSig in TLSignatures)
+        {
+            if (TLSig is MoveableObjectSignature)
+                Destroy(TLSig.gameObject);
+        }
+
+        foreach (var TLObj in GameManager.Inst.movementManager.currentState.GetAllTLObjects())
+        {
+            if (TLObj is TLPlayer)
+                InstantiatePlayer((TLPlayer)TLObj);
+            if (TLObj is TLPlant)
+                InstantiatePlant((TLPlant)TLObj);
+        }
     }
 }

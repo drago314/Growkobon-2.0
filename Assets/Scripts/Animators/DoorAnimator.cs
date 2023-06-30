@@ -40,7 +40,6 @@ public class DoorAnimator : MonoBehaviour
 
     private void OnMoveEnd()
     {
-        GameManager.Inst.DEBUG("move end    ");
         if (door.IsOpen() != doorOpen)
         {
             if (door.IsOpen())
@@ -52,7 +51,6 @@ public class DoorAnimator : MonoBehaviour
 
     private void OnUndoOrResetEnd()
     {
-        GameManager.Inst.DEBUG("undid or reset: " + door.IsOpen().ToString());
         if (door.IsOpen())
             animator.SetTrigger("InstantOpen");
         else

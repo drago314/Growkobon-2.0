@@ -168,7 +168,7 @@ public class MovementManager : MonoBehaviour
 
 
 
-    public void Undo(InputAction.CallbackContext obj)
+    private void Undo(InputAction.CallbackContext obj)
     {
         //print("Begin Undo: " + stateList.Count);
         if (stateList.Count >= 2)
@@ -176,55 +176,23 @@ public class MovementManager : MonoBehaviour
             var lastState = stateList[stateList.Count - 2];
             stateList.RemoveAt(stateList.Count - 1);
             currentState = new GameState(lastState);
-            GenerateState(currentState);
         }
 
         OnUndoEnd?.Invoke();
         //print("End Undo: " + stateList.Count);
     }
 
-    public void Reset(InputAction.CallbackContext obj)
+    private void Reset(InputAction.CallbackContext obj)
     {
         //print("Begin Reset: " + stateList.Count);
         if (!currentState.Equals(initialGameState))
         {
             stateList.Add(initialGameState);
             currentState = new GameState(initialGameState);
-            GenerateState(currentState);
         }
 
         OnResetEnd?.Invoke();
         //print("End Reset: " + stateList.Count);
-    }
-
-    //TODO FIX ALL THIS SHIT BY MOVING IT TO GENERAL ANIMATOR
-    private void GenerateState(GameState state)
-    {
-        // TODO Add MoveableTLObject class
-        var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
-        foreach (var TLSig in TLSignatures)
-        {
-            if (TLSig is MoveableObjectSignature)
-                Destroy(TLSig.gameObject);
-        }
-
-        foreach (var TLObj in state.GetAllTLObjects())
-        {
-            if (TLObj is TLPlayer)
-                GameManager.Inst.animator.InstantiatePlayer((TLPlayer)TLObj);
-            if (TLObj is TLPlant)
-                GameManager.Inst.animator.InstantiatePlant((TLPlant)TLObj);
-        }
-    }
-
-    private void GenerateCurrentState()
-    {
-        if (!currentState.Equals(stateList[stateList.Count - 1]))
-        {
-            stateList.Add(currentState);
-            currentState = new GameState(currentState);
-            GenerateState(currentState);
-        }
     }
 
     public void EndMove()
