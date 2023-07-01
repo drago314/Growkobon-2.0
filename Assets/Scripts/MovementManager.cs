@@ -2,20 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public class MovementManager : MonoBehaviour
 {
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, undo, reset;
 
-    public event System.Action OnMoveBegin;
-    public event System.Action OnMoveEnd;
-    public event System.Action<MoveAction> OnPlayerMove;
-    public event System.Action<MoveAction> OnPlantMove;
-    public event System.Action<GrowAction> OnPlantGrow;
-    public event System.Action<Vector2Int> OnDoorClose;
-    public event System.Action<Vector2Int> OnDoorOpen;
-    public event System.Action OnUndoEnd;
-    public event System.Action OnResetEnd;
+    public event Action OnMoveBegin;
+    public event Action OnMoveEnd;
+    public event Action<MoveAction> OnPlayerMove;
+    public event Action<MoveAction> OnPlantMove;
+    public event Action<GrowAction> OnPlantGrow;
+    public event Action<Vector2Int> OnDoorClose;
+    public event Action<Vector2Int> OnDoorOpen;
+    public event Action OnUndoEnd;
+    public event Action OnResetEnd;
 
     public GameState initialGameState;
     public GameState currentState;
@@ -62,6 +63,8 @@ public class MovementManager : MonoBehaviour
     private void Move(Vector2Int moveDir)
     {
         //print("Begin Move: " + GameManager.Inst.stateList.Count);
+        //print(currentState.ToString());
+
         OnMoveBegin?.Invoke();
 
         TLPlayer player = currentState.GetPlayer();
@@ -75,8 +78,6 @@ public class MovementManager : MonoBehaviour
             originalDoorStates.Add(door, door.IsOpen());
         }
 
-
-        //print(state.ToString());
 
         // 2
         if (currentState.GetWallAtPos(goalPos) != null)
@@ -147,7 +148,7 @@ public class MovementManager : MonoBehaviour
             GameManager.Inst.FinishLevel();
         }
 
-        //print(state.ToString());
+        //print(currentState.ToString());
         //print("End Move: " + GameManager.Inst.stateList.Count);
     }
 

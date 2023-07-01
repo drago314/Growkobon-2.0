@@ -14,11 +14,11 @@ public class DoorAnimator : MonoBehaviour
     private void Start()
     {
         MovementManager manager = GameManager.Inst.movementManager;
-        door = GameManager.Inst.movementManager.currentState.GetDoorAtPos(new Vector2Int((int) transform.position.x, (int) transform.position.y));
         manager.OnMoveEnd += OnMoveEnd;
         manager.OnMoveBegin += OnMoveBegin;
         GameManager.Inst.movementManager.OnUndoEnd += OnUndoOrResetEnd;
         GameManager.Inst.movementManager.OnResetEnd += OnUndoOrResetEnd;
+        GameManager.Inst.OnLevelEnter += OnLevelLoaded;
     }
 
     private void OnDestroy()
@@ -30,11 +30,18 @@ public class DoorAnimator : MonoBehaviour
             manager.OnMoveEnd -= OnMoveEnd;
             GameManager.Inst.movementManager.OnUndoEnd -= OnUndoOrResetEnd;
             GameManager.Inst.movementManager.OnResetEnd -= OnUndoOrResetEnd;
+            GameManager.Inst.OnLevelEnter -= OnLevelLoaded;
         }
+    }
+
+    private void OnLevelLoaded()
+    {
+        door = GameManager.Inst.movementManager.currentState.GetDoorAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
     }
 
     private void OnMoveBegin()
     {
+        door = GameManager.Inst.movementManager.currentState.GetDoorAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
         doorOpen = door.IsOpen();
     }
 

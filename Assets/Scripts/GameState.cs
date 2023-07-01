@@ -32,6 +32,14 @@ public class GameState
             {
                 AddObject(new TLPot(TLObj.curPos));
             }
+            else if (TLObj is TLPath)
+            {
+                AddObject(new TLPath((TLPath)TLObj));
+            }
+            else if (TLObj is TLLevel)
+            {
+                AddObject(new TLLevel((TLLevel)TLObj));
+            }
         }
 
         //DEBUG
@@ -93,8 +101,8 @@ public class GameState
                 doorList.Add((TLDoor)obj);
         }
         return doorList;
-
     }
+
     public List<TLObject> GetTLObjectsAtPos(Vector2Int pos)
     {
         if (!posToTLObj.ContainsKey((pos.x, pos.y)))
@@ -145,6 +153,30 @@ public class GameState
         {
             if (TLObj is TLPot)
                 return (TLPot)TLObj;
+        }
+        return null;
+    }
+
+    public TLPath GetPathAtPos(Vector2Int pos)
+    {
+        if (GetTLObjectsAtPos(pos) == null)
+            return null;
+        foreach (var TLObj in GetTLObjectsAtPos(pos))
+        {
+            if (TLObj is TLPath)
+                return (TLPath)TLObj;
+        }
+        return null;
+    }
+
+    public TLLevel GetLevelAtPos(Vector2Int pos)
+    {
+        if (GetTLObjectsAtPos(pos) == null)
+            return null;
+        foreach (var TLObj in GetTLObjectsAtPos(pos))
+        {
+            if (TLObj is TLLevel)
+                return (TLLevel)TLObj;
         }
         return null;
     }

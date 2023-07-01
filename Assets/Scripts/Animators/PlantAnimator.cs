@@ -17,11 +17,11 @@ public class PlantAnimator : MonoBehaviour
     private bool instantiateCalled = false;
     double timer = 0;
 
-    private void Awake()
+   /* private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.color = new Color(1f, 1f, 1f, 0f);
-    }
+    }*/
 
     private void Start()
     {
@@ -29,10 +29,11 @@ public class PlantAnimator : MonoBehaviour
         manager.OnMoveBegin += OnMoveBegin;
         manager.OnPlantMove += OnPlantMove;
         manager.OnMoveEnd += UpdatePlantInPot;
-        plant = GameManager.Inst.movementManager.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        GameManager.Inst.OnLevelEnter += OnLevelLoaded;
+        GameManager.Inst.OnLevelEnter += UpdatePlantInPot;
         potOverlay = potOverlayChild.GetComponent<SpriteRenderer>();
 
-        StartCoroutine(WaitTilGrown());
+        //StartCoroutine(WaitTilGrown()); //TODO
     }
 
     private void OnDestroy()
@@ -43,7 +44,14 @@ public class PlantAnimator : MonoBehaviour
             manager.OnMoveBegin -= OnMoveBegin;
             manager.OnPlantMove -= OnPlantMove;
             manager.OnMoveEnd -= UpdatePlantInPot;
+            GameManager.Inst.OnLevelEnter -= OnLevelLoaded;
+            GameManager.Inst.OnLevelEnter -= UpdatePlantInPot;
         }
+    }
+
+    private void OnLevelLoaded()
+    {
+        plant = GameManager.Inst.movementManager.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
     }
 
     private void OnMoveBegin()

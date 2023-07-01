@@ -72,12 +72,31 @@ MonoBehaviour:
   - Fences_15
   - Fences_0
   - CustomTileFence
-  doorNames:
-  - Separated_Flowers_17
   potNames:
   - Pots_v3_0
+  pathNames:
+  - UnlockPathTile
+  - PathTile
+  - Paths_0
+  - Paths_1
+  - Paths_2
+  - Paths_3
+  - Paths_4
+  - Paths_5
+  - Paths_6
+  - Paths_7
+  - Paths_8
+  - Paths_9
+  - Paths_10
+  - Paths_11
+  - Paths_12
+  - Paths_13
+  - Paths_14
+  - Paths_15
   animator: {fileID: 8565691529311702107}
-  movementManager: {fileID: 0}
+  currentLevel: 
+  movementManager: {fileID: 3077985321389285311}
+  mapManager: {fileID: 0}
 --- !u!114 &3077985321389285311
 MonoBehaviour:
   m_ObjectHideFlags: 0
