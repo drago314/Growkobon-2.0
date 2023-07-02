@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7568371175457020856}
   - component: {fileID: 6793108168556100717}
   - component: {fileID: 8727432959045836151}
+  - component: {fileID: 1861811839661242538}
   m_Layer: 0
   m_Name: Level
   m_TagString: Untagged
@@ -32,7 +33,7 @@ Transform:
   m_Children:
   - {fileID: 3061662490975286055}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6793108168556100717
 SpriteRenderer:
@@ -99,6 +100,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelName: World 1 Level 1
+--- !u!114 &1861811839661242538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4505020176476778285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4a167ac8968dde46a52a60d5ab0dc89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lockedLevelOverlays: []
+  unlockedLevelOverlays:
+  - {fileID: 1001398685, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1001398685, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 77189936, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -976722825, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 2088574340, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -306370568, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1984084853, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 227130569, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 609517916, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1660340811, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  completedLevelOverlays: []
+  levelOverlayChild: {fileID: 5551922264554381202}
 --- !u!1 &5551922264554381202
 GameObject:
   m_ObjectHideFlags: 0

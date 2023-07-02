@@ -48,7 +48,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d30101abe78497f40bb4285a9240d216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputManager: {fileID: 561370031755289853}
   wallNames:
   - TX Tileset Grass_32
   - Growkoban_Sprites_with_Player_3
@@ -93,10 +92,12 @@ MonoBehaviour:
   - Paths_13
   - Paths_14
   - Paths_15
-  animator: {fileID: 8565691529311702107}
   currentLevel: 
+  currentWorld: 
   movementManager: {fileID: 3077985321389285311}
-  mapManager: {fileID: 0}
+  mapManager: {fileID: 5490834138412588229}
+  animator: {fileID: 8565691529311702107}
+  inputManager: {fileID: 561370031755289853}
 --- !u!114 &3077985321389285311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,6 +147,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 8086639633654412458, guid: 0d292bdb0a638854da6bc1b676c5c58d, type: 3}
   plantPrefab: {fileID: 3967567610578681259, guid: 81cfa803b11c2d142b9317f8a6347a97, type: 3}
+  levelPrefab: {fileID: 4505020176476778285, guid: bd80b8397ce94054bbca74c040b0b592, type: 3}
 --- !u!114 &561370031755289853
 MonoBehaviour:
   m_ObjectHideFlags: 0

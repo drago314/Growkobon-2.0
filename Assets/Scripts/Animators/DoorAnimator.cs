@@ -5,19 +5,19 @@ using UnityEngine.InputSystem;
 
 public class DoorAnimator : MonoBehaviour
 {
-    [SerializeField] private Animator animator;
+    private Animator animator;
 
-    TLDoor door;
-
-    bool doorOpen = false;
+    private TLDoor door;
+    private bool doorOpen = false;
 
     private void Start()
     {
+        animator = GetComponent<Animator>();
         MovementManager manager = GameManager.Inst.movementManager;
         manager.OnMoveEnd += OnMoveEnd;
         manager.OnMoveBegin += OnMoveBegin;
-        GameManager.Inst.movementManager.OnUndoEnd += OnUndoOrResetEnd;
-        GameManager.Inst.movementManager.OnResetEnd += OnUndoOrResetEnd;
+        manager.OnUndoEnd += OnUndoOrResetEnd;
+        manager.OnResetEnd += OnUndoOrResetEnd;
         GameManager.Inst.OnLevelEnter += OnLevelLoaded;
     }
 

@@ -6,39 +6,49 @@ public class GeneralAnimator : MonoBehaviour
 {
     [SerializeField] public GameObject playerPrefab;
     [SerializeField] public GameObject plantPrefab;
+    [SerializeField] public GameObject levelPrefab;
 
     private void Start()
     {
         gameObject.GetComponent<MovementManager>().OnPlantGrow += GrowPlant;
-        GameManager.Inst.movementManager.OnResetEnd += GenerateState;
-        GameManager.Inst.movementManager.OnUndoEnd += GenerateState;
+        GameManager.Inst.movementManager.OnResetEnd += GenerateLevel;
+        GameManager.Inst.movementManager.OnUndoEnd += GenerateLevel;
+        GameManager.Inst.OnMapEnter += GenerateMap;
     }
 
     private void OnDestroy()
     {
-        GameManager.Inst.movementManager.OnResetEnd -= GenerateState;
-        GameManager.Inst.movementManager.OnUndoEnd -= GenerateState;
+        GameManager.Inst.movementManager.OnResetEnd -= GenerateLevel;
+        GameManager.Inst.movementManager.OnUndoEnd -= GenerateLevel;
+        GameManager.Inst.OnMapEnter -= GenerateMap;
     }
 
-    public void InstantiatePlayer(TLPlayer player)
+    private void InstantiatePlayer(TLPlayer player)
     {
         var playerAnimator = Instantiate(playerPrefab, new Vector3Int(player.curPos.x, player.curPos.y, 0), Quaternion.identity).GetComponent<PlayerAnimator>();
         playerAnimator.PlayerFaceDir(player.directionFacing);
     }
 
-    public void GrowPlant(GrowAction grow)
+    private void GrowPlant(GrowAction grow)
     {
         var plantAnimator = Instantiate(plantPrefab, new Vector3Int(grow.newPos.x, grow.newPos.y, 0), Quaternion.identity).GetComponent<PlantAnimator>();
         plantAnimator.Grow(grow.moveDir);
     }
 
-    public void InstantiatePlant(TLPlant plant)
+    private void InstantiatePlant(TLPlant plant)
     {
         var plantAnimator = Instantiate(plantPrefab, new Vector3Int(plant.curPos.x, plant.curPos.y, 0), Quaternion.identity).GetComponent<PlantAnimator>();
         plantAnimator.Instantiate();
     }
 
-    private void GenerateState()
+    private void InstantiateLevel(TLLevel level)
+    {
+        var levelAnimator = Instantiate(levelPrefab, new Vector3Int(level.curPos.x, level.curPos.y, 0), Quaternion.identity).GetComponent<LevelAnimator>();
+        levelAnimator.Instantiate();
+    }
+
+
+    private void GenerateLevel()
     {
         // TODO Add MoveableTLObject class
         var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
@@ -54,6 +64,24 @@ public class GeneralAnimator : MonoBehaviour
                 InstantiatePlayer((TLPlayer)TLObj);
             if (TLObj is TLPlant)
                 InstantiatePlant((TLPlant)TLObj);
+        }
+    }
+
+    private void GenerateMap()
+    {
+        var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
+        foreach (var TLSig in TLSignatures)
+        {
+            if (TLSig is MoveableObjectSignature)
+                Destroy(TLSig.gameObject);
+        }
+
+        foreach (var TLObj in GameManager.Inst.mapManager.currentState.GetAllTLObjects())
+        {
+            if (TLObj is TLPlayer)
+                InstantiatePlayer((TLPlayer)TLObj);
+            if (TLObj is TLLevel)
+                InstantiateLevel((TLLevel)TLObj);
         }
     }
 }
