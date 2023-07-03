@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class GeneralAnimator : MonoBehaviour
 {
-    [SerializeField] public GameObject playerPrefab;
-    [SerializeField] public GameObject plantPrefab;
-    [SerializeField] public GameObject levelPrefab;
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject plantPrefab;
+    [SerializeField] private GameObject levelPrefab;
+    private Tilemap pathTilemap;
 
     private void Start()
     {
@@ -69,11 +71,17 @@ public class GeneralAnimator : MonoBehaviour
 
     private void GenerateMap()
     {
+        var tileMaps = FindObjectsOfType<Tilemap>();
+        foreach (var tileMap in tileMaps)
+        {
+            if (tileMap.gameObject.name == "Path Tilemap")
+                pathTilemap = tileMap;
+        }
+
         var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
         foreach (var TLSig in TLSignatures)
         {
-            if (TLSig is MoveableObjectSignature)
-                Destroy(TLSig.gameObject);
+            Destroy(TLSig.gameObject);
         }
 
         foreach (var TLObj in GameManager.Inst.mapManager.currentState.GetAllTLObjects())
@@ -82,6 +90,14 @@ public class GeneralAnimator : MonoBehaviour
                 InstantiatePlayer((TLPlayer)TLObj);
             if (TLObj is TLLevel)
                 InstantiateLevel((TLLevel)TLObj);
+            if (TLObj is TLPath)
+            {
+                Vector3Int pos = new Vector3Int(TLObj.curPos.x, TLObj.curPos.y, 0);
+                PathTile tile = (PathTile) pathTilemap.GetTile(pos);
+                tile.unlocked = ((TLPath)TLObj).unlocked;
+                tile.RefreshTile(pos, pathTilemap);
+            }
+                
         }
     }
 }

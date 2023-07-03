@@ -74,7 +74,7 @@ MonoBehaviour:
   potNames:
   - Pots_v3_0
   pathNames:
-  - UnlockPathTile
+  - PathTile
   - PathTile
   - Paths_0
   - Paths_1

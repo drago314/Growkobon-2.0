@@ -143,7 +143,7 @@ public class GameManager : MonoBehaviour
                         if (tileMap.GetTile(tilePos) != null && pathName.Equals(tileMap.GetTile(tilePos).name))
                         {
                             Vector3 pos = tileMap.CellToLocal(tilePos);
-                            TlObjectList.Add(new TLPath(new Vector2Int((int)pos.x, (int)pos.y), true));
+                            TlObjectList.Add(new TLPath(new Vector2Int((int)pos.x, (int)pos.y), false));
                         }
                     }
                 }
@@ -169,10 +169,19 @@ public class GameManager : MonoBehaviour
             else if (TLSig is DoorSignature)
                 TlObjectList.Add(new TLDoor(pos));
             else if (TLSig is LevelSignature)
-                TlObjectList.Add(new TLLevel(pos, ((LevelSignature)TLSig).levelName));
+                TlObjectList.Add(new TLLevel(pos, (LevelSignature)TLSig));
         }
 
         mapManager.currentState = new GameState(TlObjectList);
+
+        foreach (var lvl in mapManager.currentState.GetAllTLLevels())
+        {
+            foreach (var path in lvl.unlockablePaths)
+            {
+                if (mapManager.currentState.GetPathAtPos(path) != null)
+                    mapManager.currentState.GetPathAtPos(path).unlocked = true;
+            }
+        }
     }
 
     public void OpenLevel(string level)

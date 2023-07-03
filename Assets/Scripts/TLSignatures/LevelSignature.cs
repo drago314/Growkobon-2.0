@@ -5,4 +5,6 @@ using UnityEngine;
 public class LevelSignature : MoveableObjectSignature
 {
     [SerializeField] public string levelName;
+    [SerializeField] public int levelNumber;
+    [SerializeField] public List<Vector2Int> pathsUnlocked;
 }

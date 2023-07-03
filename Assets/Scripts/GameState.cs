@@ -103,6 +103,17 @@ public class GameState
         return doorList;
     }
 
+    public List<TLLevel> GetAllTLLevels()
+    {
+        List<TLLevel> levelList = new List<TLLevel>();
+        foreach (var obj in GetAllTLObjects())
+        {
+            if (obj is TLLevel)
+                levelList.Add((TLLevel)obj);
+        }
+        return levelList;
+    }
+
     public List<TLObject> GetTLObjectsAtPos(Vector2Int pos)
     {
         if (!posToTLObj.ContainsKey((pos.x, pos.y)))

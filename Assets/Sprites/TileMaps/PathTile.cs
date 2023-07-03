@@ -23,7 +23,9 @@ public class PathTile : Tile
         tileData.sprite = GetSprite(position, tilemap);
     }
 
-    public Sprite[] m_SpritesURDL;
+    public Sprite[] lockedSpritesURDL;
+    public Sprite[] unlockedSpritesURDL;
+    public bool unlocked;
     public Sprite GetSprite(Vector3Int position, ITilemap tilemap)
     {
         bool pathUp = tilemap.GetTile(position + Vector3Int.up) != null;
@@ -41,7 +43,10 @@ public class PathTile : Tile
         if (pathUp)
             index += 8;
 
-        return m_SpritesURDL[index];
+        if (unlocked)
+            return unlockedSpritesURDL[index];
+        else
+            return lockedSpritesURDL[index];
     }
 
 #if UNITY_EDITOR
