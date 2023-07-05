@@ -8,7 +8,11 @@ public class GeneralAnimator : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject plantPrefab;
     [SerializeField] private GameObject levelPrefab;
+
+    public event System.Action<Vector2Int> OnLevelUnlock;
     private Tilemap pathTilemap;
+    private List<Vector3Int> tilesToUnlock;
+    bool corutineInAction;
 
     private void Start()
     {
@@ -108,9 +112,36 @@ public class GeneralAnimator : MonoBehaviour
 
     private void UnlockPath(Vector2Int pos)
     {
-        Vector3Int pos3 = pathTilemap.WorldToCell(new Vector3Int(pos.x, pos.y, 0));
-        PathTile tile = (PathTile)pathTilemap.GetTile(pos3);
-        tile.unlocked = true;
-        pathTilemap.RefreshTile(pos3);
+        if (tilesToUnlock == null)
+            tilesToUnlock = new List<Vector3Int>();
+
+        tilesToUnlock.Add(pathTilemap.WorldToCell(new Vector3Int(pos.x, pos.y, 0)));
+
+
+        if (!corutineInAction)
+        {
+            corutineInAction = true;
+            StartCoroutine(UnlockPathCorutine());
+        }
+    }
+
+    private IEnumerator UnlockPathCorutine()
+    {
+        while (tilesToUnlock.Count != 0)
+        {
+            if (pathTilemap.GetTile(tilesToUnlock[0]) != null && pathTilemap.GetTile(tilesToUnlock[0]) is PathTile)
+            {
+                (pathTilemap.GetTile(tilesToUnlock[0]) as PathTile).unlocked = true;
+                pathTilemap.RefreshTile(tilesToUnlock[0]);
+            }
+            else if (GameManager.Inst.mapManager.currentState.GetLevelAtPos(new Vector2Int(tilesToUnlock[0].x, tilesToUnlock[0].y)) != null)
+            {
+                OnLevelUnlock?.Invoke(new Vector2Int(tilesToUnlock[0].x, tilesToUnlock[0].y));
+            }
+
+            tilesToUnlock.RemoveAt(0);
+            yield return new WaitForSeconds(0.2f);
+        }
+        corutineInAction = false;
     }
 }

@@ -9,7 +9,6 @@ public class MapManager : MonoBehaviour
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, enter;
     public event System.Action<MoveAction> OnPlayerMove;
     public event System.Action<Vector2Int> OnPathUnlock;
-    public event System.Action<Vector2Int> OnLevelUnlock;
 
     public GameState currentState;
     public Dictionary<string, List<Vector2Int>> lvlToUnlockedPaths;
@@ -121,7 +120,7 @@ public class MapManager : MonoBehaviour
             else if (currentState.GetLevelAtPos(pathPos) != null)
             {
                 currentState.GetLevelAtPos(pathPos).unlocked = true;
-                OnLevelUnlock?.Invoke(pathPos);
+                OnPathUnlock?.Invoke(pathPos);
             }
         }
     }
