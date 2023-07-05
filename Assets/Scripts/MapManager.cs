@@ -8,7 +8,7 @@ public class MapManager : MonoBehaviour
 {
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, enter;
     public event System.Action<MoveAction> OnPlayerMove;
-    public event System.Action<Vector2Int> OnPathUnlock;
+    public event System.Action<List<Vector2Int>> OnPathsUnlock;
 
     public GameState currentState;
     public Dictionary<string, List<Vector2Int>> lvlToUnlockedPaths;
@@ -110,17 +110,16 @@ public class MapManager : MonoBehaviour
 
     public void CompleteLevel(string currentLevel)
     {
+        OnPathsUnlock?.Invoke(lvlToUnlockedPaths[currentLevel]);
         foreach (var pathPos in lvlToUnlockedPaths[currentLevel])
         {
             if (currentState.GetPathAtPos(pathPos) != null)
             {
                 currentState.GetPathAtPos(pathPos).unlocked = true;
-                OnPathUnlock?.Invoke(pathPos);
             }
             else if (currentState.GetLevelAtPos(pathPos) != null)
             {
                 currentState.GetLevelAtPos(pathPos).unlocked = true;
-                OnPathUnlock?.Invoke(pathPos);
             }
         }
     }

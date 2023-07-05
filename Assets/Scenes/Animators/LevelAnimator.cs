@@ -46,4 +46,9 @@ public class LevelAnimator : MonoBehaviour
                 levelOverlayChild.GetComponent<SpriteRenderer>().sprite = unlockedLevelOverlays[level.levelNumber];
         }
     }
+
+    public void SetLevelNumber(int lvlNumber)
+    {
+        levelOverlayChild.GetComponent<SpriteRenderer>().sprite = unlockedLevelOverlays[lvlNumber];
+    }
 }

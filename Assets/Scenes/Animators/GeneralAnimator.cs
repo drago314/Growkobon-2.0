@@ -21,7 +21,7 @@ public class GeneralAnimator : MonoBehaviour
         GameManager.Inst.movementManager.OnUndoEnd += GenerateLevel;
         GameManager.Inst.OnMapEnter += GenerateMap;
         GameManager.Inst.OnMapLoad += GenerateMap;
-        GameManager.Inst.mapManager.OnPathUnlock += UnlockPath;
+        GameManager.Inst.mapManager.OnPathsUnlock += UnlockPaths;
     }
 
     private void OnDestroy()
@@ -30,7 +30,7 @@ public class GeneralAnimator : MonoBehaviour
         GameManager.Inst.movementManager.OnUndoEnd -= GenerateLevel;
         GameManager.Inst.OnMapEnter -= GenerateMap;
         GameManager.Inst.OnMapLoad -= GenerateMap;
-        GameManager.Inst.mapManager.OnPathUnlock -= UnlockPath;
+        GameManager.Inst.mapManager.OnPathsUnlock -= UnlockPaths;
     }
 
     private void InstantiatePlayer(TLPlayer player)
@@ -110,12 +110,15 @@ public class GeneralAnimator : MonoBehaviour
         }
     }
 
-    private void UnlockPath(Vector2Int pos)
+    private void UnlockPaths(List<Vector2Int> posList)
     {
         if (tilesToUnlock == null)
             tilesToUnlock = new List<Vector3Int>();
 
-        tilesToUnlock.Add(pathTilemap.WorldToCell(new Vector3Int(pos.x, pos.y, 0)));
+        foreach (var pos in posList)
+        {
+            tilesToUnlock.Add(pathTilemap.WorldToCell(new Vector3Int(pos.x, pos.y, 0)));
+        }
 
 
         if (!corutineInAction)
@@ -127,19 +130,49 @@ public class GeneralAnimator : MonoBehaviour
 
     private IEnumerator UnlockPathCorutine()
     {
+        List<Vector2Int> pastPosList = new List<Vector2Int>();
         while (tilesToUnlock.Count != 0)
         {
+            Vector2Int curPos = new Vector2Int(tilesToUnlock[0].x, tilesToUnlock[0].y);
+            List<Vector2Int> curPosList = new List<Vector2Int>();
+            curPosList.Add(curPos);
+
             if (pathTilemap.GetTile(tilesToUnlock[0]) != null && pathTilemap.GetTile(tilesToUnlock[0]) is PathTile)
             {
                 (pathTilemap.GetTile(tilesToUnlock[0]) as PathTile).unlocked = true;
                 pathTilemap.RefreshTile(tilesToUnlock[0]);
             }
-            else if (GameManager.Inst.mapManager.currentState.GetLevelAtPos(new Vector2Int(tilesToUnlock[0].x, tilesToUnlock[0].y)) != null)
+            else if (GameManager.Inst.mapManager.currentState.GetLevelAtPos(curPos) != null)
             {
-                OnLevelUnlock?.Invoke(new Vector2Int(tilesToUnlock[0].x, tilesToUnlock[0].y));
+                OnLevelUnlock?.Invoke(curPos);
             }
 
             tilesToUnlock.RemoveAt(0);
+
+            foreach (var newPos in tilesToUnlock)
+            {
+                foreach (var pastPos in pastPosList)
+                {
+                    Vector2Int newPos2 = new Vector2Int(newPos.x, newPos.y); ;
+                    if (!(curPos + Vector2Int.up).Equals(newPos) && !(curPos + Vector2Int.down).Equals(newPos) && !(curPos + Vector2Int.right).Equals(newPos) && !(curPos + Vector2Int.left).Equals(newPos)
+                        && ((pastPos + Vector2Int.up).Equals(newPos) || (pastPos + Vector2Int.left).Equals(newPos) || (pastPos + Vector2Int.right).Equals(newPos) || (pastPos + Vector2Int.down).Equals(newPos)))
+                    {
+                        if (pathTilemap.GetTile(newPos) != null && pathTilemap.GetTile(newPos) is PathTile)
+                        {
+                            (pathTilemap.GetTile(newPos) as PathTile).unlocked = true;
+                            pathTilemap.RefreshTile(newPos);
+                        }
+                        else if (GameManager.Inst.mapManager.currentState.GetLevelAtPos(newPos2) != null)
+                        {
+                            OnLevelUnlock?.Invoke(newPos2);
+                        }
+                        tilesToUnlock.Remove(newPos);
+                    }
+                    break;
+                }
+            }
+
+            pastPosList = curPosList;
             yield return new WaitForSeconds(0.2f);
         }
         corutineInAction = false;

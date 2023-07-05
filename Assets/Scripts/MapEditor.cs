@@ -13,6 +13,8 @@ public class MapEditor : Editor
         DrawDefaultInspector();
 
         LevelSignature lvl = (LevelSignature)target;
+        LevelAnimator lvlAnimator = lvl.gameObject.GetComponent<LevelAnimator>();
+        SpriteRenderer renderer = lvl.gameObject.GetComponent<SpriteRenderer>();
 
         string lvlNumber = "0";
         for (int i = 0; i < lvl.levelName.Length - 5; i++)
@@ -27,7 +29,8 @@ public class MapEditor : Editor
         try
         {
             lvl.levelNumber = Int32.Parse(lvlNumber);
-        }
+            lvlAnimator.SetLevelNumber(lvl.levelNumber);
+       }
         catch (Exception) { }
 
         if (GUILayout.Button("UP"))
