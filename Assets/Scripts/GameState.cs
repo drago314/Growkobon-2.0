@@ -35,6 +35,7 @@ public class GameState
             else if (TLObj is TLPath)
             {
                 AddObject(new TLPath((TLPath)TLObj));
+                //GameManager.Inst.DEBUG(TLObj.curPos.x.ToString() + ' ' + TLObj.curPos.y);
             }
             else if (TLObj is TLLevel)
             {
@@ -304,6 +305,9 @@ public class GameState
                 foreach (var TLObj in kvp.Value)
                 {
                     result += " " + TLObj.GetName();
+                    if (TLObj is TLPath)
+                        result += " " + ((TLPath)TLObj).unlocked.ToString();
+                    result += ",";
                 }
                 result += "\n";
             }

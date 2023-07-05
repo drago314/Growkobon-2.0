@@ -16,6 +16,8 @@ public class GeneralAnimator : MonoBehaviour
         GameManager.Inst.movementManager.OnResetEnd += GenerateLevel;
         GameManager.Inst.movementManager.OnUndoEnd += GenerateLevel;
         GameManager.Inst.OnMapEnter += GenerateMap;
+        GameManager.Inst.OnMapLoad += GenerateMap;
+        GameManager.Inst.mapManager.OnPathUnlock += UnlockPath;
     }
 
     private void OnDestroy()
@@ -23,6 +25,8 @@ public class GeneralAnimator : MonoBehaviour
         GameManager.Inst.movementManager.OnResetEnd -= GenerateLevel;
         GameManager.Inst.movementManager.OnUndoEnd -= GenerateLevel;
         GameManager.Inst.OnMapEnter -= GenerateMap;
+        GameManager.Inst.OnMapLoad -= GenerateMap;
+        GameManager.Inst.mapManager.OnPathUnlock -= UnlockPath;
     }
 
     private void InstantiatePlayer(TLPlayer player)
@@ -74,8 +78,10 @@ public class GeneralAnimator : MonoBehaviour
         var tileMaps = FindObjectsOfType<Tilemap>();
         foreach (var tileMap in tileMaps)
         {
-            if (tileMap.gameObject.name == "Path Tilemap")
+            if (tileMap.tag.Equals("Path Tilemap"))
+            {
                 pathTilemap = tileMap;
+            }
         }
 
         var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
@@ -92,12 +98,19 @@ public class GeneralAnimator : MonoBehaviour
                 InstantiateLevel((TLLevel)TLObj);
             if (TLObj is TLPath)
             {
-                Vector3Int pos = new Vector3Int(TLObj.curPos.x, TLObj.curPos.y, 0);
+                Vector3Int pos = pathTilemap.WorldToCell(new Vector3Int(TLObj.curPos.x, TLObj.curPos.y, 0));
                 PathTile tile = (PathTile) pathTilemap.GetTile(pos);
                 tile.unlocked = ((TLPath)TLObj).unlocked;
-                tile.RefreshTile(pos, pathTilemap);
-            }
-                
+                pathTilemap.RefreshTile(pos);
+            }      
         }
+    }
+
+    private void UnlockPath(Vector2Int pos)
+    {
+        Vector3Int pos3 = pathTilemap.WorldToCell(new Vector3Int(pos.x, pos.y, 0));
+        PathTile tile = (PathTile)pathTilemap.GetTile(pos3);
+        tile.unlocked = true;
+        pathTilemap.RefreshTile(pos3);
     }
 }

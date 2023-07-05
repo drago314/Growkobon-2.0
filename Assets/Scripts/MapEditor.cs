@@ -8,8 +8,6 @@ using System;
 [CustomEditor(typeof(LevelSignature))]
 public class MapEditor : Editor
 {
-    bool instantiated = false;
-
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
@@ -32,21 +30,31 @@ public class MapEditor : Editor
         }
         catch (Exception) { }
 
-        if (!instantiated)
-        {
-            instantiated = true;
-            lvl.pathsUnlocked = new List<Vector2Int>();
-            lvl.pathsUnlocked.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
-        }
-
         if (GUILayout.Button("UP"))
+        {
+            if (lvl.pathsUnlocked.Count == 0)
+                lvl.pathsUnlocked.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
             lvl.pathsUnlocked.Add(lvl.pathsUnlocked[lvl.pathsUnlocked.Count - 1] + Vector2Int.up);
+        }
         if (GUILayout.Button("DOWN"))
+        {
+            if (lvl.pathsUnlocked.Count == 0)
+                lvl.pathsUnlocked.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
             lvl.pathsUnlocked.Add(lvl.pathsUnlocked[lvl.pathsUnlocked.Count - 1] + Vector2Int.down);
+        }
         if (GUILayout.Button("RIGHT"))
+        {
+            if (lvl.pathsUnlocked.Count == 0)
+                lvl.pathsUnlocked.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
             lvl.pathsUnlocked.Add(lvl.pathsUnlocked[lvl.pathsUnlocked.Count - 1] + Vector2Int.right);
+        }
         if (GUILayout.Button("LEFT"))
+        {
+            if (lvl.pathsUnlocked.Count == 0)
+                lvl.pathsUnlocked.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
             lvl.pathsUnlocked.Add(lvl.pathsUnlocked[lvl.pathsUnlocked.Count - 1] + Vector2Int.left);
+        }
+        EditorUtility.SetDirty(target);
     }
 }
 #endif

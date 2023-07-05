@@ -100,6 +100,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelName: World 1 Level 1
+  levelNumber: 0
+  pathsUnlocked: []
 --- !u!114 &1861811839661242538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,7 +114,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4a167ac8968dde46a52a60d5ab0dc89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lockedLevelOverlays: []
+  lockedLevelOverlays:
+  - {fileID: -1070384239, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1070384239, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -463415133, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1899946015, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -626844217, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 2088655958, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1115513916, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1012062406, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 410095306, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 734932512, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 859637480, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1690826973, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1113684283, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1652169403, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 30096070, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1233252737, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1222049052, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1753897129, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 35072545, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1893305420, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
   unlockedLevelOverlays:
   - {fileID: 1001398685, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
   - {fileID: 1001398685, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
@@ -124,7 +146,39 @@ MonoBehaviour:
   - {fileID: 227130569, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
   - {fileID: 609517916, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
   - {fileID: 1660340811, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
-  completedLevelOverlays: []
+  - {fileID: -1462643544, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1653574759, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1247238506, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -2108543140, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1518763061, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 52191319, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1837443545, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 282340962, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1749346613, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1224955351, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -2041132306, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  completedLevelOverlays:
+  - {fileID: -269504080, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -269504080, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1818667029, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1051036982, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1876508284, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -903938184, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -787333185, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1222389117, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -527157748, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -410032751, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1871939513, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 278716951, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 78447152, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -236326804, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1744979264, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 1583473641, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -788958206, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1659185849, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: 516823, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -1287442339, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
+  - {fileID: -944561384, guid: 3e6cd0d3570efb345be6394577a214cf, type: 3}
   levelOverlayChild: {fileID: 5551922264554381202}
 --- !u!1 &5551922264554381202
 GameObject:

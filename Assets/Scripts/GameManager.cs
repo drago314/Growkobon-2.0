@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
 
     public event Action OnLevelEnter;
     public event Action OnMapEnter;
+    public event Action OnMapLoad;
 
     private void Awake()
     {
@@ -174,12 +175,17 @@ public class GameManager : MonoBehaviour
 
         mapManager.currentState = new GameState(TlObjectList);
 
+        mapManager.lvlToUnlockedPaths = new Dictionary<string, List<Vector2Int>>();
         foreach (var lvl in mapManager.currentState.GetAllTLLevels())
         {
-            foreach (var path in lvl.unlockablePaths)
+            mapManager.lvlToUnlockedPaths.Add(lvl.levelName, lvl.unlockablePaths);
+            if (levelsCompleted.ContainsKey(lvl.levelName) && levelsCompleted[lvl.levelName] == true)
             {
-                if (mapManager.currentState.GetPathAtPos(path) != null)
-                    mapManager.currentState.GetPathAtPos(path).unlocked = true;
+                foreach (var path in lvl.unlockablePaths)
+                {
+                    if (mapManager.currentState.GetPathAtPos(path) != null)
+                        mapManager.currentState.GetPathAtPos(path).unlocked = true;
+                }
             }
         }
     }
@@ -232,8 +238,16 @@ public class GameManager : MonoBehaviour
     public void FinishLevel()
     {
         levelsCompleted[currentLevel] = true;
-        OpenCurrentMap();
-        //map.complete level
+        inputManager.SwitchCurrentActionMap("World Map");
+        StartCoroutine(FinishLevelCoroutine());
+    }
+
+    private IEnumerator FinishLevelCoroutine()
+    {
+        var asyncLoadLevel = SceneManager.LoadSceneAsync(currentWorld, LoadSceneMode.Single);
+        yield return new WaitUntil(() => asyncLoadLevel.isDone);
+        OnMapLoad?.Invoke();
+        mapManager.CompleteLevel(currentLevel);
     }
 
     public void LoadScene(string name)

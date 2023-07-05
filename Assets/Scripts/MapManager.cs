@@ -2,13 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 
 public class MapManager : MonoBehaviour
 {
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, enter;
     public event System.Action<MoveAction> OnPlayerMove;
+    public event System.Action<Vector2Int> OnPathUnlock;
+    public event System.Action<Vector2Int> OnLevelUnlock;
 
     public GameState currentState;
+    public Dictionary<string, List<Vector2Int>> lvlToUnlockedPaths;
 
     private void Start()
     {
@@ -49,6 +53,36 @@ public class MapManager : MonoBehaviour
 
     private void Move(Vector2Int moveDir)
     {
+        //print(currentState.ToString());
+        /*foreach (var kvp in lvlToUnlockedPaths)
+        {
+            print(kvp.Key + " ");
+            print(kvp.Value.Count);
+            foreach (var item in kvp.Value)
+            {
+                print(item.x + " " + item.y);
+            }
+        }
+        var tileMaps = FindObjectsOfType<Tilemap>();
+
+        foreach (var tileMap in tileMaps)
+        {
+            if (tileMap.gameObject.name != "Background Tilemap")
+            {
+                BoundsInt bounds = tileMap.cellBounds;
+                foreach (Vector3Int tilePos in tileMap.cellBounds.allPositionsWithin)
+                {
+                    //if (tileMap.GetTile(tilePos) != null)
+                    //    print(tileMap.GetTile(tilePos).name);
+                    if (tileMap.GetTile(tilePos) != null && tileMap.GetTile(tilePos) is PathTile)
+                    {
+                        print(tileMap.CellToLocal(tilePos) + " " + ((PathTile) tileMap.GetTile(tilePos)).unlocked);
+                    }
+                }
+            }
+        }*/
+
+
         TLPlayer player = currentState.GetPlayer();
         Vector2Int curPos = currentState.GetPosOf(player);
         Vector2Int goalPos = curPos + moveDir;
@@ -72,6 +106,23 @@ public class MapManager : MonoBehaviour
         if (level != null)
         {
             GameManager.Inst.OpenLevel(level.levelName);
+        }
+    }
+
+    public void CompleteLevel(string currentLevel)
+    {
+        foreach (var pathPos in lvlToUnlockedPaths[currentLevel])
+        {
+            if (currentState.GetPathAtPos(pathPos) != null)
+            {
+                currentState.GetPathAtPos(pathPos).unlocked = true;
+                OnPathUnlock?.Invoke(pathPos);
+            }
+            else if (currentState.GetLevelAtPos(pathPos) != null)
+            {
+                currentState.GetLevelAtPos(pathPos).unlocked = true;
+                OnLevelUnlock?.Invoke(pathPos);
+            }
         }
     }
 };
