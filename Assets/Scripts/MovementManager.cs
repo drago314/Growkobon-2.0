@@ -6,7 +6,7 @@ using System;
 
 public class MovementManager : MonoBehaviour
 {
-    [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, undo, reset;
+    [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, undo, reset, finishLevel;
 
     public event Action OnMoveBegin;
     public event Action OnMoveEnd;
@@ -30,6 +30,7 @@ public class MovementManager : MonoBehaviour
         moveLeft.action.performed += MoveLeft;
         undo.action.performed += Undo;
         reset.action.performed += Reset;
+        finishLevel.action.performed += DebugFinishLevel;
     }
 
     private void OnDestroy()
@@ -40,6 +41,7 @@ public class MovementManager : MonoBehaviour
         moveLeft.action.performed -= MoveLeft;
         undo.action.performed -= Undo;
         reset.action.performed -= Reset;
+        finishLevel.action.performed -= DebugFinishLevel;
     }
 
     private void MoveUp(InputAction.CallbackContext obj)
@@ -203,5 +205,11 @@ public class MovementManager : MonoBehaviour
             stateList.Add(currentState);
             currentState = new GameState(currentState);
         }
+    }
+
+
+    private void DebugFinishLevel(InputAction.CallbackContext obj)
+    {
+        GameManager.Inst.FinishLevel();
     }
 }

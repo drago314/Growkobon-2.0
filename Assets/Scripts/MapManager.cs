@@ -110,7 +110,6 @@ public class MapManager : MonoBehaviour
 
     public void CompleteLevel(string currentLevel)
     {
-        OnPathsUnlock?.Invoke(lvlToUnlockedPaths[currentLevel]);
         foreach (var pathPos in lvlToUnlockedPaths[currentLevel])
         {
             if (currentState.GetPathAtPos(pathPos) != null)
@@ -122,5 +121,6 @@ public class MapManager : MonoBehaviour
                 currentState.GetLevelAtPos(pathPos).unlocked = true;
             }
         }
+        OnPathsUnlock?.Invoke(lvlToUnlockedPaths[currentLevel]);
     }
 };

@@ -116,6 +116,7 @@ MonoBehaviour:
   moveLeft: {fileID: -1243338697533458188, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   undo: {fileID: -6953554902921529626, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   reset: {fileID: 9029940788691076395, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  finishLevel: {fileID: -1928604609368515483, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
 --- !u!114 &5490834138412588229
 MonoBehaviour:
   m_ObjectHideFlags: 0
