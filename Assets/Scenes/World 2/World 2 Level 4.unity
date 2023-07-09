@@ -367,7 +367,7 @@ Tilemap:
   m_GameObject: {fileID: 957511398}
   m_Enabled: 1
   m_Tiles:
-  - first: {x: -1, y: -1, z: 0}
+  - first: {x: -2, y: -1, z: 0}
     second:
       serializedVersion: 2
       m_TileIndex: 8
@@ -4208,7 +4208,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9202636253534109733, guid: 0d292bdb0a638854da6bc1b676c5c58d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 9202636253534109733, guid: 0d292bdb0a638854da6bc1b676c5c58d, type: 3}
       propertyPath: m_LocalPosition.y
