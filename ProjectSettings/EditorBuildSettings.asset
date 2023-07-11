@@ -33,16 +33,16 @@ EditorBuildSettings:
     path: Assets/Scenes/World 1/World 1 Level 10.unity
     guid: 809c77b7787ee994785c85f6b254922e
   - enabled: 1
-    path: Assets/Scenes/World 1/World 1 Level 14.unity
+    path: Assets/Scenes/World 1/World 1 Level 16.unity
     guid: 9684b374946fc3e418a4dae8cfc459f9
   - enabled: 1
     path: Assets/Scenes/World 1/World 1 Level 15.unity
     guid: 5c5b536415e702543b346b646f9bb20c
   - enabled: 1
-    path: Assets/Scenes/World 1/World 1 Level 18.unity
+    path: Assets/Scenes/World 1/World 1 Level 19.unity
     guid: f781b5ca8973333438ec8f96b1539d67
   - enabled: 1
-    path: Assets/Scenes/World 1/World 1 Level 21.unity
+    path: Assets/Scenes/World 1/World 1 Level 22.unity
     guid: 83761111d101b5846bac5775a670a802
   - enabled: 1
     path: Assets/Scenes/World 1/World 1 Level 3.unity
@@ -54,16 +54,16 @@ EditorBuildSettings:
     path: Assets/Scenes/World 1/World 1 Level 11.unity
     guid: 596ad2609b175324189196cf528ac544
   - enabled: 1
-    path: Assets/Scenes/World 1/World 1 Level 16.unity
+    path: Assets/Scenes/World 1/World 1 Level 17.unity
     guid: 1b6345310db0cf944b717b554839a54f
   - enabled: 1
-    path: Assets/Scenes/World 1/World 1 Level 19.unity
+    path: Assets/Scenes/World 1/World 1 Level 20.unity
     guid: 5c74f57900280e44c84a9a76689f76f4
   - enabled: 1
-    path: Assets/Scenes/World 1/World 1 Level 17.unity
+    path: Assets/Scenes/World 1/World 1 Level 18.unity
     guid: 323c91c9a86609b4fa1ba5b41544ed15
   - enabled: 1
-    path: Assets/Scenes/World 1/World 1 Level 20.unity
+    path: Assets/Scenes/World 1/World 1 Level 21.unity
     guid: e672a2839ed985d42bdb3d88048bd527
   - enabled: 1
     path: Assets/Scenes/World 1/World 1 Level 8.unity
