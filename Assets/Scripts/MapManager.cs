@@ -86,7 +86,12 @@ public class MapManager : MonoBehaviour
         Vector2Int curPos = currentState.GetPosOf(player);
         Vector2Int goalPos = curPos + moveDir;
 
-        bool noLevelInFront = currentState.GetLevelAtPos(goalPos) == null;// || !currentState.GetLevelAtPos(goalPos).unlocked;
+        if (currentState.GetWorldAtPos(goalPos) != null)
+        {
+            GameManager.Inst.OpenNewMap(currentState.GetWorldAtPos(goalPos).worldName);
+        }
+
+        bool noLevelInFront = currentState.GetLevelAtPos(goalPos) == null;
         bool noPathInFront = currentState.GetPathAtPos(goalPos) == null || !currentState.GetPathAtPos(goalPos).unlocked;
         if (noLevelInFront && noPathInFront)
         {

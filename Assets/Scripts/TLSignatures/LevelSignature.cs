@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelSignature : MoveableObjectSignature
+public class LevelSignature : TLSignature
 {
     [SerializeField] public string levelName;
     [SerializeField] public int levelNumber;

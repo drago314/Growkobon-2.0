@@ -8,6 +8,7 @@ public class GeneralAnimator : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject plantPrefab;
     [SerializeField] private GameObject levelPrefab;
+    [SerializeField] private GameObject worldExitPrefab;
 
     public event System.Action<Vector2Int> OnLevelUnlock;
     private Tilemap pathTilemap;
@@ -57,6 +58,10 @@ public class GeneralAnimator : MonoBehaviour
         levelAnimator.Instantiate();
     }
 
+    private void InstantiateWorldExit(TLWorldExit world)
+    {
+        Instantiate(worldExitPrefab, new Vector3Int(world.curPos.x, world.curPos.y, 0), Quaternion.identity);
+    }
 
     private void GenerateLevel()
     {
@@ -107,6 +112,8 @@ public class GeneralAnimator : MonoBehaviour
                 tile.unlocked = ((TLPath)TLObj).unlocked;
                 pathTilemap.RefreshTile(pos);
             }      
+            if (TLObj is TLWorldExit)
+                InstantiateWorldExit((TLWorldExit)TLObj);
         }
     }
 

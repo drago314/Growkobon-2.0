@@ -41,6 +41,10 @@ public class GameState
             {
                 AddObject(new TLLevel((TLLevel)TLObj));
             }
+            else if (TLObj is TLWorldExit)
+            {
+                AddObject(new TLWorldExit((TLWorldExit)TLObj));
+            }
         }
 
         //DEBUG
@@ -189,6 +193,18 @@ public class GameState
         {
             if (TLObj is TLLevel)
                 return (TLLevel)TLObj;
+        }
+        return null;
+    }
+
+    public TLWorldExit GetWorldAtPos(Vector2Int pos)
+    {
+        if (GetTLObjectsAtPos(pos) == null)
+            return null;
+        foreach (var TLObj in GetTLObjectsAtPos(pos))
+        {
+            if (TLObj is TLWorldExit)
+                return (TLWorldExit)TLObj;
         }
         return null;
     }

@@ -75,7 +75,6 @@ MonoBehaviour:
   - Pots_v3_0
   pathNames:
   - PathTile
-  - PathTile
   - Paths_0
   - Paths_1
   - Paths_2
@@ -149,6 +148,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 8086639633654412458, guid: 0d292bdb0a638854da6bc1b676c5c58d, type: 3}
   plantPrefab: {fileID: 3967567610578681259, guid: 81cfa803b11c2d142b9317f8a6347a97, type: 3}
   levelPrefab: {fileID: 4505020176476778285, guid: bd80b8397ce94054bbca74c040b0b592, type: 3}
+  worldExitPrefab: {fileID: 5035644985454627608, guid: eae08a65dc29e904999dd46b0e63865b, type: 3}
 --- !u!114 &561370031755289853
 MonoBehaviour:
   m_ObjectHideFlags: 0

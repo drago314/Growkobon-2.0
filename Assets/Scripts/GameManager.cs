@@ -171,6 +171,8 @@ public class GameManager : MonoBehaviour
                 TlObjectList.Add(new TLDoor(pos));
             else if (TLSig is LevelSignature)
                 TlObjectList.Add(new TLLevel(pos, (LevelSignature)TLSig));
+            else if (TLSig is WorldSignature)
+                TlObjectList.Add(new TLWorldExit(pos, (WorldSignature)TLSig));
         }
 
         mapManager.currentState = new GameState(TlObjectList);
@@ -224,6 +226,7 @@ public class GameManager : MonoBehaviour
     public void OpenNewMap(string mapName)
     {
         inputManager.SwitchCurrentActionMap("World Map");
+        currentWorld = mapName;
         StartCoroutine(OpenNewMapCoroutine(mapName));
     }
 
