@@ -26,16 +26,15 @@ public class GameState
             }
             else if (TLObj is TLDoor)
             {
-                AddObject(new TLDoor(TLObj.curPos));
+                AddObject(new TLDoor((TLDoor) TLObj));
             }
             else if (TLObj is TLPot)
             {
-                AddObject(new TLPot(TLObj.curPos));
+                AddObject(new TLPot((TLPot) TLObj));
             }
             else if (TLObj is TLPath)
             {
                 AddObject(new TLPath((TLPath)TLObj));
-                //GameManager.Inst.DEBUG(TLObj.curPos.x.ToString() + ' ' + TLObj.curPos.y);
             }
             else if (TLObj is TLLevel)
             {

@@ -86,12 +86,12 @@ public class GameManager : MonoBehaviour
                             TlObjectList.Add(new TLWall(new Vector2Int((int)pos.x, (int)pos.y)));
                         }
                     }
-                    foreach (var potName in potNames)
+                    for (int i = 0; i < potNames.Length; i++)
                     {
-                        if (tileMap.GetTile(tilePos) != null && potName.Equals(tileMap.GetTile(tilePos).name))
+                        if (tileMap.GetTile(tilePos) != null && potNames[i].Equals(tileMap.GetTile(tilePos).name))
                         {
                             Vector3 pos = tileMap.CellToLocal(tilePos);
-                            TlObjectList.Add(new TLPot(new Vector2Int((int)pos.x, (int)pos.y)));
+                            TlObjectList.Add(new TLPot(new Vector2Int((int)pos.x, (int)pos.y), i + 1));
                         }
                     }
                 }
@@ -115,7 +115,7 @@ public class GameManager : MonoBehaviour
             if (TLSig is PlantSignature)
                 TlObjectList.Add(new TLPlant(pos));
             if (TLSig is DoorSignature)
-                TlObjectList.Add(new TLDoor(pos));
+                TlObjectList.Add(new TLDoor(pos, (DoorSignature) TLSig));
         }
 
         movementManager.initialGameState = new GameState(TlObjectList);
@@ -165,10 +165,6 @@ public class GameManager : MonoBehaviour
             Vector2Int pos = new Vector2Int((int)TLSig.gameObject.transform.position.x, (int)TLSig.gameObject.transform.position.y);
             if (TLSig is PlayerSignature)
                 TlObjectList.Add(new TLPlayer(pos));
-            else if (TLSig is PlantSignature)
-                TlObjectList.Add(new TLPlant(pos));
-            else if (TLSig is DoorSignature)
-                TlObjectList.Add(new TLDoor(pos));
             else if (TLSig is LevelSignature)
                 TlObjectList.Add(new TLLevel(pos, (LevelSignature)TLSig));
             else if (TLSig is WorldSignature)
@@ -253,9 +249,14 @@ public class GameManager : MonoBehaviour
         mapManager.CompleteLevel(currentLevel);
     }
 
-    public void LoadScene(string name)
+    private void LoadScene(string name)
     {
         SceneManager.LoadScene(name);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 
     public void DEBUG(string message)

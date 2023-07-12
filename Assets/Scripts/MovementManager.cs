@@ -150,6 +150,12 @@ public class MovementManager : MonoBehaviour
             GameManager.Inst.FinishLevel();
         }
 
+        /*int potNum = 0;
+        foreach (var pot in currentState.GetAllTLPots())
+        {
+            potNum += pot.IsFull();
+        }
+        print(potNum);*/
         //print(currentState.ToString());
         //print("End Move: " + GameManager.Inst.stateList.Count);
     }

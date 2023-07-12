@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class TLPot : TLObject
 {
-    public TLPot(Vector2Int curPos) : base(curPos)
+    public int potNumber = 1;
+
+    public TLPot(Vector2Int curPos, int potNum) : base(curPos)
     {
+        potNumber = potNum;
     }
 
     public TLPot(TLPot obj) : base(obj)
     {
+        potNumber = obj.potNumber;
     }
 
     public int IsFull()
     {
         if (GameManager.Inst.movementManager.currentState.GetPlantAtPos(curPos) != null)
-            return 1;
+            return potNumber;
         else
             return 0;
     }
