@@ -581,6 +581,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: LR Door
       objectReference: {fileID: 0}
+    - target: {fileID: 1439753733346455207, guid: 67d282874f1eae847967ed7157b24c7d, type: 3}
+      propertyPath: potsRequired
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1439753733346455207, guid: 67d282874f1eae847967ed7157b24c7d, type: 3}
+      propertyPath: usesMultiPots
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8442579569008547854, guid: 67d282874f1eae847967ed7157b24c7d, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -4437,17 +4445,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4777826634627551701, guid: 7a101c58103cdd74c9c9ed6dd27c2e9c, type: 3}
-      propertyPath: inputManager
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 4848350101653444800, guid: 7a101c58103cdd74c9c9ed6dd27c2e9c, type: 3}
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 8137114986294396262, guid: 7a101c58103cdd74c9c9ed6dd27c2e9c, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a101c58103cdd74c9c9ed6dd27c2e9c, type: 3}
