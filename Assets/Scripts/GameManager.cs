@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
         else
         {
             currentLevel = SceneManager.GetActiveScene().name;
+            currentWorld = SceneManager.GetActiveScene().name.Substring(0, 7) + " Map";
             OpenLevel(currentLevel);
         }
     }       
@@ -112,10 +113,12 @@ public class GameManager : MonoBehaviour
             Vector2Int pos = new Vector2Int((int)TLSig.gameObject.transform.position.x, (int)TLSig.gameObject.transform.position.y);
             if (TLSig is PlayerSignature)
                 TlObjectList.Add(new TLPlayer(pos));
-            if (TLSig is PlantSignature)
+            else if (TLSig is PlantSignature)
                 TlObjectList.Add(new TLPlant(pos));
-            if (TLSig is DoorSignature)
-                TlObjectList.Add(new TLDoor(pos, (DoorSignature) TLSig));
+            else if (TLSig is MultiExitDoorSignature)
+                TlObjectList.Add(new TLDoorMultiExit(pos, (MultiExitDoorSignature)TLSig));
+            else if (TLSig is DoorSignature)
+                TlObjectList.Add(new TLDoor(pos, (DoorSignature)TLSig));
         }
 
         movementManager.initialGameState = new GameState(TlObjectList);
@@ -247,11 +250,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
         OnMapLoad?.Invoke();
         mapManager.CompleteLevel(currentLevel);
-    }
-
-    private void LoadScene(string name)
-    {
-        SceneManager.LoadScene(name);
     }
 
     public void QuitGame()
