@@ -585,6 +585,7 @@ GameObject:
   - component: {fileID: 3077985321389285311}
   - component: {fileID: 5490834138412588229}
   - component: {fileID: 8921392625247923110}
+  - component: {fileID: 4228786683357840424}
   - component: {fileID: 8565691529311702107}
   - component: {fileID: 561370031755289853}
   m_Layer: 0
@@ -623,70 +624,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d30101abe78497f40bb4285a9240d216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallNames:
-  - TX Tileset Grass_32
-  - Growkoban_Sprites_with_Player_3
-  - Separated_Flowers_16
-  - Separated_Flowers_23
-  - Fence
-  - Fences_1
-  - Fences_2
-  - Fences_3
-  - Fences_4
-  - Fences_5
-  - Fences_6
-  - Fences_7
-  - Fences_8
-  - Fences_9
-  - Fences_10
-  - Fences_11
-  - Fences_12
-  - Fences_13
-  - Fences_14
-  - Fences_15
-  - Fences_0
-  - CustomTileFence
-  potNames:
-  - Pots_v3_0
-  - Pots_v3_1
-  - Pots_v3_2
-  - Pots_v3_3
-  - Pots_v3_4
-  - Pots_v3_5
-  - Pots_v3_6
-  - Pots_v3_7
-  - Pots_v3_8
-  - Pots_v3_9
-  - Pots_v3_10
-  - Pots_v3_11
-  - Pots_v3_12
-  - Pots_v3_13
-  - Pots_v3_14
-  - Pots_v3_15
-  pathNames:
-  - PathTile
-  - Paths_0
-  - Paths_1
-  - Paths_2
-  - Paths_3
-  - Paths_4
-  - Paths_5
-  - Paths_6
-  - Paths_7
-  - Paths_8
-  - Paths_9
-  - Paths_10
-  - Paths_11
-  - Paths_12
-  - Paths_13
-  - Paths_14
-  - Paths_15
-  currentLevel: 
-  currentWorld: 
   movementManager: {fileID: 3077985321389285311}
   mapManager: {fileID: 5490834138412588229}
   animator: {fileID: 8565691529311702107}
   inputManager: {fileID: 561370031755289853}
+  currentWorld: 
 --- !u!114 &3077985321389285311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -699,6 +641,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2037500dd60994648a52b7e14fd72568, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wallNames: []
+  potNames: []
   moveUp: {fileID: -6737352863954743828, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   moveDown: {fileID: 357779603669613348, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   moveRight: {fileID: -4140952004102833554, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
@@ -718,6 +662,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93736465f18602d458978f477f2579ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pathNames: []
   moveUp: {fileID: 5536412998195584913, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   moveDown: {fileID: 4929436957986363429, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   moveRight: {fileID: -5645837413309641247, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
@@ -739,6 +684,19 @@ MonoBehaviour:
   OpenMenuMap: {fileID: 2953609243104009286, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   CloseMenu: {fileID: -2410471381532546122, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   pauseMenuUI: {fileID: 1911995550000775158}
+--- !u!114 &4228786683357840424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4848350101653444800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e4b4d35936f3c148952ffdbf01c0a72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileName: data.json
 --- !u!114 &8565691529311702107
 MonoBehaviour:
   m_ObjectHideFlags: 0

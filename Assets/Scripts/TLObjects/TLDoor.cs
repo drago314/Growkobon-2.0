@@ -6,17 +6,20 @@ public class TLDoor : TLObject
 {
     public int potsRequired = 0;
     public bool usesMultiPot = false;
+    public string doorName = "Main";
 
     public TLDoor(Vector2Int curPos, DoorSignature doorSig) : base(curPos)
     {
         this.potsRequired = doorSig.potsRequired;
         this.usesMultiPot = doorSig.usesMultiPots;
+        this.doorName = doorSig.doorName;
     }
 
     public TLDoor(TLDoor obj) : base(obj)
     {
         potsRequired = obj.potsRequired;
         usesMultiPot = obj.usesMultiPot;
+        doorName = obj.doorName;
     }
 
     public bool IsOpen()
@@ -42,5 +45,5 @@ public class TLDoor : TLObject
         }
     }
 
-    public override string GetName() { return "Door"; }
+    public override string GetName() { return doorName; }
 }

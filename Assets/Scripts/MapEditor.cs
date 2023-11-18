@@ -14,7 +14,6 @@ public class MapEditor : Editor
 
         LevelSignature lvl = (LevelSignature)target;
         LevelAnimator lvlAnimator = lvl.gameObject.GetComponent<LevelAnimator>();
-        SpriteRenderer renderer = lvl.gameObject.GetComponent<SpriteRenderer>();
 
         string lvlNumber = "0";
         for (int i = 0; i < lvl.levelName.Length - 5; i++)
@@ -30,32 +29,35 @@ public class MapEditor : Editor
         {
             lvl.levelNumber = Int32.Parse(lvlNumber);
             lvlAnimator.SetLevelNumber(lvl.levelNumber);
-       }
+        }
         catch (Exception) { }
 
-        if (GUILayout.Button("UP"))
+        foreach (KeyValuePair<string, List<Vector2Int>> pair in lvl.exitToPathsUnlocked)
         {
-            if (lvl.pathsUnlocked.Count == 0)
-                lvl.pathsUnlocked.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
-            lvl.pathsUnlocked.Add(lvl.pathsUnlocked[lvl.pathsUnlocked.Count - 1] + Vector2Int.up);
-        }
-        if (GUILayout.Button("DOWN"))
-        {
-            if (lvl.pathsUnlocked.Count == 0)
-                lvl.pathsUnlocked.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
-            lvl.pathsUnlocked.Add(lvl.pathsUnlocked[lvl.pathsUnlocked.Count - 1] + Vector2Int.down);
-        }
-        if (GUILayout.Button("RIGHT"))
-        {
-            if (lvl.pathsUnlocked.Count == 0)
-                lvl.pathsUnlocked.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
-            lvl.pathsUnlocked.Add(lvl.pathsUnlocked[lvl.pathsUnlocked.Count - 1] + Vector2Int.right);
-        }
-        if (GUILayout.Button("LEFT"))
-        {
-            if (lvl.pathsUnlocked.Count == 0)
-                lvl.pathsUnlocked.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
-            lvl.pathsUnlocked.Add(lvl.pathsUnlocked[lvl.pathsUnlocked.Count - 1] + Vector2Int.left);
+            if (GUILayout.Button("UP " + pair.Key))
+            {
+                if (pair.Value.Count == 0)
+                    pair.Value.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
+                pair.Value.Add(pair.Value[pair.Value.Count - 1] + Vector2Int.up);
+            }
+            if (GUILayout.Button("DOWN " + pair.Key))
+            {
+                if (pair.Value.Count == 0)
+                    pair.Value.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
+                pair.Value.Add(pair.Value[pair.Value.Count - 1] + Vector2Int.down);
+            }
+            if (GUILayout.Button("RIGHT " + pair.Key))
+            {
+                if (pair.Value.Count == 0)
+                    pair.Value.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
+                pair.Value.Add(pair.Value[pair.Value.Count - 1] + Vector2Int.right);
+            }
+            if (GUILayout.Button("LEFT " + pair.Key))
+            {
+                if (pair.Value.Count == 0)
+                    pair.Value.Add(new Vector2Int((int)lvl.transform.position.x, (int)lvl.transform.position.y));
+                pair.Value.Add(pair.Value[pair.Value.Count - 1] + Vector2Int.left);
+            }
         }
         EditorUtility.SetDirty(target);
     }

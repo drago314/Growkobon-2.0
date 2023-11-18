@@ -29,8 +29,8 @@ public class PlantAnimator : MonoBehaviour
         manager.OnMoveBegin += OnMoveBegin;
         manager.OnPlantMove += OnPlantMove;
         manager.OnMoveEnd += UpdatePlantInPot;
-        GameManager.Inst.OnLevelEnter += OnLevelLoaded;
-        GameManager.Inst.OnLevelEnter += UpdatePlantInPot;
+        GameManager.Inst.movementManager.OnLevelEnter += OnLevelLoaded;
+        GameManager.Inst.movementManager.OnLevelEnter += UpdatePlantInPot;
         potOverlay = potOverlayChild.GetComponent<SpriteRenderer>();
 
         //StartCoroutine(WaitTilGrown()); //TODO
@@ -44,8 +44,8 @@ public class PlantAnimator : MonoBehaviour
             manager.OnMoveBegin -= OnMoveBegin;
             manager.OnPlantMove -= OnPlantMove;
             manager.OnMoveEnd -= UpdatePlantInPot;
-            GameManager.Inst.OnLevelEnter -= OnLevelLoaded;
-            GameManager.Inst.OnLevelEnter -= UpdatePlantInPot;
+            GameManager.Inst.movementManager.OnLevelEnter -= OnLevelLoaded;
+            GameManager.Inst.movementManager.OnLevelEnter -= UpdatePlantInPot;
         }
     }
 

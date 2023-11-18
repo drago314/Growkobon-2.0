@@ -50,6 +50,6 @@ public class MenuManager : MonoBehaviour
     public void OpenMap()
     {
         Resume();
-        GameManager.Inst.OpenCurrentMap();
+        GameManager.Inst.OpenMap();
     }
 }

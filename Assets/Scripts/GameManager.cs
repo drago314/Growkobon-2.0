@@ -6,26 +6,30 @@ using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 using System;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, IDataPersistence
 {
+<<<<<<< Updated upstream
+=======
     [SerializeField] public string[] wallNames;
     [SerializeField] public string[] potNames;
     [SerializeField] public string[] pathNames;
 
     public Dictionary<string, bool> levelsCompleted;
+    public Dictionary<string, bool[]> multiExitLevelsCompleted;
     public string currentLevel;
     public string currentWorld;
 
+>>>>>>> Stashed changes
     public static GameManager Inst;
     public MovementManager movementManager;
     public MapManager mapManager;
     public GeneralAnimator animator;
     public PlayerInput inputManager;
+    public DataPersistenceManager dataManager;
 
-
-    public event Action OnLevelEnter;
-    public event Action OnMapEnter;
-    public event Action OnMapLoad;
+    public string currentWorld;
+    public Dictionary<string, bool> levelsCompleted;
+    private Vector2Int playerMapPosition;
 
     private void Awake()
     {
@@ -38,6 +42,17 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        if (SceneManager.GetActiveScene().name.Contains("Map"))
+        {
+            currentWorld = SceneManager.GetActiveScene().name;
+            OpenMap(currentWorld);
+        }
+        else
+        {
+            currentWorld = SceneManager.GetActiveScene().name.Substring(0, 7) + " Map";
+            OpenLevel(SceneManager.GetActiveScene().name);
+        }
     }
 
     private void OnEnable()
@@ -46,8 +61,13 @@ public class GameManager : MonoBehaviour
         mapManager = GetComponent<MapManager>();
         animator = GetComponent<GeneralAnimator>();
         inputManager = GetComponent<PlayerInput>();
+<<<<<<< Updated upstream
+        dataManager = GetComponent<DataPersistenceManager>();
+        dataManager.LoadGame();
+=======
 
         levelsCompleted = new Dictionary<string, bool>();
+        multiExitLevelsCompleted = new Dictionary<string, bool[]>();
 
         if (SceneManager.GetActiveScene().name.Contains("Map"))
         {
@@ -58,7 +78,7 @@ public class GameManager : MonoBehaviour
         {
             currentLevel = SceneManager.GetActiveScene().name;
             currentWorld = SceneManager.GetActiveScene().name.Substring(0, 7) + " Map";
-            OpenLevel(currentLevel);
+            StartCoroutine(WaitTilLevelLoad(currentLevel));
         }
     }       
 
@@ -124,10 +144,44 @@ public class GameManager : MonoBehaviour
         movementManager.initialGameState = new GameState(TlObjectList);
         movementManager.stateList.Add(movementManager.initialGameState);
         movementManager.currentState = new GameState(movementManager.initialGameState);
+>>>>>>> Stashed changes
     }
 
-    private void SetMapManagerFromScene()
+    public void LoadData(GameData data)
     {
+<<<<<<< Updated upstream
+        levelsCompleted = new Dictionary<string, bool>(data.levelsCompleted);
+        currentWorld = data.currentWorld;
+        playerMapPosition = data.playerPosition;
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        foreach (var pair in levelsCompleted)
+        {
+            if (data.levelsCompleted.ContainsKey(pair.Key))
+                data.levelsCompleted[pair.Key] = pair.Value;
+            else
+                data.levelsCompleted.Add(pair.Key, pair.Value);
+        }
+
+        data.currentWorld = currentWorld;
+        data.playerPosition = playerMapPosition;
+    }
+
+    public void OpenLevel(string levelName)
+    {
+        inputManager.SwitchCurrentActionMap("Gameplay");
+        try
+        {
+            playerMapPosition = mapManager.currentState.GetPlayer().curPos;
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Likely started playing from inside a level. Shouldn't be an issue: " + e);
+        }
+        StartCoroutine(OpenLevelCoroutine(levelName));
+=======
         var TlObjectList = new List<TLObject>();
 
         var tileMaps = FindObjectsOfType<Tilemap>();
@@ -176,50 +230,79 @@ public class GameManager : MonoBehaviour
 
         mapManager.currentState = new GameState(TlObjectList);
 
-        mapManager.lvlToUnlockedPaths = new Dictionary<string, List<Vector2Int>>();
+        mapManager.lvlToUnlockedPaths = new Dictionary<string, List<List<Vector2Int>>>();
         foreach (var lvl in mapManager.currentState.GetAllTLLevels())
         {
-            mapManager.lvlToUnlockedPaths.Add(lvl.levelName, lvl.unlockablePaths);
+            mapManager.lvlToUnlockedPaths.Add(lvl.levelName, new List<List<Vector2Int>> { lvl.unlockablePaths });
             if (levelsCompleted.ContainsKey(lvl.levelName) && levelsCompleted[lvl.levelName] == true)
             {
-                foreach (var path in lvl.unlockablePaths)
+                if (lvl is TLLevel2Exit)
                 {
-                    if (mapManager.currentState.GetPathAtPos(path) != null)
-                        mapManager.currentState.GetPathAtPos(path).unlocked = true;
+                    if (multiExitLevelsCompleted.ContainsKey(lvl.levelName) && multiExitLevelsCompleted[lvl.levelName][0])
+                    {
+                        foreach (var path in lvl.unlockablePaths)
+                        {
+                            if (mapManager.currentState.GetPathAtPos(path) != null)
+                                mapManager.currentState.GetPathAtPos(path).unlocked = true;
+                        }
+                    }
+                    else if (multiExitLevelsCompleted.ContainsKey(lvl.levelName) && multiExitLevelsCompleted[lvl.levelName][1])
+                    {
+                        foreach (var path in ((TLLevel2Exit)lvl).unlockablePaths2)
+                        {
+                            if (mapManager.currentState.GetPathAtPos(path) != null)
+                                mapManager.currentState.GetPathAtPos(path).unlocked = true;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var path in lvl.unlockablePaths)
+                    {
+                        if (mapManager.currentState.GetPathAtPos(path) != null)
+                            mapManager.currentState.GetPathAtPos(path).unlocked = true;
+                    }
                 }
             }
         }
     }
 
-    public void OpenLevel(string level)
+    public void OpenLevel(TLLevel level)
     {
         inputManager.SwitchCurrentActionMap("Gameplay");
 
-        currentLevel = level;
-        if (!levelsCompleted.ContainsKey(level))
-            levelsCompleted.Add(level, false);
-        StartCoroutine(WaitTilLevelLoad(level));
+        currentLevel = level.levelName;
+        if (!levelsCompleted.ContainsKey(currentLevel))
+            levelsCompleted.Add(currentLevel, false);
+        if (level is TLLevel2Exit && !multiExitLevelsCompleted.ContainsKey(currentLevel))
+            multiExitLevelsCompleted.Add(currentLevel, new Boolean[] { false, false });
+        StartCoroutine(WaitTilLevelLoad(currentLevel));
+>>>>>>> Stashed changes
     }
-
-    private IEnumerator WaitTilLevelLoad(string level)
+    private IEnumerator OpenLevelCoroutine(string levelName)
     {
-        var asyncLoadLevel = SceneManager.LoadSceneAsync(level, LoadSceneMode.Single);
+        var asyncLoadLevel = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
-        SetMovementManagerFromScene();
-        OnLevelEnter?.Invoke();
+        movementManager.LoadLevel();
     }
 
-    public void OpenCurrentMap()
+    public void FinishLevel(string levelExit)
     {
+        if (levelsCompleted.ContainsKey(levelExit))
+            levelsCompleted[levelExit] = true;
+        else
+            levelsCompleted.Add(levelExit, true);
+
         inputManager.SwitchCurrentActionMap("World Map");
-        StartCoroutine(OpenCurrentMapCoroutine());
+        StartCoroutine(FinishLevelCoroutine(currentWorld));
     }
 
-    private IEnumerator OpenCurrentMapCoroutine()
+    private IEnumerator FinishLevelCoroutine(string levelExit)
     {
         var asyncLoadLevel = SceneManager.LoadSceneAsync(currentWorld, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
-        OnMapEnter?.Invoke();
+        mapManager.LoadMap(playerMapPosition);
+        mapManager.UnlockLevelExit(levelExit);
     }
 
     public void OpenNewMap(string mapName)
@@ -228,32 +311,61 @@ public class GameManager : MonoBehaviour
         currentWorld = mapName;
         StartCoroutine(OpenNewMapCoroutine(mapName));
     }
-
     private IEnumerator OpenNewMapCoroutine(string map)
     {
         var asyncLoadLevel = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
-        SetMapManagerFromScene();
-        OnMapEnter?.Invoke();
+        mapManager.LoadMap();
+        playerMapPosition = mapManager.currentState.GetPlayer().curPos;
     }
 
-    public void FinishLevel()
+<<<<<<< Updated upstream
+    public void OpenMap()
     {
+        OpenMap(currentWorld);
+    }
+    public void OpenMap(string mapName)
+    {
+        inputManager.SwitchCurrentActionMap("World Map");
+        currentWorld = mapName;
+        StartCoroutine(OpenMapCoroutine(mapName));
+    }
+    private IEnumerator OpenMapCoroutine(string map)
+=======
+    public void FinishLevel(TLDoor door, bool isMultiExit)
+    {
+        print("hi");
+        if (isMultiExit)
+        {
+            print(((TLDoorMultiExit)door).exitNumber);
+            multiExitLevelsCompleted[currentLevel][((TLDoorMultiExit)door).exitNumber] = true;
+        }
+
         levelsCompleted[currentLevel] = true;
         inputManager.SwitchCurrentActionMap("World Map");
-        StartCoroutine(FinishLevelCoroutine());
+
+        if (door is TLDoorMultiExit)
+            StartCoroutine(FinishLevelCoroutine(((TLDoorMultiExit)door).exitNumber));
+        else
+            StartCoroutine(FinishLevelCoroutine(0));
     }
 
-    private IEnumerator FinishLevelCoroutine()
+    private IEnumerator FinishLevelCoroutine(int doorExited)
+>>>>>>> Stashed changes
     {
-        var asyncLoadLevel = SceneManager.LoadSceneAsync(currentWorld, LoadSceneMode.Single);
+        var asyncLoadLevel = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
+<<<<<<< Updated upstream
+        mapManager.LoadMap(playerMapPosition);
+=======
         OnMapLoad?.Invoke();
-        mapManager.CompleteLevel(currentLevel);
+        mapManager.CompleteLevel(currentLevel, doorExited);
+>>>>>>> Stashed changes
     }
 
     public void QuitGame()
     {
+        DataPersistenceManager.instance.SaveGame();
         Application.Quit();
     }
 

@@ -18,7 +18,7 @@ public class DoorAnimator : MonoBehaviour
         manager.OnMoveBegin += OnMoveBegin;
         manager.OnUndoEnd += OnUndoOrResetEnd;
         manager.OnResetEnd += OnUndoOrResetEnd;
-        GameManager.Inst.OnLevelEnter += OnLevelLoaded;
+        GameManager.Inst.movementManager.OnLevelEnter += OnLevelLoaded;
     }
 
     private void OnDestroy()
@@ -30,7 +30,7 @@ public class DoorAnimator : MonoBehaviour
             manager.OnMoveEnd -= OnMoveEnd;
             GameManager.Inst.movementManager.OnUndoEnd -= OnUndoOrResetEnd;
             GameManager.Inst.movementManager.OnResetEnd -= OnUndoOrResetEnd;
-            GameManager.Inst.OnLevelEnter -= OnLevelLoaded;
+            GameManager.Inst.movementManager.OnLevelEnter -= OnLevelLoaded;
         }
     }
 

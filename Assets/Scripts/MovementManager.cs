@@ -2,12 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
 using System;
 
 public class MovementManager : MonoBehaviour
 {
+    [SerializeField] public string[] wallNames;
+    [SerializeField] public string[] potNames;
+
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, undo, reset, finishLevel;
 
+    public event Action OnLevelEnter;
     public event Action OnMoveBegin;
     public event Action OnMoveEnd;
     public event Action<MoveAction> OnPlayerMove;
@@ -42,6 +48,73 @@ public class MovementManager : MonoBehaviour
         undo.action.performed -= Undo;
         reset.action.performed -= Reset;
         finishLevel.action.performed -= DebugFinishLevel;
+    }
+
+    public void LoadLevel()
+    {
+        if (SceneManager.GetActiveScene().name.Contains("Level"))
+        { 
+            stateList = new List<GameState>();
+
+            var TlObjectList = new List<TLObject>();
+
+            var tileMaps = FindObjectsOfType<Tilemap>();
+            foreach (var tileMap in tileMaps)
+            {
+                if (tileMap.gameObject.name != "Background Tilemap")
+                {
+                    BoundsInt bounds = tileMap.cellBounds;
+                    foreach (Vector3Int tilePos in tileMap.cellBounds.allPositionsWithin)
+                    {
+                        //if (tileMap.GetTile(tilePos) != null)
+                        //    print(tileMap.GetTile(tilePos).name);
+
+                        foreach (var wallName in wallNames)
+                        {
+                            if (tileMap.GetTile(tilePos) != null && wallName.Equals(tileMap.GetTile(tilePos).name))
+                            {
+                                Vector3 pos = tileMap.CellToLocal(tilePos);
+                                TlObjectList.Add(new TLWall(new Vector2Int((int)pos.x, (int)pos.y)));
+                            }
+                        }
+                        for (int i = 0; i < potNames.Length; i++)
+                        {
+                            if (tileMap.GetTile(tilePos) != null && potNames[i].Equals(tileMap.GetTile(tilePos).name))
+                            {
+                                Vector3 pos = tileMap.CellToLocal(tilePos);
+                                TlObjectList.Add(new TLPot(new Vector2Int((int)pos.x, (int)pos.y), i + 1));
+                            }
+                        }
+                    }
+                }
+            }
+
+            var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
+
+
+            /*foreach (var anim in TLSignatures)
+            {
+                print(anim.gameObject.name + ": " + anim.transform.position.x + " " + anim.transform.position.y);
+            }*/
+
+
+            foreach (var TLSig in TLSignatures)
+            {
+                Vector2Int pos = new Vector2Int((int)TLSig.gameObject.transform.position.x, (int)TLSig.gameObject.transform.position.y);
+                if (TLSig is PlayerSignature)
+                    TlObjectList.Add(new TLPlayer(pos));
+                else if (TLSig is PlantSignature)
+                    TlObjectList.Add(new TLPlant(pos));
+                else if (TLSig is DoorSignature)
+                    TlObjectList.Add(new TLDoor(pos, (DoorSignature)TLSig));
+            }
+
+            initialGameState = new GameState(TlObjectList);
+            stateList.Add(initialGameState);
+            currentState = new GameState(initialGameState);
+
+            OnLevelEnter?.Invoke();
+        }
     }
 
     private void MoveUp(InputAction.CallbackContext obj)
@@ -147,7 +220,11 @@ public class MovementManager : MonoBehaviour
 
         if (currentState.GetDoorAtPos(currentState.GetPosOf(player)) != null)
         {
-            GameManager.Inst.FinishLevel();
+<<<<<<< Updated upstream
+            GameManager.Inst.FinishLevel(SceneManager.GetActiveScene().name + " " + currentState.GetDoorAtPos(currentState.GetPosOf(player)).doorName);
+=======
+            GameManager.Inst.FinishLevel(currentState.GetDoorAtPos(currentState.GetPosOf(player)));
+>>>>>>> Stashed changes
         }
 
         /*int potNum = 0;
@@ -216,6 +293,10 @@ public class MovementManager : MonoBehaviour
 
     private void DebugFinishLevel(InputAction.CallbackContext obj)
     {
-        GameManager.Inst.FinishLevel();
+<<<<<<< Updated upstream
+        GameManager.Inst.FinishLevel(SceneManager.GetActiveScene().name + " " + currentState.GetAllTLDoors()[0].doorName);
+=======
+        GameManager.Inst.FinishLevel(currentState.GetAllTLDoors()[0]);
+>>>>>>> Stashed changes
     }
 }

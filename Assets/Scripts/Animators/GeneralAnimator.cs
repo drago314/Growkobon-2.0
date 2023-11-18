@@ -20,8 +20,7 @@ public class GeneralAnimator : MonoBehaviour
         gameObject.GetComponent<MovementManager>().OnPlantGrow += GrowPlant;
         GameManager.Inst.movementManager.OnResetEnd += GenerateLevel;
         GameManager.Inst.movementManager.OnUndoEnd += GenerateLevel;
-        GameManager.Inst.OnMapEnter += GenerateMap;
-        GameManager.Inst.OnMapLoad += GenerateMap;
+        GameManager.Inst.mapManager.OnMapEnter += GenerateMap;
         GameManager.Inst.mapManager.OnPathsUnlock += UnlockPaths;
     }
 
@@ -29,8 +28,7 @@ public class GeneralAnimator : MonoBehaviour
     {
         GameManager.Inst.movementManager.OnResetEnd -= GenerateLevel;
         GameManager.Inst.movementManager.OnUndoEnd -= GenerateLevel;
-        GameManager.Inst.OnMapEnter -= GenerateMap;
-        GameManager.Inst.OnMapLoad -= GenerateMap;
+        GameManager.Inst.mapManager.OnMapEnter -= GenerateMap;
         GameManager.Inst.mapManager.OnPathsUnlock -= UnlockPaths;
     }
 
