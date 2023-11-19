@@ -21,13 +21,13 @@ public class MainMenu : MonoBehaviour
     {
         DisableAllButtons();
         DataPersistenceManager.instance.NewGame();
-        GameManager.Inst.OpenNewMap("World 1 Map");
+        GameManager.Inst.OpenMap("World 1 Map");
     }
 
     public void OnContinueGameClicked()
     {
         DisableAllButtons();
-        GameManager.Inst.OpenNewMap(GameManager.Inst.currentWorld);
+        GameManager.Inst.OpenMap(GameManager.Inst.currentWorld);
     }
 
     private void DisableAllButtons()

@@ -29,7 +29,7 @@ public class LevelAnimator : MonoBehaviour
     public void Instantiate()
     {
         level = GameManager.Inst.mapManager.currentState.GetLevelAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-        if (GameManager.Inst.levelsCompleted.ContainsKey(level.levelName) && GameManager.Inst.levelsCompleted[level.levelName])
+        if (GameManager.Inst.IsLevelComplete(level.levelName))
             levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlays[level.levelNumber];
         else if (level.unlocked)
             levelOverlayChild.GetComponent<SpriteRenderer>().sprite = unlockedLevelOverlays[level.levelNumber];
@@ -42,7 +42,9 @@ public class LevelAnimator : MonoBehaviour
         if (new Vector2Int((int)transform.position.x, (int)transform.position.y).Equals(pos))
         {
             level = GameManager.Inst.mapManager.currentState.GetLevelAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-            if (!GameManager.Inst.levelsCompleted.ContainsKey(level.levelName) || !GameManager.Inst.levelsCompleted[level.levelName])
+            if (GameManager.Inst.IsLevelComplete(level.levelName))
+                levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlays[level.levelNumber];
+            else
                 levelOverlayChild.GetComponent<SpriteRenderer>().sprite = unlockedLevelOverlays[level.levelNumber];
         }
     }

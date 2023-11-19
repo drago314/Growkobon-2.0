@@ -21,7 +21,6 @@ public class GeneralAnimator : MonoBehaviour
         GameManager.Inst.movementManager.OnResetEnd += GenerateLevel;
         GameManager.Inst.movementManager.OnUndoEnd += GenerateLevel;
         GameManager.Inst.OnMapEnter += GenerateMap;
-        GameManager.Inst.OnMapLoad += GenerateMap;
         GameManager.Inst.mapManager.OnPathsUnlock += UnlockPaths;
     }
 
@@ -30,7 +29,6 @@ public class GeneralAnimator : MonoBehaviour
         GameManager.Inst.movementManager.OnResetEnd -= GenerateLevel;
         GameManager.Inst.movementManager.OnUndoEnd -= GenerateLevel;
         GameManager.Inst.OnMapEnter -= GenerateMap;
-        GameManager.Inst.OnMapLoad -= GenerateMap;
         GameManager.Inst.mapManager.OnPathsUnlock -= UnlockPaths;
     }
 
@@ -153,7 +151,7 @@ public class GeneralAnimator : MonoBehaviour
             {
                 pathTilemap.RefreshTile(tilesToUnlock[0]);
             }
-            else if (GameManager.Inst.mapManager.currentState.GetLevelAtPos(curPos) != null)
+            if (GameManager.Inst.mapManager.currentState.GetLevelAtPos(curPos) != null)
             {
                 OnLevelUnlock?.Invoke(curPos);
             }

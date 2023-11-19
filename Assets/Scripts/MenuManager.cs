@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
@@ -50,6 +51,6 @@ public class MenuManager : MonoBehaviour
     public void OpenMap()
     {
         Resume();
-        GameManager.Inst.OpenCurrentMap();
+        GameManager.Inst.OpenMap(GameManager.Inst.currentWorld, GameManager.Inst.currentLevel);
     }
 }

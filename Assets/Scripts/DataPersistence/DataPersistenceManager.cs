@@ -42,12 +42,12 @@ public class DataPersistenceManager : MonoBehaviour
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         this.dataPersistenceObjects = FindAllIDataPersistenceObjects();
-        LoadGame();
+        //LoadGame();
     }
 
     public void OnSceneUnloaded(Scene scene)
     {
-        SaveGame();
+        //SaveGame();
     }
 
     private void OnApplicationQuit()
