@@ -11,7 +11,7 @@ public class MapManager : MonoBehaviour
     public event System.Action<List<Vector2Int>> OnPathsUnlock;
 
     public GameState currentState;
-    public Dictionary<string, List<Vector2Int>> lvlToUnlockedPaths;
+    public Dictionary<string, List<Vector2Int>> exitToPathsUnlocked;
 
     private void Start()
     {
@@ -113,9 +113,9 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    public void CompleteLevel(string currentLevel)
+    public void CompleteLevel(string levelExit)
     {
-        foreach (var pathPos in lvlToUnlockedPaths[currentLevel])
+        foreach (var pathPos in exitToPathsUnlocked[levelExit])
         {
             if (currentState.GetPathAtPos(pathPos) != null)
             {
@@ -126,6 +126,6 @@ public class MapManager : MonoBehaviour
                 currentState.GetLevelAtPos(pathPos).unlocked = true;
             }
         }
-        OnPathsUnlock?.Invoke(lvlToUnlockedPaths[currentLevel]);
+        OnPathsUnlock?.Invoke(exitToPathsUnlocked[levelExit]);
     }
 };

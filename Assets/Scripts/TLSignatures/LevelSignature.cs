@@ -6,5 +6,5 @@ public class LevelSignature : TLSignature
 {
     [SerializeField] public string levelName;
     [SerializeField] public int levelNumber;
-    [SerializeField] public List<Vector2Int> pathsUnlocked;
+    [SerializeField] public SerializableDictionary<string, List<Vector2Int>> exitToPathsUnlocked;
 }

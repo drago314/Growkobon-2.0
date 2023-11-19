@@ -173,16 +173,20 @@ public class GameManager : MonoBehaviour
 
         mapManager.currentState = new GameState(TlObjectList);
 
-        mapManager.lvlToUnlockedPaths = new Dictionary<string, List<Vector2Int>>();
+        mapManager.exitToPathsUnlocked = new Dictionary<string, List<Vector2Int>>();
         foreach (var lvl in mapManager.currentState.GetAllTLLevels())
         {
-            mapManager.lvlToUnlockedPaths.Add(lvl.levelName, lvl.unlockablePaths);
-            if (levelsCompleted.ContainsKey(lvl.levelName) && levelsCompleted[lvl.levelName] == true)
+            foreach (var pair in lvl.exitToPathsUnlocked)
             {
-                foreach (var path in lvl.unlockablePaths)
+                Debug.Log(pair.Key);
+                mapManager.exitToPathsUnlocked.Add(pair.Key, pair.Value);
+                if (levelsCompleted.ContainsKey(lvl.levelName) && levelsCompleted[lvl.levelName] == true)
                 {
-                    if (mapManager.currentState.GetPathAtPos(path) != null)
-                        mapManager.currentState.GetPathAtPos(path).unlocked = true;
+                    foreach (var path in pair.Value)
+                    {
+                        if (mapManager.currentState.GetPathAtPos(path) != null)
+                            mapManager.currentState.GetPathAtPos(path).unlocked = true;
+                    }
                 }
             }
         }
@@ -234,24 +238,19 @@ public class GameManager : MonoBehaviour
         OnMapEnter?.Invoke();
     }
 
-    public void FinishLevel()
+    public void FinishLevel(string levelExit)
     {
-        levelsCompleted[currentLevel] = true;
+        levelsCompleted[levelExit] = true;
         inputManager.SwitchCurrentActionMap("World Map");
-        StartCoroutine(FinishLevelCoroutine());
+        StartCoroutine(FinishLevelCoroutine(levelExit));
     }
 
-    private IEnumerator FinishLevelCoroutine()
+    private IEnumerator FinishLevelCoroutine(string levelExit)
     {
         var asyncLoadLevel = SceneManager.LoadSceneAsync(currentWorld, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
         OnMapLoad?.Invoke();
-        mapManager.CompleteLevel(currentLevel);
-    }
-
-    private void LoadScene(string name)
-    {
-        SceneManager.LoadScene(name);
+        mapManager.CompleteLevel(levelExit);
     }
 
     public void QuitGame()
