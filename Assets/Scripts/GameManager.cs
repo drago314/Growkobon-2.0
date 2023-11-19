@@ -6,13 +6,13 @@ using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 using System;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, IDataPersistence
 {
     [SerializeField] public string[] wallNames;
     [SerializeField] public string[] potNames;
     [SerializeField] public string[] pathNames;
 
-    public Dictionary<string, bool> levelsCompleted;
+    public SerializableDictionary<string, bool> levelsCompleted;
     public string currentLevel;
     public string currentWorld;
 
@@ -47,9 +47,13 @@ public class GameManager : MonoBehaviour
         animator = GetComponent<GeneralAnimator>();
         inputManager = GetComponent<PlayerInput>();
 
-        levelsCompleted = new Dictionary<string, bool>();
+        levelsCompleted = new SerializableDictionary<string, bool>();
 
-        if (SceneManager.GetActiveScene().name.Contains("Map"))
+        if (SceneManager.GetActiveScene().name.Contains("Title"))
+        {
+            inputManager.SwitchCurrentActionMap("Pause Menu");
+        }
+        else if (SceneManager.GetActiveScene().name.Contains("Map"))
         {
             currentWorld = SceneManager.GetActiveScene().name;
             OpenNewMap(currentWorld);
@@ -60,6 +64,40 @@ public class GameManager : MonoBehaviour
             OpenLevel(currentLevel);
         }
     }       
+
+    public void LoadData(GameData data)
+    {
+        currentWorld = data.currentWorld;
+
+        levelsCompleted.Clear();
+        foreach (var pair in data.levelsCompleted)
+        {
+            levelsCompleted.Add(pair.Key, pair.Value);
+        }
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.currentWorld = currentWorld;
+
+        data.levelsCompleted.Clear();
+        foreach (var pair in levelsCompleted)
+        {
+            data.levelsCompleted.Add(pair.Key, pair.Value);
+        }
+    }
+
+    public bool IsLevelComplete(string levelName)
+    {
+        foreach (string key in levelsCompleted.Keys)
+        {
+            if (key.Contains(levelName))
+                return levelsCompleted[key];
+        }
+
+        // This level hasn't been attempted yet
+        return false;
+    }
 
     private void SetMovementManagerFromScene()
     {
@@ -191,47 +229,33 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OpenLevel(string level)
+    public IEnumerator OpenLevel(string level)
     {
         inputManager.SwitchCurrentActionMap("Gameplay");
 
         currentLevel = level;
         if (!levelsCompleted.ContainsKey(level))
             levelsCompleted.Add(level, false);
-        StartCoroutine(WaitTilLevelLoad(level));
-    }
 
-    private IEnumerator WaitTilLevelLoad(string level)
-    {
         var asyncLoadLevel = SceneManager.LoadSceneAsync(level, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
         SetMovementManagerFromScene();
         OnLevelEnter?.Invoke();
     }
 
-    public void OpenCurrentMap()
+    public IEnumerator OpenCurrentMap()
     {
         inputManager.SwitchCurrentActionMap("World Map");
-        StartCoroutine(OpenCurrentMapCoroutine());
-    }
-
-    private IEnumerator OpenCurrentMapCoroutine()
-    {
         var asyncLoadLevel = SceneManager.LoadSceneAsync(currentWorld, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
         OnMapEnter?.Invoke();
     }
 
-    public void OpenNewMap(string mapName)
+    public IEnumerator OpenMap(string mapName)
     {
         inputManager.SwitchCurrentActionMap("World Map");
         currentWorld = mapName;
-        StartCoroutine(OpenNewMapCoroutine(mapName));
-    }
-
-    private IEnumerator OpenNewMapCoroutine(string map)
-    {
-        var asyncLoadLevel = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
+        var asyncLoadLevel = SceneManager.LoadSceneAsync(mapName, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
         SetMapManagerFromScene();
         OnMapEnter?.Invoke();
