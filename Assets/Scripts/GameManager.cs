@@ -178,7 +178,6 @@ public class GameManager : MonoBehaviour
         {
             foreach (var pair in lvl.exitToPathsUnlocked)
             {
-                Debug.Log(pair.Key);
                 mapManager.exitToPathsUnlocked.Add(pair.Key, pair.Value);
                 if (levelsCompleted.ContainsKey(lvl.levelName) && levelsCompleted[lvl.levelName] == true)
                 {
