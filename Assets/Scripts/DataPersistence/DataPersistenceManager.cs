@@ -42,12 +42,11 @@ public class DataPersistenceManager : MonoBehaviour
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         this.dataPersistenceObjects = FindAllIDataPersistenceObjects();
-        //LoadGame();
     }
 
     public void OnSceneUnloaded(Scene scene)
     {
-        //SaveGame();
+        SaveGame();
     }
 
     private void OnApplicationQuit()
@@ -94,7 +93,6 @@ public class DataPersistenceManager : MonoBehaviour
     private List<IDataPersistence> FindAllIDataPersistenceObjects()
     {
         IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<MonoBehaviour>().OfType<IDataPersistence>();
-
         return new List<IDataPersistence>(dataPersistenceObjects);
     }
 

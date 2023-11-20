@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
         else if (SceneManager.GetActiveScene().name.Contains("Map"))
         {
-           OpenMap(SceneManager.GetActiveScene().name);
+            OpenMap(SceneManager.GetActiveScene().name);
         }
         else
         {
@@ -68,9 +68,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
         currentWorld = data.currentWorld;
 
         levelsCompleted.Clear();
-        foreach (var pair in data.levelsCompleted)
+        foreach (var level in data.levelsCompleted)
         {
-            levelsCompleted.Add(pair.Key, pair.Value);
+            levelsCompleted.Add(level, true);
         }
     }
 
@@ -81,7 +81,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         data.levelsCompleted.Clear();
         foreach (var pair in levelsCompleted)
         {
-            data.levelsCompleted.Add(pair.Key, pair.Value);
+            if (pair.Value)
+                data.levelsCompleted.Add(pair.Key);
         }
     }
 

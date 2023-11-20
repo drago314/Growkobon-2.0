@@ -6,15 +6,10 @@ using UnityEngine;
 public class GameData
 {
     public string currentWorld;
-    public SerializableDictionary<string, bool> levelsCompleted;
+    public List<string> levelsCompleted;
 
     public GameData()
     {
-        levelsCompleted = new SerializableDictionary<string, bool>();
-    }
-
-    public string GetCurrentWorldName()
-    {
-        return "World " + currentWorld + " Map";
+        levelsCompleted = new List<string>();
     }
 }

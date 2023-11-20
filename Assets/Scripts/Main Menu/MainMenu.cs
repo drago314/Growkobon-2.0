@@ -11,6 +11,7 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
+        DataPersistenceManager.instance.LoadGame();
         if (!DataPersistenceManager.instance.HasGameData())
         {
             continueGameButton.interactable = false;
