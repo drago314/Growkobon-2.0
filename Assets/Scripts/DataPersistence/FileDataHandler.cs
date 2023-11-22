@@ -57,8 +57,6 @@ public class FileDataHandler
                     writer.Write(dataToStore);
                 }
             }
-
-            Debug.Log("Data Saved");
         }
         catch (Exception e)
         {

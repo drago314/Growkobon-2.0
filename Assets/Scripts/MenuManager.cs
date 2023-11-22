@@ -3,30 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] public InputActionReference OpenMenuLevel, OpenMenuMap, CloseMenu;
     [SerializeField] public GameObject pauseMenuUI;
-
+    [SerializeField] public Button titleScreenButton, mapButton;
     private bool menuOpen;
+    private bool inMap;
     private string currentActionMap;
 
     private void Start()
     {
-        OpenMenuLevel.action.performed += OpenMenu;
-        OpenMenuMap.action.performed += OpenMenu;
+        OpenMenuLevel.action.performed += OpenLevelMenu;
+        OpenMenuMap.action.performed += OpenMapMenu;
         CloseMenu.action.performed += OpenMenu;
     }
 
     private void OnDestroy()
     {
-        OpenMenuLevel.action.performed -= OpenMenu;
-        OpenMenuMap.action.performed -= OpenMenu;
+        OpenMenuLevel.action.performed -= OpenLevelMenu;
+        OpenMenuMap.action.performed -= OpenMapMenu;
         CloseMenu.action.performed -= OpenMenu;
     }
+
+    private void OpenMapMenu(InputAction.CallbackContext obj)
+    {
+        inMap = true;
+        OpenMenu(obj);
+    }
+
+    private void OpenLevelMenu(InputAction.CallbackContext obj)
+    {
+        inMap = false;
+        OpenMenu(obj);
+    }
+
     private void OpenMenu(InputAction.CallbackContext obj)
     {
+        if (SceneManager.GetActiveScene().name.Contains("Title"))
+            return;
+
         if (menuOpen)
             Resume();
         else
@@ -38,6 +56,16 @@ public class MenuManager : MonoBehaviour
         currentActionMap = GameManager.Inst.inputManager.currentActionMap.name;
         GameManager.Inst.inputManager.SwitchCurrentActionMap("Pause Menu");
         pauseMenuUI.SetActive(true);
+        if (inMap)
+        {
+            titleScreenButton.gameObject.SetActive(true);
+            mapButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            titleScreenButton.gameObject.SetActive(false);
+            mapButton.gameObject.SetActive(true);
+        }
         menuOpen = true;
     }
 
@@ -52,5 +80,11 @@ public class MenuManager : MonoBehaviour
     {
         Resume();
         GameManager.Inst.OpenMap(GameManager.Inst.currentWorld, GameManager.Inst.currentLevel);
+    }
+
+    public void OpenTitleScreen()
+    {
+        Resume();
+        GameManager.Inst.OpenTitleScreen();
     }
 }

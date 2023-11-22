@@ -57,6 +57,8 @@ public class DataPersistenceManager : MonoBehaviour
     public void NewGame()
     {
         this.gameData = new GameData();
+        dataHandler.Save(gameData);
+        LoadGame();
     }
 
     public void LoadGame()
@@ -64,7 +66,10 @@ public class DataPersistenceManager : MonoBehaviour
         this.gameData = dataHandler.Load();
 
         if (this.gameData == null && initializeDataIfNull)
+        {
             NewGame();
+            return;
+        }
 
         if (this.gameData == null)
         {
@@ -74,6 +79,8 @@ public class DataPersistenceManager : MonoBehaviour
 
         foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
             dataPersistenceObj.LoadData(gameData);
+
+        Debug.Log("Game Loaded");
     }
 
     public void SaveGame()
@@ -85,15 +92,28 @@ public class DataPersistenceManager : MonoBehaviour
         }
 
         foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
-            dataPersistenceObj.SaveData(ref gameData);
+            dataPersistenceObj.SaveData(gameData);
 
         dataHandler.Save(gameData);
+
+        Debug.Log("Game Saved, There were " + dataPersistenceObjects.Count + " data persistance objects.");
     }
 
     private List<IDataPersistence> FindAllIDataPersistenceObjects()
     {
         IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<MonoBehaviour>().OfType<IDataPersistence>();
-        return new List<IDataPersistence>(dataPersistenceObjects);
+        List<IDataPersistence> dataPersistences = new List<IDataPersistence>(dataPersistenceObjects);
+
+        foreach (var obj in dataPersistences)
+        {
+            if (obj is GameManager && !((GameManager)obj).activated)
+            {
+                dataPersistences.Remove(obj);
+                break;
+            }
+        }
+
+        return dataPersistences;
     }
 
     public bool HasGameData()

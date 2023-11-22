@@ -10,6 +10,7 @@ public class GameData
 
     public GameData()
     {
+        currentWorld = "World 1 Map";
         levelsCompleted = new List<string>();
     }
 }

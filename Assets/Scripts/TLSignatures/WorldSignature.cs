@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class WorldSignature : TLSignature
 {
-    [SerializeField] public string worldName;
+    [SerializeField] public string worldToTravelTo;
 }

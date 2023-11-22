@@ -56,7 +56,7 @@ public class GeneralAnimator : MonoBehaviour
         levelAnimator.Instantiate();
     }
 
-    private void InstantiateWorldExit(TLWorldExit world)
+    private void InstantiateWorldExit(TLWorldPortal world)
     {
         Instantiate(worldExitPrefab, new Vector3Int(world.curPos.x, world.curPos.y, 0), Quaternion.identity);
     }
@@ -110,8 +110,8 @@ public class GeneralAnimator : MonoBehaviour
                 tile.unlocked = ((TLPath)TLObj).unlocked;
                 pathTilemap.RefreshTile(pos);
             }      
-            if (TLObj is TLWorldExit)
-                InstantiateWorldExit((TLWorldExit)TLObj);
+            if (TLObj is TLWorldPortal)
+                InstantiateWorldExit((TLWorldPortal)TLObj);
         }
     }
 
