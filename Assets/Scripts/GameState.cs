@@ -40,9 +40,9 @@ public class GameState
             {
                 AddObject(new TLLevel((TLLevel)TLObj));
             }
-            else if (TLObj is TLWorldExit)
+            else if (TLObj is TLWorldPortal)
             {
-                AddObject(new TLWorldExit((TLWorldExit)TLObj));
+                AddObject(new TLWorldPortal((TLWorldPortal)TLObj));
             }
         }
 
@@ -116,6 +116,17 @@ public class GameState
                 levelList.Add((TLLevel)obj);
         }
         return levelList;
+    }
+
+    public List<TLWorldPortal> GetAllTLWorlds()
+    {
+        List<TLWorldPortal> worldList = new List<TLWorldPortal>();
+        foreach (var obj in GetAllTLObjects())
+        {
+            if (obj is TLWorldPortal)
+                worldList.Add((TLWorldPortal)obj);
+        }
+        return worldList;
     }
 
     public List<TLObject> GetTLObjectsAtPos(Vector2Int pos)
@@ -196,14 +207,14 @@ public class GameState
         return null;
     }
 
-    public TLWorldExit GetWorldAtPos(Vector2Int pos)
+    public TLWorldPortal GetWorldAtPos(Vector2Int pos)
     {
         if (GetTLObjectsAtPos(pos) == null)
             return null;
         foreach (var TLObj in GetTLObjectsAtPos(pos))
         {
-            if (TLObj is TLWorldExit)
-                return (TLWorldExit)TLObj;
+            if (TLObj is TLWorldPortal)
+                return (TLWorldPortal)TLObj;
         }
         return null;
     }

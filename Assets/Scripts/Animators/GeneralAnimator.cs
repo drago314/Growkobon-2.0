@@ -21,7 +21,6 @@ public class GeneralAnimator : MonoBehaviour
         GameManager.Inst.movementManager.OnResetEnd += GenerateLevel;
         GameManager.Inst.movementManager.OnUndoEnd += GenerateLevel;
         GameManager.Inst.OnMapEnter += GenerateMap;
-        GameManager.Inst.OnMapLoad += GenerateMap;
         GameManager.Inst.mapManager.OnPathsUnlock += UnlockPaths;
     }
 
@@ -30,7 +29,6 @@ public class GeneralAnimator : MonoBehaviour
         GameManager.Inst.movementManager.OnResetEnd -= GenerateLevel;
         GameManager.Inst.movementManager.OnUndoEnd -= GenerateLevel;
         GameManager.Inst.OnMapEnter -= GenerateMap;
-        GameManager.Inst.OnMapLoad -= GenerateMap;
         GameManager.Inst.mapManager.OnPathsUnlock -= UnlockPaths;
     }
 
@@ -58,7 +56,7 @@ public class GeneralAnimator : MonoBehaviour
         levelAnimator.Instantiate();
     }
 
-    private void InstantiateWorldExit(TLWorldExit world)
+    private void InstantiateWorldExit(TLWorldPortal world)
     {
         Instantiate(worldExitPrefab, new Vector3Int(world.curPos.x, world.curPos.y, 0), Quaternion.identity);
     }
@@ -112,8 +110,8 @@ public class GeneralAnimator : MonoBehaviour
                 tile.unlocked = ((TLPath)TLObj).unlocked;
                 pathTilemap.RefreshTile(pos);
             }      
-            if (TLObj is TLWorldExit)
-                InstantiateWorldExit((TLWorldExit)TLObj);
+            if (TLObj is TLWorldPortal)
+                InstantiateWorldExit((TLWorldPortal)TLObj);
         }
     }
 
@@ -153,7 +151,7 @@ public class GeneralAnimator : MonoBehaviour
             {
                 pathTilemap.RefreshTile(tilesToUnlock[0]);
             }
-            else if (GameManager.Inst.mapManager.currentState.GetLevelAtPos(curPos) != null)
+            if (GameManager.Inst.mapManager.currentState.GetLevelAtPos(curPos) != null)
             {
                 OnLevelUnlock?.Invoke(curPos);
             }

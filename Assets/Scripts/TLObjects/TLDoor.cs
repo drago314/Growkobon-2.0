@@ -6,6 +6,7 @@ public class TLDoor : TLObject
 {
     public int potsRequired = 0;
     public bool usesMultiPot = false;
+    public string exitName = "Main Exit";
 
     public TLDoor(Vector2Int curPos, DoorSignature doorSig) : base(curPos)
     {
@@ -42,5 +43,5 @@ public class TLDoor : TLObject
         }
     }
 
-    public override string GetName() { return "Door"; }
+    public override string GetName() { return exitName; }
 }

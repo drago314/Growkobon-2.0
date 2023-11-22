@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using System;
 
 public class MovementManager : MonoBehaviour
@@ -147,7 +148,7 @@ public class MovementManager : MonoBehaviour
 
         if (currentState.GetDoorAtPos(currentState.GetPosOf(player)) != null)
         {
-            GameManager.Inst.FinishLevel();
+            GameManager.Inst.FinishLevel(SceneManager.GetActiveScene().name + " " + currentState.GetDoorAtPos(currentState.GetPosOf(player)).exitName);
         }
 
         /*int potNum = 0;
@@ -216,6 +217,6 @@ public class MovementManager : MonoBehaviour
 
     private void DebugFinishLevel(InputAction.CallbackContext obj)
     {
-        GameManager.Inst.FinishLevel();
+        GameManager.Inst.FinishLevel(SceneManager.GetActiveScene().name + " " + currentState.GetAllTLDoors()[0].exitName);
     }
 }
