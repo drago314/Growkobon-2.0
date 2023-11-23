@@ -24,7 +24,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public GeneralAnimator animator;
     public PlayerInput inputManager;
 
-
     public event Action OnLevelEnter;
     public event Action OnMapEnter;
 
@@ -269,19 +268,25 @@ public class GameManager : MonoBehaviour, IDataPersistence
     private IEnumerator FinishLevelAsync(string levelExit)
     {
         Debug.Log("Finish Level: " + levelExit);
-
         var asyncLoadLevel = SceneManager.LoadSceneAsync(currentWorld, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
+
+        if (levelsCompleted.ContainsKey(levelExit))
+            levelsCompleted[levelExit] = true;
+        else
+            levelsCompleted.Add(levelExit, true);
+        DataPersistenceManager.instance.SaveGame();
+        levelsCompleted[levelExit] = false;
+
         SetMapManagerFromScene();
+
         foreach (var level in mapManager.currentState.GetAllTLLevels())
         {
             if (level.levelName == currentLevel)
                 mapManager.currentState.Move(mapManager.currentState.GetPlayer(), level.curPos);
         }
-        if (levelsCompleted.ContainsKey(levelExit))
-            levelsCompleted[levelExit] = true;
-        else
-            levelsCompleted.Add(levelExit, true);
+        levelsCompleted[levelExit] = true;
+
         inputManager.SwitchCurrentActionMap("World Map");
         OnMapEnter?.Invoke();
         mapManager.CompleteLevel(levelExit);

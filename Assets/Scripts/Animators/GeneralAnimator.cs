@@ -7,17 +7,19 @@ public class GeneralAnimator : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject plantPrefab;
+    [SerializeField] private GameObject clearPlantPrefab;
     [SerializeField] private GameObject levelPrefab;
     [SerializeField] private GameObject worldExitPrefab;
 
     public event System.Action<Vector2Int> OnLevelUnlock;
     private Tilemap pathTilemap;
     private List<Vector3Int> tilesToUnlock;
-    bool corutineInAction;
+    private bool corutineInAction;
 
     private void Start()
     {
-        gameObject.GetComponent<MovementManager>().OnPlantGrow += GrowPlant;
+       GameManager.Inst.movementManager.OnPlantGrow += GrowPlant;
+        GameManager.Inst.OnLevelEnter += GenerateLevel;
         GameManager.Inst.movementManager.OnResetEnd += GenerateLevel;
         GameManager.Inst.movementManager.OnUndoEnd += GenerateLevel;
         GameManager.Inst.OnMapEnter += GenerateMap;
@@ -26,6 +28,8 @@ public class GeneralAnimator : MonoBehaviour
 
     private void OnDestroy()
     {
+        GameManager.Inst.movementManager.OnPlantGrow -= GrowPlant;
+        GameManager.Inst.OnLevelEnter -= GenerateLevel;
         GameManager.Inst.movementManager.OnResetEnd -= GenerateLevel;
         GameManager.Inst.movementManager.OnUndoEnd -= GenerateLevel;
         GameManager.Inst.OnMapEnter -= GenerateMap;
@@ -40,7 +44,7 @@ public class GeneralAnimator : MonoBehaviour
 
     private void GrowPlant(GrowAction grow)
     {
-        var plantAnimator = Instantiate(plantPrefab, new Vector3Int(grow.newPos.x, grow.newPos.y, 0), Quaternion.identity).GetComponent<PlantAnimator>();
+        var plantAnimator = Instantiate(clearPlantPrefab, new Vector3Int(grow.newPos.x, grow.newPos.y, 0), Quaternion.identity).GetComponent<PlantAnimator>();
         plantAnimator.Grow(grow.moveDir);
     }
 
@@ -161,34 +165,4 @@ public class GeneralAnimator : MonoBehaviour
         }
         corutineInAction = false;
     }
-
-    // List<Vector2Int> pastPosList = new List<Vector2Int>();
-
-    //  List<Vector2Int> curPosList = new List<Vector2Int>();
-    // curPosList.Add(curPos);
-    /*foreach (var newPos in tilesToUnlock)
-{
-    foreach (var pastPos in pastPosList)
-    {
-        Vector2Int newPos2 = new Vector2Int(newPos.x, newPos.y); ;
-        if (!(curPos + Vector2Int.up).Equals(newPos) && !(curPos + Vector2Int.down).Equals(newPos) && !(curPos + Vector2Int.right).Equals(newPos) && !(curPos + Vector2Int.left).Equals(newPos)
-            && ((pastPos + Vector2Int.up).Equals(newPos) || (pastPos + Vector2Int.left).Equals(newPos) || (pastPos + Vector2Int.right).Equals(newPos) || (pastPos + Vector2Int.down).Equals(newPos)))
-        {
-            if (pathTilemap.GetTile(newPos) != null && pathTilemap.GetTile(newPos) is PathTile)
-            {
-                (pathTilemap.GetTile(newPos) as PathTile).unlocked = true;
-                pathTilemap.RefreshTile(newPos);
-            }
-            else if (GameManager.Inst.mapManager.currentState.GetLevelAtPos(newPos2) != null)
-            {
-                OnLevelUnlock?.Invoke(newPos2);
-            }
-            curPosList.Add(newPos2);
-            tilesToUnlock.Remove(newPos);
-        }
-        break;
-    }
-}
-
-pastPosList = curPosList;*/
 }
