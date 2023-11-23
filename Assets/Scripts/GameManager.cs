@@ -62,14 +62,12 @@ public class GameManager : MonoBehaviour, IDataPersistence
         else
         {
             currentWorld = SceneManager.GetActiveScene().name.Substring(0, 7) + " Map";
-            Debug.Log("Current World Changed To: " + currentWorld);
             OpenLevel(SceneManager.GetActiveScene().name);
         }
     }       
 
     public void LoadData(GameData data)
     {
-        Debug.Log("Loaded World As: " + data.currentWorld);
         currentWorld = data.currentWorld;
 
         levelsCompleted.Clear();
@@ -81,7 +79,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void SaveData(GameData data)
     {
-        Debug.Log("Saved World As: " + currentWorld);
         data.currentWorld = currentWorld;
 
         data.levelsCompleted.Clear();
@@ -235,6 +232,16 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 }
             }
         }
+        foreach (var world in mapManager.currentState.GetAllTLWorlds())
+        { 
+            foreach (var path in world.pathsBeginningUnlocked)
+            {
+                if (mapManager.currentState.GetPathAtPos(path) != null)
+                    mapManager.currentState.GetPathAtPos(path).unlocked = true;
+                if (mapManager.currentState.GetLevelAtPos(path) != null)
+                    mapManager.currentState.GetLevelAtPos(path).unlocked = true;
+            }
+        }   
 
         Debug.Log("Map Set");
     }
@@ -280,6 +287,24 @@ public class GameManager : MonoBehaviour, IDataPersistence
         mapManager.CompleteLevel(levelExit);
     }
 
+    public void OpenMap(string mapName, Vector2Int pos)
+    {
+        StartCoroutine(OpenMapAsync(mapName, pos));
+    }
+    private IEnumerator OpenMapAsync(string mapName, Vector2Int pos)
+    {
+        Debug.Log("Open Map: " + mapName);
+        currentWorld = mapName;
+
+
+        var asyncLoadLevel = SceneManager.LoadSceneAsync(mapName, LoadSceneMode.Single);
+        yield return new WaitUntil(() => asyncLoadLevel.isDone);
+        SetMapManagerFromScene();
+        mapManager.currentState.Move(mapManager.currentState.GetPlayer(), pos);
+        inputManager.SwitchCurrentActionMap("World Map");
+        OnMapEnter?.Invoke();
+    }
+
     public void OpenMap(string mapName, string levelName)
     {
         StartCoroutine(OpenMapAsync(mapName, levelName));
@@ -287,9 +312,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     private IEnumerator OpenMapAsync(string mapName, string levelName)
     {
         Debug.Log("Open Map: " + mapName + ", " + levelName);
-
         currentWorld = mapName;
-        Debug.Log("Current World Changed To: " + mapName);
 
         var asyncLoadLevel = SceneManager.LoadSceneAsync(mapName, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
@@ -315,9 +338,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     private IEnumerator OpenMapAsync(string mapName)
     {
         Debug.Log("Open Map: " + mapName);
-
         currentWorld = mapName;
-        Debug.Log("Current World Changed To: " + mapName);
 
         var asyncLoadLevel = SceneManager.LoadSceneAsync(mapName, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);

@@ -88,7 +88,7 @@ public class MapManager : MonoBehaviour
 
         if (currentState.GetWorldAtPos(goalPos) != null)
         {
-            GameManager.Inst.OpenMap(currentState.GetWorldAtPos(goalPos).worldToTravelTo, GameManager.Inst.currentWorld);
+            GameManager.Inst.OpenMap(currentState.GetWorldAtPos(goalPos).worldToTravelTo, currentState.GetWorldAtPos(goalPos).posToTravelTo);
         }
 
         bool noLevelInFront = currentState.GetLevelAtPos(goalPos) == null;
