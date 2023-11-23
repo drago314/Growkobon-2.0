@@ -165,4 +165,31 @@ public class GeneralAnimator : MonoBehaviour
         }
         corutineInAction = false;
     }
+        // List<Vector2Int> pastPosList = new List<Vector2Int>();
+        //  List<Vector2Int> curPosList = new List<Vector2Int>();
+        // curPosList.Add(curPos);
+        /*foreach (var newPos in tilesToUnlock)
+    {
+        foreach (var pastPos in pastPosList)
+        {
+            Vector2Int newPos2 = new Vector2Int(newPos.x, newPos.y); ;
+            if (!(curPos + Vector2Int.up).Equals(newPos) && !(curPos + Vector2Int.down).Equals(newPos) && !(curPos + Vector2Int.right).Equals(newPos) && !(curPos + Vector2Int.left).Equals(newPos)
+                && ((pastPos + Vector2Int.up).Equals(newPos) || (pastPos + Vector2Int.left).Equals(newPos) || (pastPos + Vector2Int.right).Equals(newPos) || (pastPos + Vector2Int.down).Equals(newPos)))
+            {
+                if (pathTilemap.GetTile(newPos) != null && pathTilemap.GetTile(newPos) is PathTile)
+                {
+                    (pathTilemap.GetTile(newPos) as PathTile).unlocked = true;
+                    pathTilemap.RefreshTile(newPos);
+                }
+                else if (GameManager.Inst.mapManager.currentState.GetLevelAtPos(newPos2) != null)
+                {
+                    OnLevelUnlock?.Invoke(newPos2);
+                }
+                curPosList.Add(newPos2);
+                tilesToUnlock.Remove(newPos);
+            }
+            break;
+        }
+    }
+    pastPosList = curPosList;*/
 }
