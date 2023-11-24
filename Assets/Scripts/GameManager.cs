@@ -252,6 +252,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         currentLevel = level;
 
         levelTransitioner.StartLevelTransition();
+        yield return new WaitForSeconds(1f);
         var asyncLoadLevel = SceneManager.LoadSceneAsync(level, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
         levelTransitioner.EndLevelTransition();
@@ -269,6 +270,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         Debug.Log("Finish Level: " + levelExit);
         levelTransitioner.StartLevelTransition();
+        yield return new WaitForSeconds(1f);
         var asyncLoadLevel = SceneManager.LoadSceneAsync(currentWorld, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
         levelTransitioner.EndLevelTransition();
@@ -301,6 +303,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         currentWorld = mapName;
 
         levelTransitioner.StartLevelTransition();
+        yield return new WaitForSeconds(1f);
         var asyncLoadLevel = SceneManager.LoadSceneAsync(mapName, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
         levelTransitioner.EndLevelTransition();
@@ -321,6 +324,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         currentWorld = mapName;
 
         levelTransitioner.StartLevelTransition();
+        yield return new WaitForSeconds(1f);
         var asyncLoadLevel = SceneManager.LoadSceneAsync(mapName, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
         levelTransitioner.EndLevelTransition();
@@ -350,6 +354,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         currentWorld = mapName;
 
         levelTransitioner.StartLevelTransition();
+        yield return new WaitForSeconds(1f);
         var asyncLoadLevel = SceneManager.LoadSceneAsync(mapName, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
         levelTransitioner.EndLevelTransition();
