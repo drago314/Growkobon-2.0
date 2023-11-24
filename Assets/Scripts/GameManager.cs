@@ -261,33 +261,30 @@ public class GameManager : MonoBehaviour, IDataPersistence
         OnLevelEnter?.Invoke();
     }
 
-    public void FinishLevel(string levelExit)
+    public void CompleteLevel(string levelExit)
     {
-        StartCoroutine(FinishLevelAsync(levelExit));
+        StartCoroutine(CompleteLevelAsync(levelExit));
     }
-    private IEnumerator FinishLevelAsync(string levelExit)
+    private IEnumerator CompleteLevelAsync(string levelExit)
     {
         Debug.Log("Finish Level: " + levelExit);
         levelTransitioner.StartLevelTransition();
         var asyncLoadLevel = SceneManager.LoadSceneAsync(currentWorld, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
         levelTransitioner.EndLevelTransition();
+        SetMapManagerFromScene();
 
         if (levelsCompleted.ContainsKey(levelExit))
             levelsCompleted[levelExit] = true;
         else
             levelsCompleted.Add(levelExit, true);
         DataPersistenceManager.instance.SaveGame();
-        levelsCompleted[levelExit] = false;
-
-        SetMapManagerFromScene();
 
         foreach (var level in mapManager.currentState.GetAllTLLevels())
         {
             if (level.levelName == currentLevel)
                 mapManager.currentState.Move(mapManager.currentState.GetPlayer(), level.curPos);
         }
-        levelsCompleted[levelExit] = true;
 
         inputManager.SwitchCurrentActionMap("World Map");
         OnMapEnter?.Invoke();
