@@ -103,6 +103,17 @@
                 },
                 {
                     "name": "",
+                    "id": "a70d113a-10ac-42e7-8871-52d501b06cf2",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Undo",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "85915563-ed4c-4d5d-884d-dd9227b12497",
                     "path": "<Keyboard>/w",
                     "interactions": "",
