@@ -107,6 +107,17 @@ public class GameState
         return doorList;
     }
 
+    public List<TLPath> GetAllTLPaths()
+    {
+        List<TLPath> pathList = new List<TLPath>();
+        foreach (var obj in GetAllTLObjects())
+        {
+            if (obj is TLPath)
+                pathList.Add((TLPath)obj);
+        }
+        return pathList;
+    }
+
     public List<TLLevel> GetAllTLLevels()
     {
         List<TLLevel> levelList = new List<TLLevel>();

@@ -11,6 +11,8 @@ public class GeneralAnimator : MonoBehaviour
     [SerializeField] private GameObject levelPrefab;
     [SerializeField] private GameObject worldExitPrefab;
 
+    [SerializeField] private Sprite[] SpecialTSprites;
+
     public event System.Action<Vector2Int> OnLevelUnlock;
     private Tilemap pathTilemap;
 
@@ -114,6 +116,15 @@ public class GeneralAnimator : MonoBehaviour
             }      
             if (TLObj is TLWorldPortal)
                 InstantiateWorldExit((TLWorldPortal)TLObj);
+        }
+
+        // Ensure we reload all the path sprites because they need the other path sprite's data to properly initialize (mainly for the special T sprites)
+        foreach (var TLPath in GameManager.Inst.mapManager.currentState.GetAllTLPaths())
+        {
+            Vector3Int pos = pathTilemap.WorldToCell(new Vector3Int(TLPath.curPos.x, TLPath.curPos.y, 0));
+            PathTile tile = (PathTile)pathTilemap.GetTile(pos);
+            tile.unlocked = TLPath.unlocked;
+            pathTilemap.RefreshTile(pos);
         }
     }
 

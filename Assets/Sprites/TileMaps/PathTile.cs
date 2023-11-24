@@ -25,6 +25,7 @@ public class PathTile : Tile
 
     public Sprite[] lockedSpritesURDL;
     public Sprite[] unlockedSpritesURDL;
+    public Sprite[] specialCaseUnlockedTs;
     public bool unlocked;
     public Sprite GetSprite(Vector3Int position, ITilemap tilemap)
     {
@@ -43,6 +44,55 @@ public class PathTile : Tile
         if (pathUp)
             index += 8;
 
+        // T-Sprite Special Cases
+        if (unlocked && index == 14)
+        {
+            bool unlockedPathUp = true, unlockedPathDown = true;
+
+            try
+            {
+                unlockedPathUp = false;
+                // Check if sprite above is unlocked
+                Sprite spriteUp = tilemap.GetSprite(position + Vector3Int.up);
+                int i = 0;
+                foreach (var sprite in unlockedSpritesURDL)
+                {
+                    if (sprite.Equals(spriteUp))
+                    {
+                        unlockedPathUp = true;
+                    }
+                    i++;
+                }
+
+                // Check if sprite below is unlocked
+                Sprite spriteDown = tilemap.GetSprite(position + Vector3Int.down);
+                unlockedPathDown = false;
+                i = 0;
+                foreach (var sprite in unlockedSpritesURDL)
+                {
+                    if (sprite.Equals(spriteDown))
+                    {
+                        unlockedPathDown = true;
+                    }
+                    i++;
+                }
+            }
+            catch (System.Exception e)
+            {
+                unlockedPathUp = true;
+                unlockedPathDown = true;
+                Debug.LogWarning("Special T Path Loaded Incorrectly: " + e);
+            }
+
+            if (unlockedPathDown && unlockedPathUp)
+                return unlockedSpritesURDL[index];
+            else if (unlockedPathDown)
+                return specialCaseUnlockedTs[0];
+            else if (unlockedPathUp)
+                return specialCaseUnlockedTs[1];
+        }
+
+        // Regular Cases
         if (unlocked)
             return unlockedSpritesURDL[index];
         else
