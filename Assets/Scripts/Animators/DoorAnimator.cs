@@ -37,6 +37,7 @@ public class DoorAnimator : MonoBehaviour
     private void OnLevelLoaded()
     {
         door = GameManager.Inst.movementManager.currentState.GetDoorAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        InstantActivateDoor();
     }
 
     private void OnMoveBegin()
@@ -57,6 +58,11 @@ public class DoorAnimator : MonoBehaviour
     }
 
     private void OnUndoOrResetEnd()
+    {
+        InstantActivateDoor();
+    }
+
+    private void InstantActivateDoor()
     {
         if (door.IsOpen())
             animator.SetTrigger("InstantOpen");
