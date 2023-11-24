@@ -261,7 +261,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         SetMovementManagerFromScene();
         OnLevelEnter?.Invoke();
 
-        yield return new WaitForSeconds(40f / 60f);
+        yield return new WaitForSeconds(20f / 60f);
         inputManager.SwitchCurrentActionMap("Gameplay");
     }
 
@@ -296,7 +296,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         OnMapEnter?.Invoke();
         mapManager.CompleteLevel(levelExit);
 
-        yield return new WaitForSeconds(40f / 60f);
+        yield return new WaitForSeconds(20f / 60f);
         inputManager.SwitchCurrentActionMap("World Map");
     }
 
@@ -321,7 +321,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         mapManager.currentState.Move(mapManager.currentState.GetPlayer(), pos);
         OnMapEnter?.Invoke();
 
-        yield return new WaitForSeconds(40f / 60f);
+        yield return new WaitForSeconds(20f / 60f);
         inputManager.SwitchCurrentActionMap("World Map");
     }
 
@@ -356,7 +356,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
         OnMapEnter?.Invoke();
 
-        yield return new WaitForSeconds(40f / 60f);
+        yield return new WaitForSeconds(20f / 60f);
         inputManager.SwitchCurrentActionMap("World Map");
     }
 
@@ -381,7 +381,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         SetMapManagerFromScene();
         OnMapEnter?.Invoke();
 
-        yield return new WaitForSeconds(40f / 60f);
+        yield return new WaitForSeconds(20f / 60f);
         inputManager.SwitchCurrentActionMap("World Map");
     }
 
