@@ -133,17 +133,48 @@ public class GeneralAnimator : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         List<List<Vector3Int>> unlockPosOrder = new List<List<Vector3Int>>();
-        foreach (var tile in tilesToUnlock)
+
+        for (int i = 0; i < tilesToUnlock.Count; i++)
         {
-            unlockPosOrder.Add(new List<Vector3Int> { tile });
+            Vector2Int tilePos = new Vector2Int(tilesToUnlock[i].x, tilesToUnlock[i].y);
+            if (i == 0)
+            {
+                unlockPosOrder.Add(new List<Vector3Int> { tilesToUnlock[i] });
+                continue;
+            }
+
+            bool foundPair = false;
+            for (int j = unlockPosOrder.Count - 1; j >= 0; j--)
+            {
+                foreach (var possiblePairVector3 in unlockPosOrder[j])
+                {
+                    Vector2Int possiblePair = new Vector2Int(possiblePairVector3.x, possiblePairVector3.y);
+                    if ((tilePos + Vector2Int.up).Equals(possiblePair) || (tilePos + Vector2Int.down).Equals(possiblePair) || (tilePos + Vector2Int.right).Equals(possiblePair) || (tilePos + Vector2Int.left).Equals(possiblePair))
+                    {
+                        if (j == unlockPosOrder.Count - 1)
+                            unlockPosOrder.Add(new List<Vector3Int> { tilesToUnlock[i] });
+                        else
+                            unlockPosOrder[j + 1].Add(tilesToUnlock[i]);
+
+                        foundPair = true;
+                        break;
+                    }
+                }
+
+                if (foundPair)
+                    break;
+            }
+            
+            if (!foundPair)
+            {
+                unlockPosOrder[0].Add(tilesToUnlock[i]);
+            }
         }
 
         foreach (var bunch in unlockPosOrder)
         {
-            Debug.Log("bunch");
             foreach (var tile in bunch)
             {
-                Debug.Log("tile");
                 Vector2Int curPos = new Vector2Int(tile.x, tile.y);
 
                 if (pathTilemap.GetTile(tile) != null && pathTilemap.GetTile(tile) is PathTile)
