@@ -248,6 +248,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     private IEnumerator OpenLevelAsync(string level)
     {
         Debug.Log("Open Level: " + level);
+        inputManager.SwitchCurrentActionMap("No Control");
 
         currentLevel = level;
 
@@ -258,8 +259,10 @@ public class GameManager : MonoBehaviour, IDataPersistence
         levelTransitioner.EndLevelTransition();
 
         SetMovementManagerFromScene();
-        inputManager.SwitchCurrentActionMap("Gameplay");
         OnLevelEnter?.Invoke();
+
+        yield return new WaitForSeconds(40f / 60f);
+        inputManager.SwitchCurrentActionMap("Gameplay");
     }
 
     public void CompleteLevel(string levelExit)
@@ -269,6 +272,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
     private IEnumerator CompleteLevelAsync(string levelExit)
     {
         Debug.Log("Finish Level: " + levelExit);
+        inputManager.SwitchCurrentActionMap("No Control");
+
         levelTransitioner.StartLevelTransition();
         yield return new WaitForSeconds(40f / 60f);
         var asyncLoadLevel = SceneManager.LoadSceneAsync(currentWorld, LoadSceneMode.Single);
@@ -288,9 +293,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 mapManager.currentState.Move(mapManager.currentState.GetPlayer(), level.curPos);
         }
 
-        inputManager.SwitchCurrentActionMap("World Map");
         OnMapEnter?.Invoke();
         mapManager.CompleteLevel(levelExit);
+
+        yield return new WaitForSeconds(40f / 60f);
+        inputManager.SwitchCurrentActionMap("World Map");
     }
 
     public void OpenMap(string mapName, Vector2Int pos)
@@ -300,6 +307,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
     private IEnumerator OpenMapAsync(string mapName, Vector2Int pos)
     {
         Debug.Log("Open Map: " + mapName);
+        inputManager.SwitchCurrentActionMap("No Control");
+
         currentWorld = mapName;
 
         levelTransitioner.StartLevelTransition();
@@ -310,8 +319,10 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         SetMapManagerFromScene();
         mapManager.currentState.Move(mapManager.currentState.GetPlayer(), pos);
-        inputManager.SwitchCurrentActionMap("World Map");
         OnMapEnter?.Invoke();
+
+        yield return new WaitForSeconds(40f / 60f);
+        inputManager.SwitchCurrentActionMap("World Map");
     }
 
     public void OpenMap(string mapName, string levelName)
@@ -321,6 +332,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
     private IEnumerator OpenMapAsync(string mapName, string levelName)
     {
         Debug.Log("Open Map: " + mapName + ", " + levelName);
+
+        inputManager.SwitchCurrentActionMap("No Control");
+
         currentWorld = mapName;
 
         levelTransitioner.StartLevelTransition();
@@ -340,8 +354,10 @@ public class GameManager : MonoBehaviour, IDataPersistence
             if (world.worldToTravelTo == levelName)
                 mapManager.currentState.Move(mapManager.currentState.GetPlayer(), world.curPos);
         }
-        inputManager.SwitchCurrentActionMap("World Map");
         OnMapEnter?.Invoke();
+
+        yield return new WaitForSeconds(40f / 60f);
+        inputManager.SwitchCurrentActionMap("World Map");
     }
 
     public void OpenMap(string mapName)
@@ -351,6 +367,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
     private IEnumerator OpenMapAsync(string mapName)
     {
         Debug.Log("Open Map: " + mapName);
+
+        inputManager.SwitchCurrentActionMap("No Control");
+
         currentWorld = mapName;
 
         levelTransitioner.StartLevelTransition();
@@ -360,13 +379,23 @@ public class GameManager : MonoBehaviour, IDataPersistence
         levelTransitioner.EndLevelTransition();
 
         SetMapManagerFromScene();
-        inputManager.SwitchCurrentActionMap("World Map");
         OnMapEnter?.Invoke();
+
+        yield return new WaitForSeconds(40f / 60f);
+        inputManager.SwitchCurrentActionMap("World Map");
     }
 
     public void OpenTitleScreen()
     {
-        SceneManager.LoadScene("Title Screen");
+        StartCoroutine(OpenTitleScreenAsync());
+    }
+    private IEnumerator OpenTitleScreenAsync()
+    {
+        levelTransitioner.StartLevelTransition();
+        yield return new WaitForSeconds(40f / 60f);
+        var asyncLoadLevel = SceneManager.LoadSceneAsync("Title Screen", LoadSceneMode.Single);
+        yield return new WaitUntil(() => asyncLoadLevel.isDone);
+        levelTransitioner.EndLevelTransition();
     }
 
     public void QuitGame()

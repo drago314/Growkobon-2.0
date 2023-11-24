@@ -942,6 +942,12 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "No Control",
+            "id": "cfbcaa22-7a19-4220-96f2-7b8034c4dac6",
+            "actions": [],
+            "bindings": []
         }
     ],
     "controlSchemes": []
