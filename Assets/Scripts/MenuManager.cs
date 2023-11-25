@@ -12,7 +12,6 @@ public class MenuManager : MonoBehaviour
     [SerializeField] public Button titleScreenButton, mapButton;
     private bool menuOpen;
     private bool inMap;
-    private string currentActionMap;
 
     private void Start()
     {
@@ -53,7 +52,6 @@ public class MenuManager : MonoBehaviour
 
     private void Pause()
     {
-        currentActionMap = GameManager.Inst.inputManager.currentActionMap.name;
         GameManager.Inst.inputManager.SwitchCurrentActionMap("Pause Menu");
         pauseMenuUI.SetActive(true);
         if (inMap)
@@ -71,7 +69,11 @@ public class MenuManager : MonoBehaviour
 
     public void Resume()
     { 
-        GameManager.Inst.inputManager.SwitchCurrentActionMap(currentActionMap);
+        if (inMap)
+            GameManager.Inst.inputManager.SwitchCurrentActionMap("World Map");
+        else
+            GameManager.Inst.inputManager.SwitchCurrentActionMap("Gameplay");
+
         pauseMenuUI.SetActive(false);
         menuOpen = false;
     }
