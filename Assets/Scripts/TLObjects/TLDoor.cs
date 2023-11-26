@@ -10,14 +10,16 @@ public class TLDoor : TLObject
 
     public TLDoor(Vector2Int curPos, DoorSignature doorSig) : base(curPos)
     {
-        this.potsRequired = doorSig.potsRequired;
-        this.usesMultiPot = doorSig.usesMultiPots;
+        potsRequired = doorSig.potsRequired;
+        usesMultiPot = doorSig.usesMultiPots;
+        exitName = doorSig.exitName;
     }
 
     public TLDoor(TLDoor obj) : base(obj)
     {
         potsRequired = obj.potsRequired;
         usesMultiPot = obj.usesMultiPot;
+        exitName = obj.exitName;
     }
 
     public bool IsOpen()

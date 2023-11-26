@@ -113,4 +113,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/World 2/World 2 Level 14.unity
     guid: 1dc0448167d821b4fa6bee4e0f690562
+  - enabled: 1
+    path: Assets/Scenes/World 3/World 3 Map.unity
+    guid: 19e96fcc14d1f9f43a33ec96c067cbc4
+  - enabled: 1
+    path: Assets/Scenes/World 3/World 3 Level 1.unity
+    guid: c71b0172f42a79642b7fb164dbf8cfe0
   m_configObjects: {}

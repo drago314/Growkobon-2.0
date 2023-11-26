@@ -215,7 +215,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
             foreach (var pair in lvl.exitToPathsUnlocked)
             {
                 mapManager.exitToPathsUnlocked.Add(pair.Key, pair.Value);
-                if (IsLevelComplete(lvl.levelName))
+                if (levelsCompleted.ContainsKey(pair.Key) && levelsCompleted[pair.Key])
                 {
                     foreach (var path in pair.Value)
                     {
