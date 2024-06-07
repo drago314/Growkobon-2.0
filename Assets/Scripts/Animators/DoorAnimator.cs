@@ -100,6 +100,6 @@ public class DoorAnimator : MonoBehaviour
         requiredPotOverlay.sprite = requiredPotOverlays[door.potsRequired];
 
         currentPotOverlay.color = new Color(255f, 255f, 255f, 1f);
-        currentPotOverlay.color = new Color(255f, 255f, 255f, 1f);
+        requiredPotOverlay.color = new Color(255f, 255f, 255f, 1f);
     }
 }
