@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     [SerializeField] public string[] potNames;
     [SerializeField] public string[] pathNames;
 
-    public SerializableDictionary<string, bool> levelsCompleted;
+    public List<string> levelsCompleted;
     public string currentLevel;
     public string currentWorld;
 
@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     private void OnEnable()
     {
-        levelsCompleted = new SerializableDictionary<string, bool>();
+        levelsCompleted = new List<string>();
 
         if (SceneManager.GetActiveScene().name.Contains("Title"))
         {
@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
         else
         {
+            // TODO WILL NOT WORK FOR WORLDS 10+
             currentWorld = SceneManager.GetActiveScene().name.Substring(0, 7) + " Map";
             OpenLevel(SceneManager.GetActiveScene().name);
         }
@@ -68,7 +69,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         levelsCompleted.Clear();
         foreach (var level in data.levelsCompleted)
         {
-            levelsCompleted.Add(level, true);
+            levelsCompleted.Add(level);
         }
     }
 
@@ -77,19 +78,18 @@ public class GameManager : MonoBehaviour, IDataPersistence
         data.currentWorld = currentWorld;
 
         data.levelsCompleted.Clear();
-        foreach (var pair in levelsCompleted)
+        foreach (var level in levelsCompleted)
         {
-            if (pair.Value)
-                data.levelsCompleted.Add(pair.Key);
+            data.levelsCompleted.Add(level);
         }
     }
 
     public bool IsLevelComplete(string levelName)
     {
         bool completed = false;
-        foreach (string key in levelsCompleted.Keys)
+        foreach (string level in levelsCompleted)
         {
-            if (key.Contains(levelName))
+            if (levelName == level)
                 completed = true;
         }
         return completed;
@@ -163,39 +163,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         var TlObjectList = new List<TLObject>();
 
-        var tileMaps = FindObjectsOfType<Tilemap>();
-
-        foreach (var tileMap in tileMaps)
-        {
-            if (tileMap.gameObject.name != "Background Tilemap")
-            {
-                BoundsInt bounds = tileMap.cellBounds;
-                foreach (Vector3Int tilePos in tileMap.cellBounds.allPositionsWithin)
-                {
-                    //if (tileMap.GetTile(tilePos) != null)
-                    //    print(tileMap.GetTile(tilePos).name);
-
-                    foreach (var pathName in pathNames)
-                    {
-                        if (tileMap.GetTile(tilePos) != null && pathName.Equals(tileMap.GetTile(tilePos).name))
-                        {
-                            Vector3 pos = tileMap.CellToLocal(tilePos);
-                            TlObjectList.Add(new TLPath(new Vector2Int((int)pos.x, (int)pos.y), false));
-                        }
-                    }
-                }
-            }
-        }
-
         var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
-
-        /*
-        foreach (var anim in TLAnimators)
-        {
-            print(anim.GetType().ToString() + ": " + anim.transform.position.x + " " + anim.transform.position.y);
-        }
-        */
-
         foreach (var TLSig in TLSignatures)
         {
             Vector2Int pos = new Vector2Int((int)TLSig.gameObject.transform.position.x, (int)TLSig.gameObject.transform.position.y);
@@ -208,35 +176,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
 
         mapManager.currentState = new GameState(TlObjectList);
-
-        mapManager.exitToPathsUnlocked = new Dictionary<string, List<Vector2Int>>();
-        foreach (var lvl in mapManager.currentState.GetAllTLLevels())
-        {
-            foreach (var pair in lvl.exitToPathsUnlocked)
-            {
-                mapManager.exitToPathsUnlocked.Add(pair.Key, pair.Value);
-                if (levelsCompleted.ContainsKey(pair.Key) && levelsCompleted[pair.Key])
-                {
-                    foreach (var path in pair.Value)
-                    {
-                        if (mapManager.currentState.GetPathAtPos(path) != null)
-                            mapManager.currentState.GetPathAtPos(path).unlocked = true;
-                        if (mapManager.currentState.GetLevelAtPos(path) != null)
-                            mapManager.currentState.GetLevelAtPos(path).unlocked = true;
-                    }
-                }
-            }
-        }
-        foreach (var world in mapManager.currentState.GetAllTLWorlds())
-        { 
-            foreach (var path in world.pathsBeginningUnlocked)
-            {
-                if (mapManager.currentState.GetPathAtPos(path) != null)
-                    mapManager.currentState.GetPathAtPos(path).unlocked = true;
-                if (mapManager.currentState.GetLevelAtPos(path) != null)
-                    mapManager.currentState.GetLevelAtPos(path).unlocked = true;
-            }
-        }   
 
         Debug.Log("Map Set");
     }
@@ -269,9 +208,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         StartCoroutine(CompleteLevelAsync(levelExit));
     }
-    private IEnumerator CompleteLevelAsync(string levelExit)
+    private IEnumerator CompleteLevelAsync(string levelName)
     {
-        Debug.Log("Finish Level: " + levelExit);
+        Debug.Log("Finish Level: " + levelName);
         inputManager.SwitchCurrentActionMap("No Control");
 
         levelTransitioner.StartLevelTransition();
@@ -281,10 +220,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         levelTransitioner.EndLevelTransition();
         SetMapManagerFromScene();
 
-        if (levelsCompleted.ContainsKey(levelExit))
-            levelsCompleted[levelExit] = true;
-        else
-            levelsCompleted.Add(levelExit, true);
+        if (!levelsCompleted.Contains(levelName))
+            levelsCompleted.Add(levelName);
         DataPersistenceManager.instance.SaveGame();
 
         foreach (var level in mapManager.currentState.GetAllTLLevels())
@@ -294,7 +231,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
 
         OnMapEnter?.Invoke();
-        mapManager.CompleteLevel(levelExit);
+        mapManager.CompleteLevel(levelName);
 
         yield return new WaitForSeconds(20f / 60f);
         inputManager.SwitchCurrentActionMap("World Map");

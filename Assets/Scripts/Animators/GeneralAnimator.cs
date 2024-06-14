@@ -23,7 +23,6 @@ public class GeneralAnimator : MonoBehaviour
         GameManager.Inst.movementManager.OnResetEnd += GenerateLevel;
         GameManager.Inst.movementManager.OnUndoEnd += GenerateLevel;
         GameManager.Inst.OnMapEnter += GenerateMap;
-        GameManager.Inst.mapManager.OnPathsUnlock += UnlockPaths;
     }
 
     private void OnDestroy()
@@ -33,7 +32,6 @@ public class GeneralAnimator : MonoBehaviour
         GameManager.Inst.movementManager.OnResetEnd -= GenerateLevel;
         GameManager.Inst.movementManager.OnUndoEnd -= GenerateLevel;
         GameManager.Inst.OnMapEnter -= GenerateMap;
-        GameManager.Inst.mapManager.OnPathsUnlock -= UnlockPaths;
     }
 
     private void InstantiatePlayer(TLPlayer player)
