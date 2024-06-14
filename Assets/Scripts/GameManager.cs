@@ -163,6 +163,29 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         var TlObjectList = new List<TLObject>();
 
+        var tileMaps = FindObjectsOfType<Tilemap>();
+        foreach (var tileMap in tileMaps)
+        {
+            if (tileMap.gameObject.name != "Background Tilemap")
+            {
+                BoundsInt bounds = tileMap.cellBounds;
+                foreach (Vector3Int tilePos in tileMap.cellBounds.allPositionsWithin)
+                {
+                    //if (tileMap.GetTile(tilePos) != null)
+                    //    print(tileMap.GetTile(tilePos).name);
+
+                    foreach (var wallName in wallNames)
+                    {
+                        if (tileMap.GetTile(tilePos) != null && wallName.Equals(tileMap.GetTile(tilePos).name))
+                        {
+                            Vector3 pos = tileMap.CellToLocal(tilePos);
+                            TlObjectList.Add(new TLWall(new Vector2Int((int)pos.x, (int)pos.y)));
+                        }
+                    }
+                }
+            }
+        }
+
         var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
         foreach (var TLSig in TLSignatures)
         {
