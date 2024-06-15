@@ -13,6 +13,7 @@ public class PlayerAnimator : MonoBehaviour
     {
         GameManager.Inst.gameObject.GetComponent<MovementManager>().OnPlayerMove += OnPlayerMove;
         GameManager.Inst.gameObject.GetComponent<MapManager>().OnPlayerMove += OnPlayerMove;
+        GameManager.Inst.OnMapEnter += OnMapEnter;
     }
 
     private void OnDestroy()
@@ -21,7 +22,15 @@ public class PlayerAnimator : MonoBehaviour
         {
             GameManager.Inst.gameObject.GetComponent<MovementManager>().OnPlayerMove -= OnPlayerMove;
             GameManager.Inst.gameObject.GetComponent<MapManager>().OnPlayerMove -= OnPlayerMove;
+            GameManager.Inst.OnMapEnter -= OnMapEnter;
         }
+    }
+
+    private void OnMapEnter(GameState gameState)
+    {
+        TLPlayer player = gameState.GetPlayer();
+        gameObject.transform.position = new Vector3Int(player.curPos.x, player.curPos.y, 0);
+       PlayerFaceDir(player.directionFacing);
     }
 
     private void OnPlayerMove(MoveAction move)

@@ -8,6 +8,7 @@ public class MapManager : MonoBehaviour
 {
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, enter;
     public event System.Action<MoveAction> OnPlayerMove;
+    public event System.Action<string> OnLevelComplete;
 
     public GameState currentState;
     public Dictionary<string, List<Vector2Int>> exitToPathsUnlocked;
@@ -113,6 +114,7 @@ public class MapManager : MonoBehaviour
 
     public void CompleteLevel(string levelName)
     {
+        OnLevelComplete?.Invoke(levelName);
         // TODO UNLOCK THINGS
     }
 };

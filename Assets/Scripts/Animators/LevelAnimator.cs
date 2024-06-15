@@ -12,35 +12,36 @@ public class LevelAnimator : MonoBehaviour
 
     void Start()
     {
-        GameManager.Inst.animator.OnLevelUnlock += UnlockLevel;
+        GameManager.Inst.mapManager.OnLevelComplete += CompleteLevel;
+        GameManager.Inst.OnMapEnter += Instantiate;
+        Debug.Log("Level Animator Created (" + gameObject.name + ")");
     }
+    
 
     private void OnDestroy()
     {
+        Debug.Log("Level Animator Destroyed");  
         if (GameManager.Inst != null)
         {
-            GameManager.Inst.animator.OnLevelUnlock -= UnlockLevel;
+            GameManager.Inst.mapManager.OnLevelComplete -= CompleteLevel;
+            GameManager.Inst.OnMapEnter -= Instantiate;
         }
     }
 
-    public void Instantiate()
+    public void Instantiate(GameState gameState)
     {
-        level = GameManager.Inst.mapManager.currentState.GetLevelAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        level = gameState.GetLevelAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        Debug.Log(level.levelName + " Instantiated");
         if (GameManager.Inst.IsLevelComplete(level.levelName))
             levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlay;
         else if (level.unlocked)
             levelOverlayChild.GetComponent<SpriteRenderer>().sprite = unlockedLevelOverlay;
     }
 
-    public void UnlockLevel(Vector2Int pos)
+    public void CompleteLevel(string levelName)
     {
-        if (new Vector2Int((int)transform.position.x, (int)transform.position.y).Equals(pos))
-        {
-            level = GameManager.Inst.mapManager.currentState.GetLevelAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-            if (GameManager.Inst.IsLevelComplete(level.levelName))
-                levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlay;
-            else
-                levelOverlayChild.GetComponent<SpriteRenderer>().sprite = unlockedLevelOverlay;
-        }
+        Debug.Log(levelName);
+        if (level.levelName == levelName)
+            levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlay;
     }
 }

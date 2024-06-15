@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public LevelTransitioner levelTransitioner;
 
     public event Action OnLevelEnter;
-    public event Action OnMapEnter;
+    public event Action<GameState> OnMapEnter;
 
     private void Awake()
     {
@@ -243,18 +243,20 @@ public class GameManager : MonoBehaviour, IDataPersistence
         levelTransitioner.EndLevelTransition();
         SetMapManagerFromScene();
 
-        if (!levelsCompleted.Contains(levelName))
-            levelsCompleted.Add(levelName);
-        DataPersistenceManager.instance.SaveGame();
-
         foreach (var level in mapManager.currentState.GetAllTLLevels())
         {
             if (level.levelName == currentLevel)
                 mapManager.currentState.Move(mapManager.currentState.GetPlayer(), level.curPos);
         }
 
-        OnMapEnter?.Invoke();
-        mapManager.CompleteLevel(levelName);
+        OnMapEnter?.Invoke(mapManager.currentState);
+
+        if (!levelsCompleted.Contains(levelName))
+        {
+            levelsCompleted.Add(levelName);
+            DataPersistenceManager.instance.SaveGame();
+            mapManager.CompleteLevel(levelName);
+        }
 
         yield return new WaitForSeconds(20f / 60f);
         inputManager.SwitchCurrentActionMap("World Map");
@@ -279,7 +281,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         SetMapManagerFromScene();
         mapManager.currentState.Move(mapManager.currentState.GetPlayer(), pos);
-        OnMapEnter?.Invoke();
+        OnMapEnter?.Invoke(mapManager.currentState);
 
         yield return new WaitForSeconds(20f / 60f);
         inputManager.SwitchCurrentActionMap("World Map");
@@ -314,7 +316,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
             if (world.worldToTravelTo == levelName)
                 mapManager.currentState.Move(mapManager.currentState.GetPlayer(), world.curPos);
         }
-        OnMapEnter?.Invoke();
+        OnMapEnter?.Invoke(mapManager.currentState);
+
 
         yield return new WaitForSeconds(20f / 60f);
         inputManager.SwitchCurrentActionMap("World Map");
@@ -339,10 +342,12 @@ public class GameManager : MonoBehaviour, IDataPersistence
         levelTransitioner.EndLevelTransition();
 
         SetMapManagerFromScene();
-        OnMapEnter?.Invoke();
+        OnMapEnter?.Invoke(mapManager.currentState);
 
+        Debug.Log("Pre Wait");
         yield return new WaitForSeconds(20f / 60f);
         inputManager.SwitchCurrentActionMap("World Map");
+        Debug.Log("Finished Complete Level Coroutine");
     }
 
     public void OpenTitleScreen()
