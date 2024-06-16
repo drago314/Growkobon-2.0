@@ -147,7 +147,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
             if (TLSig is PlayerSignature)
                 TlObjectList.Add(new TLPlayer(pos));
             if (TLSig is PlantSignature)
-                TlObjectList.Add(new TLPlant(pos));
+                TlObjectList.Add(new TLPlant(pos, (PlantSignature) TLSig));
             if (TLSig is DoorSignature)
                 TlObjectList.Add(new TLDoor(pos, (DoorSignature) TLSig));
         }

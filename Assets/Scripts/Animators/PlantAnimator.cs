@@ -6,12 +6,13 @@ using UnityEngine;
 public class PlantAnimator : MonoBehaviour
 {
     [SerializeField] private Animator animator;
+    [SerializeField] private Sprite deadHedge;
+    [SerializeField] private Sprite aliveHedge;
     [SerializeField] private List<Sprite> potOverlays;
     [SerializeField] private GameObject potOverlayChild;
 
     private TLPlant plant;
     private SpriteRenderer potOverlay;
-    private SpriteRenderer spriteRenderer;
 
     private void Start()
     {
@@ -40,12 +41,14 @@ public class PlantAnimator : MonoBehaviour
         animator.SetTrigger("Idle");
         GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
         UpdatePlantInPot();
+        UpdateDeadOrAlive();
     }
 
     private void OnLevelLoaded()
     {
         plant = GameManager.Inst.movementManager.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
         UpdatePlantInPot();
+        UpdateDeadOrAlive();
     }
 
     private void OnMoveBegin()
@@ -86,6 +89,7 @@ public class PlantAnimator : MonoBehaviour
     private void OnMoveEnd()
     {
         UpdatePlantInPot();
+        UpdateDeadOrAlive();
     }
 
     private void UpdatePlantInPot()
@@ -101,5 +105,13 @@ public class PlantAnimator : MonoBehaviour
             potOverlay.color = new Color(1f, 1f, 1f, 1f);
             potOverlay.sprite = potOverlays[0];
         }
+    }
+
+    private void UpdateDeadOrAlive()
+    {
+        if (plant.isDead)
+            animator.SetBool("Dead", true);
+        else
+            animator.SetBool("Dead", false);
     }
 }

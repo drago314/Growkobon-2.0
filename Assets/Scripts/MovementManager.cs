@@ -122,7 +122,11 @@ public class MovementManager : MonoBehaviour
             {
                 OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player, currentState));
             }
-            GrowPlant(goalPos, moveDir);
+
+            if (canMove)
+                GrowPlant(goalPos + moveDir, moveDir);
+            else
+                GrowPlant(goalPos, moveDir);
         }
         else
         {
@@ -164,15 +168,26 @@ public class MovementManager : MonoBehaviour
     private void GrowPlant(Vector2Int goalPos, Vector2Int moveDir)
     {
         Vector2Int desiredPlantGrowth = goalPos + moveDir;
-        while (currentState.GetPlantAtPos(desiredPlantGrowth) != null)
+
+        // If we are pushing into a dead plant, stop
+        if (currentState.GetPlantAtPos(goalPos) != null && currentState.GetPlantAtPos(goalPos).isDead)
+            return;
+
+        while (currentState.GetPlantAtPos(desiredPlantGrowth) != null && !currentState.GetPlantAtPos(desiredPlantGrowth).isDead)
         {
             desiredPlantGrowth += moveDir;
         }
-        if (currentState.GetWallAtPos(desiredPlantGrowth) == null && currentState.GetDoorAtPos(desiredPlantGrowth) == null)
+        if (currentState.GetWallAtPos(desiredPlantGrowth) == null && currentState.GetDoorAtPos(desiredPlantGrowth) == null && currentState.GetPlantAtPos(desiredPlantGrowth) == null)
         {
-            TLPlant plant = new TLPlant(desiredPlantGrowth);
+            TLPlant plant = new TLPlant(desiredPlantGrowth, false);
             OnPlantGrow?.Invoke(new GrowAction(desiredPlantGrowth, moveDir, plant, currentState));
             currentState.AddObject(plant);
+        }
+        else if (currentState.GetWallAtPos(desiredPlantGrowth) == null && currentState.GetDoorAtPos(desiredPlantGrowth) == null && currentState.GetPlantAtPos(desiredPlantGrowth).isDead)
+        {
+            TLPlant plant = currentState.GetPlantAtPos(desiredPlantGrowth);
+            plant.isDead = false;
+            OnPlantGrow?.Invoke(new GrowAction(desiredPlantGrowth, moveDir, plant, currentState));
         }
     }
 

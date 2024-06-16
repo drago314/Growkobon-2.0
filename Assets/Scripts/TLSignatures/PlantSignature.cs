@@ -4,4 +4,5 @@ using UnityEngine;
 
 public class PlantSignature : MoveableObjectSignature
 {
+    public bool isDead = false;
 }

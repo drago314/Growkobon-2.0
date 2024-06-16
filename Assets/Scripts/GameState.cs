@@ -18,7 +18,7 @@ public class GameState
             }
             else if (TLObj is TLPlant)
             {
-                AddObject(new TLPlant(TLObj.curPos));
+                AddObject(new TLPlant((TLPlant) TLObj));
             }
             else if (TLObj is TLWall)
             {
