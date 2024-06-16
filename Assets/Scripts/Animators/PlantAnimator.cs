@@ -102,4 +102,9 @@ public class PlantAnimator : MonoBehaviour
             potOverlay.sprite = potOverlays[0];
         }
     }
+
+    private void UpdateDeadOrAlive()
+    {
+
+    }
 }
