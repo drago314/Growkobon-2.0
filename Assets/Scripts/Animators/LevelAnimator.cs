@@ -14,13 +14,11 @@ public class LevelAnimator : MonoBehaviour
     {
         GameManager.Inst.mapManager.OnLevelComplete += CompleteLevel;
         GameManager.Inst.OnMapEnter += Instantiate;
-        Debug.Log("Level Animator Created (" + gameObject.name + ")");
     }
     
 
     private void OnDestroy()
     {
-        Debug.Log("Level Animator Destroyed");  
         if (GameManager.Inst != null)
         {
             GameManager.Inst.mapManager.OnLevelComplete -= CompleteLevel;
@@ -31,7 +29,6 @@ public class LevelAnimator : MonoBehaviour
     public void Instantiate(GameState gameState)
     {
         level = gameState.GetLevelAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-        Debug.Log(level.levelName + " Instantiated");
         if (GameManager.Inst.IsLevelComplete(level.levelName))
             levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlay;
         else if (level.unlocked)
@@ -40,7 +37,6 @@ public class LevelAnimator : MonoBehaviour
 
     public void CompleteLevel(string levelName)
     {
-        Debug.Log(levelName);
         if (level.levelName == levelName)
             levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlay;
     }

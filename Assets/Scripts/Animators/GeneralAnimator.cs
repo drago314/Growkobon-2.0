@@ -13,9 +13,6 @@ public class GeneralAnimator : MonoBehaviour
 
     [SerializeField] private Sprite[] SpecialTSprites;
 
-    public event System.Action<Vector2Int> OnLevelUnlock;
-    private Tilemap pathTilemap;
-
     private void Start()
     {
         GameManager.Inst.movementManager.OnPlantGrow += GrowPlant;

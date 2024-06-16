@@ -18,7 +18,15 @@ public class TLWorldDoor : TLObject
 
     public bool IsOpen()
     {
-        var levelsCompleted = GameManager.Inst.levelsCompleted;
-        return levelsCompleted.Count >= levelsRequired;
+        var levelsCompleted = GameManager.Inst.levelsCompleted.Count;
+        Debug.Log("Is Open: " + levelsRequired.ToString() + ", " + levelsCompleted.ToString());
+        return levelsCompleted >= levelsRequired;
+    }
+
+    public bool JustOpened()
+    {
+        var levelsCompleted = GameManager.Inst.levelsCompleted.Count;
+        Debug.Log("Just Opened " + levelsCompleted.ToString());
+        return levelsCompleted == levelsRequired;
     }
 }

@@ -92,7 +92,8 @@ public class MapManager : MonoBehaviour
         }
 
         bool wallBlocking = currentState.GetWallAtPos(goalPos) != null;
-        if (wallBlocking)
+        bool doorBlocking = currentState.GetWorldDoorAtPos(goalPos) != null && !currentState.GetWorldDoorAtPos(goalPos).IsOpen();
+        if (wallBlocking || doorBlocking)
         {
             OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player, currentState));
             return;
@@ -115,6 +116,5 @@ public class MapManager : MonoBehaviour
     public void CompleteLevel(string levelName)
     {
         OnLevelComplete?.Invoke(levelName);
-        // TODO UNLOCK THINGS
     }
 };

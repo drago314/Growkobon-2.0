@@ -196,6 +196,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 TlObjectList.Add(new TLLevel(pos, (LevelSignature)TLSig));
             else if (TLSig is WorldSignature)
                 TlObjectList.Add(new TLWorldPortal(pos, (WorldSignature)TLSig));
+            else if (TLSig is WorldDoorSignature)
+                TlObjectList.Add(new TLWorldDoor(pos, (WorldDoorSignature)TLSig));
         }
 
         mapManager.currentState = new GameState(TlObjectList);

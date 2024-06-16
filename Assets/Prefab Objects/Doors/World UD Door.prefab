@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8442579569008547854}
   - component: {fileID: 9156349282137428921}
-  - component: {fileID: 1439753733346455207}
-  - component: {fileID: 6518114960266708047}
+  - component: {fileID: 2987568843527199796}
+  - component: {fileID: 7061933824610722026}
   - component: {fileID: 1006860828080029932}
   m_Layer: 0
   m_Name: World UD Door
@@ -27,6 +27,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 892762191897537780}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -35,7 +36,6 @@ Transform:
   - {fileID: 6644505104977244972}
   - {fileID: 3556592467324732082}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &9156349282137428921
 SpriteRenderer:
@@ -89,7 +89,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1439753733346455207
+--- !u!114 &2987568843527199796
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -98,13 +98,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 892762191897537780}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79cc947d817a439479b90ee20280d81c, type: 3}
+  m_Script: {fileID: 11500000, guid: 43dfa518c963e3348890f369eb59dd9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usesMultiPots: 0
-  potsRequired: 0
-  exitName: Main Exit
---- !u!114 &6518114960266708047
+  levelsRequired: 0
+--- !u!114 &7061933824610722026
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -113,80 +111,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 892762191897537780}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 087a3ba0d18e22f4eaa507f7b618ca4d, type: 3}
+  m_Script: {fileID: 11500000, guid: 3507ac4cc53312146afc5541efc4d8e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentPotOverlay: {fileID: 6745218085876838689}
-  requiredPotOverlay: {fileID: 110617557815167342}
-  currentPotOverlays:
-  - {fileID: -703566490, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -1930484965, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 1176114834, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -1578348246, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -639461398, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 243132826, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -1743443805, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 1681549731, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 1303025792, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 942225497, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 1310209777, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 1931890047, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -721087073, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 414712745, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -1690406958, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -603536187, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -2111928632, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 463830994, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -1000598347, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 95032320, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 2010582314, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 1602951157, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 878706510, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 575685019, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -288941757, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 1375883393, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 692279723, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -1611582649, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 892834132, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 596669463, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -1051404823, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -1386699216, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -237228951, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -1075285670, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -1262866433, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -718511331, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 651527728, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -395621291, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -1917843283, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: -608545961, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  - {fileID: 874843729, guid: 70221334bc6c9cc419237a5309df5611, type: 3}
-  requiredPotOverlays:
-  - {fileID: 2001443837, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -1385079554, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -1886889910, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: 1456299864, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: 358480656, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -909098779, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: 2088817939, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: 1529449591, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -455361668, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: 622753250, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: 12079964, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: 834927008, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -489341356, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -1434688862, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: 1437474734, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -1748726257, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -598164501, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -593485195, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -338551480, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -1038969491, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: 1568253716, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: 1892265978, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: 39341910, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: 72900642, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -2119156292, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
-  - {fileID: -2137075855, guid: 9e4228d17a74a7542a9560abcd4de600, type: 3}
 --- !u!95 &1006860828080029932
 Animator:
   serializedVersion: 5
@@ -232,13 +159,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7624911037646739317}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8442579569008547854}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &110617557815167342
 SpriteRenderer:
@@ -316,13 +243,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8678419435058749337}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8442579569008547854}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6745218085876838689
 SpriteRenderer:
