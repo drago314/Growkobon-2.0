@@ -122,7 +122,11 @@ public class MovementManager : MonoBehaviour
             {
                 OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player, currentState));
             }
-            GrowPlant(goalPos, moveDir);
+
+            if (canMove)
+                GrowPlant(goalPos + moveDir, moveDir);
+            else
+                GrowPlant(goalPos, moveDir);
         }
         else
         {
@@ -166,7 +170,7 @@ public class MovementManager : MonoBehaviour
         Vector2Int desiredPlantGrowth = goalPos + moveDir;
 
         // If we are pushing into a dead plant, stop
-        if (currentState.GetPlantAtPos(desiredPlantGrowth) != null && currentState.GetPlantAtPos(desiredPlantGrowth).isDead)
+        if (currentState.GetPlantAtPos(goalPos) != null && currentState.GetPlantAtPos(goalPos).isDead)
             return;
 
         while (currentState.GetPlantAtPos(desiredPlantGrowth) != null && !currentState.GetPlantAtPos(desiredPlantGrowth).isDead)
