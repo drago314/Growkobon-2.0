@@ -4,53 +4,40 @@ using UnityEngine;
 
 public class LevelAnimator : MonoBehaviour
 {
-    [SerializeField] private Sprite[] lockedLevelOverlays;
-    [SerializeField] private Sprite[] unlockedLevelOverlays;
-    [SerializeField] private Sprite[] completedLevelOverlays;
+    [SerializeField] private Sprite unlockedLevelOverlay;
+    [SerializeField] private Sprite completedLevelOverlay;
     [SerializeField] private GameObject levelOverlayChild;
 
     private TLLevel level;
-    private SpriteRenderer levelOverlayRenderer;
 
     void Start()
     {
-        levelOverlayRenderer = levelOverlayChild.GetComponent<SpriteRenderer>();
-        GameManager.Inst.animator.OnLevelUnlock += UnlockLevel;
+        GameManager.Inst.mapManager.OnLevelComplete += CompleteLevel;
+        GameManager.Inst.OnMapEnter += Instantiate;
     }
+    
 
     private void OnDestroy()
     {
         if (GameManager.Inst != null)
         {
-            GameManager.Inst.animator.OnLevelUnlock -= UnlockLevel;
+            GameManager.Inst.mapManager.OnLevelComplete -= CompleteLevel;
+            GameManager.Inst.OnMapEnter -= Instantiate;
         }
     }
 
-    public void Instantiate()
+    public void Instantiate(GameState gameState)
     {
-        level = GameManager.Inst.mapManager.currentState.GetLevelAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        level = gameState.GetLevelAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
         if (GameManager.Inst.IsLevelComplete(level.levelName))
-            levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlays[level.levelNumber];
+            levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlay;
         else if (level.unlocked)
-            levelOverlayChild.GetComponent<SpriteRenderer>().sprite = unlockedLevelOverlays[level.levelNumber];
-        else
-            levelOverlayChild.GetComponent<SpriteRenderer>().sprite = lockedLevelOverlays[level.levelNumber];
+            levelOverlayChild.GetComponent<SpriteRenderer>().sprite = unlockedLevelOverlay;
     }
 
-    public void UnlockLevel(Vector2Int pos)
+    public void CompleteLevel(string levelName)
     {
-        if (new Vector2Int((int)transform.position.x, (int)transform.position.y).Equals(pos))
-        {
-            level = GameManager.Inst.mapManager.currentState.GetLevelAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-            if (GameManager.Inst.IsLevelComplete(level.levelName))
-                levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlays[level.levelNumber];
-            else
-                levelOverlayChild.GetComponent<SpriteRenderer>().sprite = unlockedLevelOverlays[level.levelNumber];
-        }
-    }
-
-    public void SetLevelNumber(int lvlNumber)
-    {
-        levelOverlayChild.GetComponent<SpriteRenderer>().sprite = unlockedLevelOverlays[lvlNumber];
+        if (level.levelName == levelName)
+            levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlay;
     }
 }

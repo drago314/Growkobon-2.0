@@ -8,7 +8,7 @@ public class MapManager : MonoBehaviour
 {
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, enter;
     public event System.Action<MoveAction> OnPlayerMove;
-    public event System.Action<List<Vector2Int>> OnPathsUnlock;
+    public event System.Action<string> OnLevelComplete;
 
     public GameState currentState;
     public Dictionary<string, List<Vector2Int>> exitToPathsUnlocked;
@@ -91,9 +91,9 @@ public class MapManager : MonoBehaviour
             GameManager.Inst.OpenMap(currentState.GetWorldAtPos(goalPos).worldToTravelTo, currentState.GetWorldAtPos(goalPos).posToTravelTo);
         }
 
-        bool noLevelInFront = currentState.GetLevelAtPos(goalPos) == null;
-        bool noPathInFront = currentState.GetPathAtPos(goalPos) == null || !currentState.GetPathAtPos(goalPos).unlocked;
-        if (noLevelInFront && noPathInFront)
+        bool wallBlocking = currentState.GetWallAtPos(goalPos) != null;
+        bool doorBlocking = currentState.GetWorldDoorAtPos(goalPos) != null && !currentState.GetWorldDoorAtPos(goalPos).IsOpen();
+        if (wallBlocking || doorBlocking)
         {
             OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player, currentState));
             return;
@@ -113,19 +113,8 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    public void CompleteLevel(string levelExit)
+    public void CompleteLevel(string levelName)
     {
-        foreach (var pathPos in exitToPathsUnlocked[levelExit])
-        {
-            if (currentState.GetPathAtPos(pathPos) != null)
-            {
-                currentState.GetPathAtPos(pathPos).unlocked = true;
-            }
-            else if (currentState.GetLevelAtPos(pathPos) != null)
-            {
-                currentState.GetLevelAtPos(pathPos).unlocked = true;
-            }
-        }
-        OnPathsUnlock?.Invoke(exitToPathsUnlocked[levelExit]);
+        OnLevelComplete?.Invoke(levelName);
     }
 };

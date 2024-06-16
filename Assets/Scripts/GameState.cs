@@ -44,6 +44,10 @@ public class GameState
             {
                 AddObject(new TLWorldPortal((TLWorldPortal)TLObj));
             }
+            else if (TLObj is TLWorldDoor)
+            {
+                AddObject(new TLWorldDoor((TLWorldDoor)TLObj));
+            }
         }
 
         //DEBUG
@@ -178,6 +182,18 @@ public class GameState
         {
             if (TLObj is TLDoor)
                 return (TLDoor)TLObj;
+        }
+        return null;
+    }
+
+    public TLWorldDoor GetWorldDoorAtPos(Vector2Int pos)
+    {
+        if (GetTLObjectsAtPos(pos) == null)
+            return null;
+        foreach (var TLObj in GetTLObjectsAtPos(pos))
+        {
+            if (TLObj is TLWorldDoor)
+                return (TLWorldDoor)TLObj;
         }
         return null;
     }

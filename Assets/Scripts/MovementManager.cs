@@ -148,7 +148,7 @@ public class MovementManager : MonoBehaviour
 
         if (currentState.GetDoorAtPos(currentState.GetPosOf(player)) != null)
         {
-            GameManager.Inst.CompleteLevel(SceneManager.GetActiveScene().name + " " + currentState.GetDoorAtPos(currentState.GetPosOf(player)).exitName);
+            GameManager.Inst.CompleteLevel(SceneManager.GetActiveScene().name);
         }
 
         /*int potNum = 0;
@@ -217,6 +217,6 @@ public class MovementManager : MonoBehaviour
 
     private void DebugFinishLevel(InputAction.CallbackContext obj)
     {
-        GameManager.Inst.CompleteLevel(SceneManager.GetActiveScene().name + " " + currentState.GetAllTLDoors()[0].exitName);
+        GameManager.Inst.CompleteLevel(SceneManager.GetActiveScene().name);
     }
 }
