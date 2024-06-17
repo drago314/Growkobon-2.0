@@ -13,45 +13,25 @@ public class GameState
         {
             //TODO MAKE BETTER
             if (TLObj is TLPlayer)
-            {
                 AddObject(new TLPlayer(TLObj.curPos));
-            }
             else if (TLObj is TLPlant)
-            {
                 AddObject(new TLPlant((TLPlant) TLObj));
-            }
             else if (TLObj is TLWall)
-            {
                 AddObject(new TLWall(TLObj.curPos));    
-            }
             else if (TLObj is TLDoor)
-            {
                 AddObject(new TLDoor((TLDoor) TLObj));
-            }
             else if (TLObj is TLPot)
-            {
                 AddObject(new TLPot((TLPot) TLObj));
-            }
             else if (TLObj is TLPath)
-            {
                 AddObject(new TLPath((TLPath)TLObj));
-            }
             else if (TLObj is TLLevel)
-            {
                 AddObject(new TLLevel((TLLevel)TLObj));
-            }
             else if (TLObj is TLWorldPortal)
-            {
                 AddObject(new TLWorldPortal((TLWorldPortal)TLObj));
-            }
             else if (TLObj is TLWorldDoor)
-            {
                 AddObject(new TLWorldDoor((TLWorldDoor)TLObj));
-            }
             else if (TLObj is TLShears)
-            {
                 AddObject(new TLShears((TLShears)TLObj));
-            }
         }
 
         //DEBUG
