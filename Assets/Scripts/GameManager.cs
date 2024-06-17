@@ -150,6 +150,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 TlObjectList.Add(new TLPlant(pos, (PlantSignature) TLSig));
             if (TLSig is DoorSignature)
                 TlObjectList.Add(new TLDoor(pos, (DoorSignature) TLSig));
+            if (TLSig is ShearSignature)
+                TlObjectList.Add(new TLShears(pos, (ShearSignature)TLSig));
         }
 
         movementManager.initialGameState = new GameState(TlObjectList);

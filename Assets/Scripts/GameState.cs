@@ -48,6 +48,10 @@ public class GameState
             {
                 AddObject(new TLWorldDoor((TLWorldDoor)TLObj));
             }
+            else if (TLObj is TLShears)
+            {
+                AddObject(new TLShears((TLShears)TLObj));
+            }
         }
 
         //DEBUG
@@ -206,6 +210,18 @@ public class GameState
         {
             if (TLObj is TLPot)
                 return (TLPot)TLObj;
+        }
+        return null;
+    }
+
+    public TLShears GetShearsAtPos(Vector2Int pos)
+    {
+        if (GetTLObjectsAtPos(pos) == null)
+            return null;
+        foreach (var TLObj in GetTLObjectsAtPos(pos))
+        {
+            if (TLObj is TLShears)
+                return (TLShears)TLObj;
         }
         return null;
     }

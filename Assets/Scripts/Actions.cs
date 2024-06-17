@@ -20,6 +20,22 @@ public class MoveAction
     }
 }
 
+public class GrabAction
+{
+    public Vector2Int grabDirection;
+    public TLPlayer player;
+    public TLHoldableObject objectGrabbed;
+    public GameState state;
+
+    public GrabAction(Vector2Int grabDirection, TLPlayer player, TLHoldableObject objectGrabbed, GameState gameState)
+    {
+        this.grabDirection = grabDirection;
+        this.player = player;
+        this.objectGrabbed = objectGrabbed;
+        state = gameState;
+    }
+}
+
 public class GrowAction
 {
     public Vector2Int newPos;
