@@ -9,5 +9,5 @@ public class TLShears : TLHoldableObject
     }
 
 
-    public override string GetName() { return "Shears"; }
+    public override string GetName() { return "Shears facing " + GetDirectionFacing(); }
 }

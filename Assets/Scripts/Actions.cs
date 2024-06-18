@@ -26,15 +26,17 @@ public class SpinAction
     public Vector2Int endPos;
     public Vector2Int origDir;
     public Vector2Int endDir;
+    public bool clockwise;
     public TLObject TLObj;
     public GameState state;
 
-    public SpinAction(Vector2Int originalPos, Vector2Int endPosition, Vector2Int originalDirection, Vector2Int endDirection, TLObject obj, GameState gameState)
+    public SpinAction(Vector2Int originalPos, Vector2Int endPosition, Vector2Int originalDirection, Vector2Int endDirection, bool clockwise, TLObject obj, GameState gameState)
     {
         origPos = originalPos;
         endPos = endPosition;
         origDir = originalDirection;
         endDir = endDirection;
+        this.clockwise = clockwise;
         TLObj = obj;
         state = gameState;
     }

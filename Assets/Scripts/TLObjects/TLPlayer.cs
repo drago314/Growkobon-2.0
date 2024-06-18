@@ -40,7 +40,7 @@ public class TLPlayer : TLMoveableObject
         string name = "Player";
         if (objectHeld != null)
         {
-            name += "is holding ";
+            name += " is holding ";
             name += objectHeld.GetName();
         }
         else

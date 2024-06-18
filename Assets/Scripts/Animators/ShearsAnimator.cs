@@ -5,9 +5,12 @@ using UnityEngine;
 public class ShearsAnimator : MonoBehaviour
 {
     TLShears shears;
+    GameObject shearSprite;
+
     private void Start()
     {
         GameManager.Inst.OnLevelEnter += OnLevelLoaded;
+        shearSprite = GetComponentInChildren<SpriteRenderer>().gameObject;
     }
 
     private void OnDestroy()
@@ -38,5 +41,9 @@ public class ShearsAnimator : MonoBehaviour
     private void OnShearsSpin(SpinAction spin)
     {
         transform.position = new Vector3(spin.endPos.x, spin.endPos.y, 0);
+        if (spin.clockwise)
+            shearSprite.transform.eulerAngles = new Vector3(shearSprite.transform.eulerAngles.x, shearSprite.transform.eulerAngles.y, shearSprite.transform.eulerAngles.z - 90);
+        else
+            shearSprite.transform.eulerAngles = new Vector3(shearSprite.transform.eulerAngles.x, shearSprite.transform.eulerAngles.y, shearSprite.transform.eulerAngles.z + 90);
     }
 }
