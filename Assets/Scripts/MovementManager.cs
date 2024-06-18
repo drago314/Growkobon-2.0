@@ -135,7 +135,14 @@ public class MovementManager : MonoBehaviour
         print(GameManager.Inst.currentState.ToString());
 
         BeginMove();
+        bool somethingChanged = TypicalMove(moveDir);
+        if (somethingChanged)
+            EndMove();
+    }
 
+    // Returns true if something changed
+    private bool TypicalMove(Vector2Int moveDir)
+    {
         GameState currentState = GameManager.Inst.currentState;
 
         TLPlayer player = currentState.GetPlayer();
@@ -146,12 +153,12 @@ public class MovementManager : MonoBehaviour
         if (currentState.GetTLOfTypeAtPos<TLWall>(goalPos) != null || currentState.GetTLOfTypeAtPos<TLShears>(goalPos) != null)
         {
             player.SetDirectionFacing(moveDir);
-            return;
+            return false;
         }
         if (currentState.GetTLOfTypeAtPos<TLDoor>(goalPos) != null && !currentState.GetTLOfTypeAtPos<TLDoor>(goalPos).IsOpen())
         {
             player.SetDirectionFacing(moveDir);
-            return;
+            return false;
         }
 
 
@@ -171,7 +178,7 @@ public class MovementManager : MonoBehaviour
                 player.SetDirectionFacing(moveDir);
                 bool grewPlant = GrowPlant(goalPos, moveDir);
                 if (!grewPlant)
-                    return;
+                    return false;
             }
         }
         else
@@ -179,7 +186,7 @@ public class MovementManager : MonoBehaviour
             currentState.MoveRelative(player, moveDir);
         }
 
-        EndMove();
+        return true;
     }
 
     // A turn from right to up would have a starting Dir of Vector2Int.right and a ending dir of Vector2Int.up
@@ -229,20 +236,26 @@ public class MovementManager : MonoBehaviour
         Vector2Int goalPosPlayer = curPos + moveDir;
         Vector2Int goalPosShears = shears.GetPosition() + moveDir;
 
-        Debug.Log("GOAL PLAYER: " + goalPosPlayer);
-        Debug.Log("GOAL SHEARS: " + goalPosShears);
+        if (moveDir == goalPosPlayer - goalPosShears) // If moving away from shear / pulling shear
+        {
+            Debug.Log("PULL");
+            bool somethingChanged = TypicalMove(moveDir);
+            bool playerMoved = curPos != player.GetPosition();
+            if (playerMoved)
+                currentState.MoveRelative(shears, moveDir);
+            if (somethingChanged)
+                EndMove();
+        }
+        else
+        {
+            Debug.Log("PUSH");
+            if (currentState.GetTLOfTypeAtPos<TLWall>(goalPosShears) != null || currentState.GetTLOfTypeAtPos<TLShears>(goalPosShears) != null || currentState.GetTLOfTypeAtPos<TLDoor>(goalPosShears) != null)
+                return;
 
-        if (currentState.GetTLOfTypeAtPos<TLWall>(goalPosPlayer) != null)
-            return;
-        if (currentState.GetTLOfTypeAtPos<TLDoor>(goalPosPlayer) != null && !currentState.GetTLOfTypeAtPos<TLDoor>(goalPosPlayer).IsOpen())
-            return;
-        if (currentState.GetTLOfTypeAtPos<TLWall>(goalPosShears) != null || currentState.GetTLOfTypeAtPos<TLShears>(goalPosShears) != null || currentState.GetTLOfTypeAtPos<TLDoor>(goalPosShears) != null)
-            return;
-
-        currentState.MoveRelative(shears, moveDir);
-        currentState.MoveRelative(player, moveDir);
-
-        EndMove();
+            currentState.MoveRelative(shears, moveDir);
+            currentState.MoveRelative(player, moveDir);
+            EndMove();
+        }
     }
 
     // Returns if the plan group moved
