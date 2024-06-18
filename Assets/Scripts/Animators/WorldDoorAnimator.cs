@@ -12,7 +12,6 @@ public class WorldDoorAnimator : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         GameManager.Inst.OnMapEnter += OnMapEnter;
-        GameManager.Inst.mapManager.OnLevelComplete += OnLevelComplete;
     }
 
     private void OnDestroy()
@@ -20,13 +19,12 @@ public class WorldDoorAnimator : MonoBehaviour
         if (GameManager.Inst != null)
         {
             GameManager.Inst.OnMapEnter -= OnMapEnter;
-            GameManager.Inst.mapManager.OnLevelComplete -= OnLevelComplete;
         }
     }
 
     private void OnMapEnter(GameState gameState)
     {
-        door = gameState.GetWorldDoorAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        door = gameState.GetTLOfTypeAtPos<TLWorldDoor>(new Vector2Int((int)transform.position.x, (int)transform.position.y));
         InstantActivateDoor();
     }
 

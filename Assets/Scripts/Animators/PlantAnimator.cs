@@ -17,10 +17,9 @@ public class PlantAnimator : MonoBehaviour
     private void Start()
     {
         MovementManager manager = GameManager.Inst.movementManager;
-        manager.OnMoveBegin += OnMoveBegin;
-        manager.OnPlantMove += OnPlantMove;
         manager.OnMoveEnd += OnMoveEnd;
         GameManager.Inst.OnLevelEnter += OnLevelLoaded;
+
         potOverlay = potOverlayChild.GetComponent<SpriteRenderer>();
     }
 
@@ -29,42 +28,57 @@ public class PlantAnimator : MonoBehaviour
         if (GameManager.Inst != null)
         {
             MovementManager manager = GameManager.Inst.movementManager;
-            manager.OnMoveBegin -= OnMoveBegin;
-            manager.OnPlantMove -= OnPlantMove;
             manager.OnMoveEnd -= OnMoveEnd;
             GameManager.Inst.OnLevelEnter -= OnLevelLoaded;
         }
+        if (plant != null)
+        {
+            plant.OnPlantMove -= OnPlantMove;
+            plant.OnUndoOrReset -= OnUndoOrReset;
+            plant.OnPlantDeath -= UpdateDeadOrAlive;
+            plant.OnPlantRegrowth -= UpdateDeadOrAlive;
+            plant.OnObjectDestroy -= DoneWithObject;
+        }
     }
 
-    public void Instantiate()
+    private void OnLevelLoaded(GameState state)
     {
+        plant = state.GetTLOfTypeAtPos<TLPlant>(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        plant.OnPlantMove += OnPlantMove;
+        plant.OnUndoOrReset += OnUndoOrReset;
+        plant.OnPlantDeath += UpdateDeadOrAlive;
+        plant.OnPlantRegrowth += UpdateDeadOrAlive;
+        plant.OnObjectDestroy += DoneWithObject;
+
+        UpdatePlantInPot();
+        UpdateDeadOrAlive();
+    }
+
+    public void Instantiate(GameState state)
+    {
+        plant = state.GetTLOfTypeAtPos<TLPlant>(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        plant.OnPlantMove += OnPlantMove;
+        plant.OnUndoOrReset += OnUndoOrReset;
+        plant.OnPlantDeath += UpdateDeadOrAlive;
+        plant.OnPlantRegrowth += UpdateDeadOrAlive;
+        plant.OnObjectDestroy += DoneWithObject;
+
         animator.SetTrigger("Idle");
         GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
         UpdatePlantInPot();
         UpdateDeadOrAlive();
     }
 
-    private void OnLevelLoaded()
-    {
-        plant = GameManager.Inst.movementManager.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-        UpdatePlantInPot();
-        UpdateDeadOrAlive();
-    }
-
-    private void OnMoveBegin()
-    {
-        plant = GameManager.Inst.movementManager.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-    }
-
-
     private void OnPlantMove(MoveAction move)
     {
-        if (plant != move.TLObj)
-            return;
-
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
     }
 
+    private void OnUndoOrReset(MoveAction move)
+    {
+        transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
+        UpdateDeadOrAlive();
+    }
 
     public void Grow(Vector2Int growDir)
     {
@@ -83,7 +97,6 @@ public class PlantAnimator : MonoBehaviour
         yield return new WaitForSeconds(5 / 60f);
         GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
         yield return new WaitForSeconds(15 / 60f);
-        UpdatePlantInPot();
     }
 
     private void OnMoveEnd()
@@ -95,8 +108,8 @@ public class PlantAnimator : MonoBehaviour
     private void UpdatePlantInPot()
     {
         potOverlay = potOverlayChild.GetComponent<SpriteRenderer>();
-        plant = GameManager.Inst.movementManager.currentState.GetPlantAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-        if (GameManager.Inst.movementManager.currentState.GetPotAtPos(plant.curPos) == null)
+        plant = GameManager.Inst.currentState.GetTLOfTypeAtPos<TLPlant>(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        if (GameManager.Inst.currentState.GetTLOfTypeAtPos<TLPot>(plant.GetPosition()) == null)
         {
             potOverlay.color = new Color(1f, 1f, 1f, 0f);
         }
@@ -109,9 +122,14 @@ public class PlantAnimator : MonoBehaviour
 
     private void UpdateDeadOrAlive()
     {
-        if (plant.isDead)
-            animator.SetBool("Dead", true);
-        else
+        if (plant.IsAlive())
             animator.SetBool("Dead", false);
+        else
+            animator.SetBool("Dead", true);
+    }
+
+    private void DoneWithObject()
+    {
+        Destroy(gameObject);
     }
 }

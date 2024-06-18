@@ -11,19 +11,12 @@ public class MovementManager : MonoBehaviour
 
     public event Action OnMoveBegin;
     public event Action OnMoveEnd;
-    public event Action<MoveAction> OnPlayerMove;
-    public event Action<MoveAction> OnShearsMove;
-    public event Action<MoveAction> OnPlantMove;
-    public event Action<GrabAction> OnObjectGrabbed;
-    public event Action<GrowAction> OnPlantGrow;
-    public event Action<Vector2Int> OnDoorClose;
-    public event Action<Vector2Int> OnDoorOpen;
+    public event Action OnUndoBegin;
     public event Action OnUndoEnd;
+    public event Action OnResetBegin;
     public event Action OnResetEnd;
+    public event Action<GrowAction> OnPlantGrow;
 
-    public GameState initialGameState;
-    public GameState currentState;
-    public List<GameState> stateList;
     Dictionary<TLDoor, bool> originalDoorStates; //  TODO this is bad and should be fixed with new animation / game state system
 
     private void Start()
@@ -52,9 +45,10 @@ public class MovementManager : MonoBehaviour
 
     private void MoveUp(InputAction.CallbackContext obj)
     {
-        if (currentState.GetPlayer().objectHeld)
-            if (currentState.GetPlayer().directionFacing == Vector2Int.left || currentState.GetPlayer().directionFacing == Vector2Int.right)
-                TurnHoldingShear(currentState.GetPlayer().directionFacing, Vector2Int.up);
+        GameState currentState = GameManager.Inst.currentState;
+        if (currentState.GetPlayer().IsObjectHeld())
+            if (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right)
+                TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
             else
                 MoveHoldingShear(Vector2Int.up);
         else
@@ -63,9 +57,10 @@ public class MovementManager : MonoBehaviour
 
     private void MoveDown(InputAction.CallbackContext obj)
     {
-        if (currentState.GetPlayer().objectHeld)
-            if (currentState.GetPlayer().directionFacing == Vector2Int.left || currentState.GetPlayer().directionFacing == Vector2Int.right)
-                TurnHoldingShear(currentState.GetPlayer().directionFacing, Vector2Int.down);
+        GameState currentState = GameManager.Inst.currentState;
+        if (currentState.GetPlayer().IsObjectHeld())
+            if (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right)
+                TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing() , Vector2Int.down);
             else
                 MoveHoldingShear(Vector2Int.down);
         else
@@ -73,9 +68,10 @@ public class MovementManager : MonoBehaviour
     }
     private void MoveRight(InputAction.CallbackContext obj)
     {
-        if (currentState.GetPlayer().objectHeld)
-            if (currentState.GetPlayer().directionFacing == Vector2Int.up || currentState.GetPlayer().directionFacing == Vector2Int.down)
-                TurnHoldingShear(currentState.GetPlayer().directionFacing, Vector2Int.right);
+        GameState currentState = GameManager.Inst.currentState;
+        if (currentState.GetPlayer().IsObjectHeld())
+            if (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down)
+                TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.right);
             else
                 MoveHoldingShear(Vector2Int.right);
         else
@@ -83,9 +79,10 @@ public class MovementManager : MonoBehaviour
     }
     private void MoveLeft(InputAction.CallbackContext obj)
     {
-        if (currentState.GetPlayer().objectHeld)
-            if (currentState.GetPlayer().directionFacing == Vector2Int.up || currentState.GetPlayer().directionFacing == Vector2Int.down)
-                TurnHoldingShear(currentState.GetPlayer().directionFacing, Vector2Int.left);
+        GameState currentState = GameManager.Inst.currentState;
+        if (currentState.GetPlayer().IsObjectHeld())
+            if (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down)
+                TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.left);
             else
                 MoveHoldingShear(Vector2Int.left);
         else
@@ -96,27 +93,28 @@ public class MovementManager : MonoBehaviour
     {
         BeginMove();
 
+        GameState currentState = GameManager.Inst.currentState;
+
         TLPlayer player = currentState.GetPlayer();
         Vector2Int curPos = currentState.GetPosOf(player);
         Vector2Int grabDirection = Vector2Int.zero;
 
-        Debug.Log("Shears Direction: " + currentState.GetShearsAtPos(curPos + Vector2Int.up).directionFacing);
+        Debug.Log("Shears Direction: " + currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.up).GetDirectionFacing());
         
 
-        if (player.objectHeld)
+        if (player.IsObjectHeld())
         {
             //player.objectHeld.SetHeld(false);
             //player.objectHeld = null;
-            player.objectHeld = false;
-            currentState.GetShearsAtPos(curPos + player.directionFacing).SetHeld(false);
+            player.ReleaseObject();
         }
-        else if (currentState.GetShearsAtPos(curPos + Vector2Int.up) != null && currentState.GetShearsAtPos(curPos + Vector2Int.up).directionFacing != Vector2Int.down)
+        else if (currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.up) != null && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.up).GetDirectionFacing() != Vector2Int.down)
             grabDirection = Vector2Int.up;
-        else if (currentState.GetShearsAtPos(curPos + Vector2Int.down) != null && currentState.GetShearsAtPos(curPos + Vector2Int.down).directionFacing != Vector2Int.up)
+        else if (currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.down) != null && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.down).GetDirectionFacing() != Vector2Int.up)
             grabDirection = Vector2Int.down;
-        else if (currentState.GetShearsAtPos(curPos + Vector2Int.left) != null && currentState.GetShearsAtPos(curPos + Vector2Int.left).directionFacing != Vector2Int.right)
+        else if (currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.left) != null && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.left).GetDirectionFacing() != Vector2Int.right)
             grabDirection = Vector2Int.left;
-        else if (currentState.GetShearsAtPos(curPos + Vector2Int.right) != null && currentState.GetShearsAtPos(curPos + Vector2Int.right).directionFacing != Vector2Int.left)
+        else if (currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.right) != null && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.right).GetDirectionFacing() != Vector2Int.left)
             grabDirection = Vector2Int.right;
         else
             return;
@@ -127,12 +125,8 @@ public class MovementManager : MonoBehaviour
         if (grabDirection != Vector2Int.zero)
         {
             //player.objectHeld = currentState.GetShearsAtPos(curPos + grabDirection);
-            player.objectHeld = true;
-            currentState.GetShearsAtPos(curPos + grabDirection).SetHeld(true);
-            player.directionFacing = grabDirection;
-            OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, grabDirection, player, currentState));
-            OnObjectGrabbed?.Invoke(new GrabAction(grabDirection, player, currentState.GetShearsAtPos(curPos + grabDirection), currentState));
-            Debug.Log("Player Holding: " + player.objectHeld);
+            player.PickupObject(currentState.GetTLOfTypeAtPos<TLShears>(curPos + grabDirection));
+            Debug.Log("Player Holding: " + player.GetObjectHeld());
         }
 
         EndMove();
@@ -140,52 +134,59 @@ public class MovementManager : MonoBehaviour
 
     private void Move(Vector2Int moveDir)
     {
+        Debug.Log("BEGIN");
+        print(GameManager.Inst.currentState.ToString());
+
         BeginMove();
+
+        Debug.Log("AFTER BEGIN");
+        print(GameManager.Inst.currentState.ToString());
+
+        GameState currentState = GameManager.Inst.currentState;
 
         TLPlayer player = currentState.GetPlayer();
         Vector2Int curPos = currentState.GetPosOf(player);
         Vector2Int goalPos = curPos + moveDir;
 
-        player.directionFacing = moveDir;
-
         // Check if the player is walking into a wall, door, or other object it cannot walk though
-        if (currentState.GetWallAtPos(goalPos) != null || currentState.GetShearsAtPos(goalPos) != null)
+        if (currentState.GetTLOfTypeAtPos<TLWall>(goalPos) != null || currentState.GetTLOfTypeAtPos<TLShears>(goalPos) != null)
         {
-            OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player, currentState));
+            player.SetDirectionFacing(moveDir);
             return;
         }
-        if (currentState.GetDoorAtPos(goalPos) != null && !currentState.GetDoorAtPos(goalPos).IsOpen())
+        if (currentState.GetTLOfTypeAtPos<TLDoor>(goalPos) != null && !currentState.GetTLOfTypeAtPos<TLDoor>(goalPos).IsOpen())
         {
-            OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player, currentState));
+            player.SetDirectionFacing(moveDir);
             return;
         }
 
 
         //6 
-        if (currentState.GetPlantAtPos(goalPos) != null)
+        if (currentState.GetTLOfTypeAtPos<TLPlant>(goalPos) != null)
         {
             TLPlant[] plantGroup = currentState.GetPlantGroupAtPos(goalPos);
             bool canMove = MovePlantGroup(plantGroup, moveDir);
 
             if (canMove)
             {
-                Debug.Log("1");
                 currentState.MoveRelative(player, moveDir);
-                OnPlayerMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, player, currentState));
                 GrowPlant(goalPos + moveDir, moveDir);
             }
             else
             {
-                OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, moveDir, player, currentState));
-                GrowPlant(goalPos, moveDir);
+                player.SetDirectionFacing(moveDir);
+                bool grewPlant = GrowPlant(goalPos, moveDir);
+                if (!grewPlant)
+                    return;
             }
         }
         else
         {
-            OnPlayerMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, player, currentState));
-            Debug.Log("2");
             currentState.MoveRelative(player, moveDir);
         }
+
+        Debug.Log("BEFORE END LOGIC");
+        print(GameManager.Inst.currentState.ToString());
 
         EndMove();
     }
@@ -195,14 +196,14 @@ public class MovementManager : MonoBehaviour
     {
         BeginMove();
 
+        GameState currentState = GameManager.Inst.currentState;
+
         TLPlayer player = currentState.GetPlayer();
         Vector2Int curPos = currentState.GetPosOf(player);
-        TLShears shears = currentState.GetShearsAtPos(curPos + startingDir);
+        TLShears shears = currentState.GetTLOfTypeAtPos<TLShears>(curPos + startingDir);
 
         currentState.MoveRelative(shears, curPos + endingDir);
-        player.directionFacing = endingDir;
-        OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, endingDir, player, currentState));
-        OnShearsMove?.Invoke(new MoveAction(curPos + startingDir, curPos + endingDir, endingDir, shears, currentState));
+        player.SetDirectionFacing(endingDir);
 
         EndMove();
     }
@@ -211,14 +212,14 @@ public class MovementManager : MonoBehaviour
     {
         BeginMove();
 
+        GameState currentState = GameManager.Inst.currentState;
+
         TLPlayer player = currentState.GetPlayer();
         Vector2Int curPos = currentState.GetPosOf(player);
-        TLShears shears = currentState.GetShearsAtPos(curPos + player.directionFacing);
+        TLShears shears = currentState.GetTLOfTypeAtPos<TLShears>(curPos + player.GetDirectionFacing());
 
-        Debug.Log("3");
         currentState.MoveRelative(shears, curPos + moveDir);
-        OnPlayerMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, player, currentState));
-        OnShearsMove?.Invoke(new MoveAction(shears.curPos, shears.curPos + moveDir, moveDir, shears, currentState));
+        currentState.MoveRelative(player, curPos + moveDir);
 
         EndMove();
     }
@@ -226,70 +227,70 @@ public class MovementManager : MonoBehaviour
     // Returns if the plan group moved
     private bool MovePlantGroup(TLPlant[] plantGroup, Vector2Int moveDir)
     {
+        GameState currentState = GameManager.Inst.currentState;
+
         foreach (var plant in plantGroup)
         {
-            if (currentState.GetWallAtPos(currentState.GetPosOf(plant) + moveDir) != null || currentState.GetDoorAtPos(currentState.GetPosOf(plant) + moveDir) != null)
+            if (currentState.GetTLOfTypeAtPos<TLWall>(currentState.GetPosOf(plant) + moveDir) != null || currentState.GetTLOfTypeAtPos<TLDoor>(currentState.GetPosOf(plant) + moveDir) != null)
                 return false;
         }
 
         foreach (var plant in plantGroup)
         {
-            OnPlantMove?.Invoke(new MoveAction(plant.curPos, plant.curPos + moveDir, moveDir, plant, currentState));
-            Debug.Log("4");
             currentState.MoveRelative(plant, moveDir);
         }
 
         return true;
     }
 
-    private void GrowPlant(Vector2Int goalPos, Vector2Int moveDir)
+    private bool GrowPlant(Vector2Int goalPos, Vector2Int moveDir)
     {
+        GameState currentState = GameManager.Inst.currentState;
+
         Vector2Int desiredPlantGrowth = goalPos + moveDir;
 
         // If we are pushing into a dead plant, stop
-        if (currentState.GetPlantAtPos(goalPos) != null && currentState.GetPlantAtPos(goalPos).isDead)
-            return;
+        if (currentState.GetTLOfTypeAtPos<TLPlant>(goalPos) != null && !currentState.GetTLOfTypeAtPos<TLPlant>(goalPos).IsAlive())
+            return false;
 
-        while (currentState.GetPlantAtPos(desiredPlantGrowth) != null && !currentState.GetPlantAtPos(desiredPlantGrowth).isDead)
+        while (currentState.GetTLOfTypeAtPos<TLPlant>(desiredPlantGrowth) != null && currentState.GetTLOfTypeAtPos<TLPlant>(desiredPlantGrowth).IsAlive())
         {
             desiredPlantGrowth += moveDir;
         }
-        if (currentState.GetWallAtPos(desiredPlantGrowth) == null && currentState.GetDoorAtPos(desiredPlantGrowth) == null && currentState.GetPlantAtPos(desiredPlantGrowth) == null)
+        if (currentState.GetTLOfTypeAtPos<TLWall>(desiredPlantGrowth) == null && currentState.GetTLOfTypeAtPos<TLDoor>(desiredPlantGrowth) == null && currentState.GetTLOfTypeAtPos<TLPlant>(desiredPlantGrowth) == null)
         {
-            TLPlant plant = new TLPlant(desiredPlantGrowth, false);
-            OnPlantGrow?.Invoke(new GrowAction(desiredPlantGrowth, moveDir, plant, currentState));
+            TLPlant plant = new TLPlant(desiredPlantGrowth, true);
             currentState.AddObject(plant);
-        }
-        else if (currentState.GetWallAtPos(desiredPlantGrowth) == null && currentState.GetDoorAtPos(desiredPlantGrowth) == null && currentState.GetPlantAtPos(desiredPlantGrowth).isDead)
-        {
-            TLPlant plant = currentState.GetPlantAtPos(desiredPlantGrowth);
-            plant.isDead = false;
             OnPlantGrow?.Invoke(new GrowAction(desiredPlantGrowth, moveDir, plant, currentState));
+            return true;
         }
+        else if (currentState.GetTLOfTypeAtPos<TLWall>(desiredPlantGrowth) == null && currentState.GetTLOfTypeAtPos<TLDoor>(desiredPlantGrowth) == null && !currentState.GetTLOfTypeAtPos<TLPlant>(desiredPlantGrowth).IsAlive())
+        {
+            TLPlant plant = currentState.GetTLOfTypeAtPos<TLPlant>(desiredPlantGrowth);
+            plant.SetAlive(true);
+            return true;
+        }
+
+        return false;
     }
 
     private void Undo(InputAction.CallbackContext obj)
     {
-        //print("Begin Undo: " + stateList.Count);
-        if (stateList.Count >= 2)
-        {
-            var lastState = stateList[stateList.Count - 2];
-            stateList.RemoveAt(stateList.Count - 1);
-            currentState = new GameState(lastState);
-        }
+        OnUndoBegin?.Invoke();
+
+        GameManager.Inst.currentState.Undo();
+        print(GameManager.Inst.currentState.ToString());
 
         OnUndoEnd?.Invoke();
-        //print("End Undo: " + stateList.Count);
     }
 
     private void Reset(InputAction.CallbackContext obj)
     {
         //print("Begin Reset: " + stateList.Count);
-        if (!currentState.Equals(initialGameState))
-        {
-            stateList.Add(initialGameState);
-            currentState = new GameState(initialGameState);
-        }
+        OnResetBegin?.Invoke();
+
+        GameManager.Inst.currentState.Reset();
+        print(GameManager.Inst.currentState.ToString());
 
         OnResetEnd?.Invoke();
         //print("End Reset: " + stateList.Count);
@@ -298,38 +299,12 @@ public class MovementManager : MonoBehaviour
     private void BeginMove()
     {
         OnMoveBegin?.Invoke();
-        originalDoorStates = new Dictionary<TLDoor, bool>();
-        foreach (var door in currentState.GetAllTLDoors())
-        {
-            originalDoorStates.Add(door, door.IsOpen());
-        }
     }
 
     public void EndMove()
     {
-        foreach (var kvp in originalDoorStates)
-        {
-            if (kvp.Key.IsOpen() != kvp.Value)
-            {
-                if (kvp.Key.IsOpen())
-                    OnDoorOpen?.Invoke(kvp.Key.curPos);
-                else
-                    OnDoorClose?.Invoke(kvp.Key.curPos);
-            }
-        }
-
         OnMoveEnd?.Invoke();
-
-        if (!currentState.Equals(stateList[stateList.Count - 1]))
-        {
-            stateList.Add(currentState);
-            currentState = new GameState(currentState);
-        }
-
-        if (currentState.GetDoorAtPos(currentState.GetPlayer().curPos) != null)
-        {
-            GameManager.Inst.CompleteLevel(SceneManager.GetActiveScene().name);
-        }
+        GameManager.Inst.currentState.EndMove();
 
         /*int potNum = 0;
         foreach (var pot in currentState.GetAllTLPots())
@@ -337,7 +312,8 @@ public class MovementManager : MonoBehaviour
             potNum += pot.IsFull();
         }
         print(potNum);*/
-        print(currentState.ToString());
+        Debug.Log("AFTER END");
+        print(GameManager.Inst.currentState.ToString());
         //print("End Move: " + GameManager.Inst.stateList.Count);
     }
 

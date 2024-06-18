@@ -8,9 +8,6 @@ public class TLShears : TLHoldableObject
     {
     }
 
-    public TLShears(TLShears obj) : base(obj)
-    {
-    }
 
     public override string GetName() { return "Shears"; }
 }

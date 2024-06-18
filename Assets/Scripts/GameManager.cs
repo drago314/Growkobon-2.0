@@ -21,11 +21,13 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public static GameManager Inst;
     public MovementManager movementManager;
     public MapManager mapManager;
-    public GeneralAnimator animator;
+    public PlantCreationAnimator animator;
     public PlayerInput inputManager;
     public LevelTransitioner levelTransitioner;
 
-    public event Action OnLevelEnter;
+    public GameState currentState;
+
+    public event Action<GameState> OnLevelEnter;
     public event Action<GameState> OnMapEnter;
 
     private void Awake()
@@ -97,8 +99,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     private void SetMovementManagerFromScene()
     {
-        movementManager.stateList = new List<GameState>();
-
         var TlObjectList = new List<TLObject>();
 
         var tileMaps = FindObjectsOfType<Tilemap>();
@@ -133,14 +133,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
 
         var TLSignatures = FindObjectsByType<TLSignature>(FindObjectsSortMode.None);
-
-        
-        /*foreach (var anim in TLSignatures)
-        {
-            print(anim.gameObject.name + ": " + anim.transform.position.x + " " + anim.transform.position.y);
-        }*/
-        
-
         foreach (var TLSig in TLSignatures)
         {
             Vector2Int pos = new Vector2Int((int)TLSig.gameObject.transform.position.x, (int)TLSig.gameObject.transform.position.y);
@@ -154,10 +146,13 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 TlObjectList.Add(new TLShears(pos, (ShearSignature)TLSig));
         }
 
-        movementManager.initialGameState = new GameState(TlObjectList);
-        movementManager.stateList.Add(movementManager.initialGameState);
-        movementManager.currentState = new GameState(movementManager.initialGameState);
+        currentState = new GameState();
+        foreach (var TLObj in TlObjectList)
+        {
+            currentState.AddObject(TLObj);
+        }
 
+        Debug.Log(currentState.ToString());
         Debug.Log("Level Set");
     }
 
@@ -195,15 +190,20 @@ public class GameManager : MonoBehaviour, IDataPersistence
             if (TLSig is PlayerSignature)
                 TlObjectList.Add(new TLPlayer(pos));
             else if (TLSig is LevelSignature)
-                TlObjectList.Add(new TLLevel(pos, (LevelSignature)TLSig));
+                TlObjectList.Add(new TLLevel(pos, (LevelSignature)TLSig, IsLevelComplete(((LevelSignature)TLSig).levelName)));
             else if (TLSig is WorldSignature)
                 TlObjectList.Add(new TLWorldPortal(pos, (WorldSignature)TLSig));
             else if (TLSig is WorldDoorSignature)
                 TlObjectList.Add(new TLWorldDoor(pos, (WorldDoorSignature)TLSig));
         }
 
-        mapManager.currentState = new GameState(TlObjectList);
+        currentState = new GameState();
+        foreach (var TLObj in TlObjectList)
+        {
+            currentState.AddObject(TLObj);
+        }
 
+        Debug.Log(currentState.ToString());
         Debug.Log("Map Set");
     }
 
@@ -225,7 +225,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         levelTransitioner.EndLevelTransition();
 
         SetMovementManagerFromScene();
-        OnLevelEnter?.Invoke();
+        OnLevelEnter?.Invoke(currentState);
 
         yield return new WaitForSeconds(20f / 60f);
         inputManager.SwitchCurrentActionMap("Gameplay");
@@ -247,13 +247,13 @@ public class GameManager : MonoBehaviour, IDataPersistence
         levelTransitioner.EndLevelTransition();
         SetMapManagerFromScene();
 
-        foreach (var level in mapManager.currentState.GetAllTLLevels())
+        foreach (var level in currentState.GetAllOfTLType<TLLevel>())
         {
-            if (level.levelName == currentLevel)
-                mapManager.currentState.Move(mapManager.currentState.GetPlayer(), level.curPos);
+            if (level.GetLevelName() == currentLevel)
+                currentState.Move(currentState.GetPlayer(), level.GetPosition());
         }
 
-        OnMapEnter?.Invoke(mapManager.currentState);
+        OnMapEnter?.Invoke(currentState);
 
         if (!levelsCompleted.Contains(levelName))
         {
@@ -284,8 +284,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         levelTransitioner.EndLevelTransition();
 
         SetMapManagerFromScene();
-        mapManager.currentState.Move(mapManager.currentState.GetPlayer(), pos);
-        OnMapEnter?.Invoke(mapManager.currentState);
+        currentState.Move(currentState.GetPlayer(), pos);
+        OnMapEnter?.Invoke(currentState);
 
         yield return new WaitForSeconds(20f / 60f);
         inputManager.SwitchCurrentActionMap("World Map");
@@ -310,17 +310,17 @@ public class GameManager : MonoBehaviour, IDataPersistence
         levelTransitioner.EndLevelTransition();
 
         SetMapManagerFromScene();
-        foreach (var level in mapManager.currentState.GetAllTLLevels())
+        foreach (var level in currentState.GetAllOfTLType<TLLevel>())
         {
-            if (level.levelName == levelName)
-                mapManager.currentState.Move(mapManager.currentState.GetPlayer(), level.curPos);
+            if (level.GetLevelName() == levelName)
+                currentState.Move(currentState.GetPlayer(), level.GetPosition());
         }
-        foreach (var world in mapManager.currentState.GetAllTLWorlds())
+        foreach (var world in currentState.GetAllOfTLType<TLWorldPortal>())
         {
-            if (world.worldToTravelTo == levelName)
-                mapManager.currentState.Move(mapManager.currentState.GetPlayer(), world.curPos);
+            if (world.GetWorldToTravelTo() == levelName)
+                currentState.Move(currentState.GetPlayer(), world.GetPosition());
         }
-        OnMapEnter?.Invoke(mapManager.currentState);
+        OnMapEnter?.Invoke(currentState);
 
 
         yield return new WaitForSeconds(20f / 60f);
@@ -346,7 +346,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         levelTransitioner.EndLevelTransition();
 
         SetMapManagerFromScene();
-        OnMapEnter?.Invoke(mapManager.currentState);
+        OnMapEnter?.Invoke(currentState);
 
         Debug.Log("Pre Wait");
         yield return new WaitForSeconds(20f / 60f);

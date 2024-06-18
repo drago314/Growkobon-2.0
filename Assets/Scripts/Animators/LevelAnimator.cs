@@ -12,8 +12,7 @@ public class LevelAnimator : MonoBehaviour
 
     void Start()
     {
-        GameManager.Inst.mapManager.OnLevelComplete += CompleteLevel;
-        GameManager.Inst.OnMapEnter += Instantiate;
+        GameManager.Inst.OnMapEnter += OnLevelLoaded;
     }
     
 
@@ -21,23 +20,27 @@ public class LevelAnimator : MonoBehaviour
     {
         if (GameManager.Inst != null)
         {
-            GameManager.Inst.mapManager.OnLevelComplete -= CompleteLevel;
-            GameManager.Inst.OnMapEnter -= Instantiate;
+            GameManager.Inst.OnMapEnter -= OnLevelLoaded;
+        }
+        if (level != null)
+        {
+            level.OnCompletion -= CompleteLevel;
         }
     }
 
-    public void Instantiate(GameState gameState)
+    public void OnLevelLoaded(GameState gameState)
     {
-        level = gameState.GetLevelAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-        if (GameManager.Inst.IsLevelComplete(level.levelName))
+        level = gameState.GetTLOfTypeAtPos<TLLevel>(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        level.OnCompletion += CompleteLevel;
+
+        if (level.IsCompleted())
             levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlay;
-        else if (level.unlocked)
+        else
             levelOverlayChild.GetComponent<SpriteRenderer>().sprite = unlockedLevelOverlay;
     }
 
-    public void CompleteLevel(string levelName)
+    public void CompleteLevel()
     {
-        if (level.levelName == levelName)
-            levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlay;
+        levelOverlayChild.GetComponent<SpriteRenderer>().sprite = completedLevelOverlay;
     }
 }

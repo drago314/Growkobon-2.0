@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class TLDoor : TLObject
 {
-    public int potsRequired = 0;
-    public bool usesMultiPot = false;
+    private int potsRequired = 0;
+    private bool usesMultiPot = false;
 
     public TLDoor(Vector2Int curPos, DoorSignature doorSig) : base(curPos)
     {
@@ -13,15 +14,9 @@ public class TLDoor : TLObject
         usesMultiPot = doorSig.usesMultiPots;
     }
 
-    public TLDoor(TLDoor obj) : base(obj)
-    {
-        potsRequired = obj.potsRequired;
-        usesMultiPot = obj.usesMultiPot;
-    }
-
     public bool IsOpen()
     {
-        var pots = GameManager.Inst.movementManager.currentState.GetAllTLPots();
+        var pots = GameManager.Inst.currentState.GetAllOfTLType<TLPot>();
         if (!usesMultiPot)
         {
             foreach (var pot in pots)
@@ -41,4 +36,13 @@ public class TLDoor : TLObject
             return potTotal == potsRequired;
         }
     }
+
+    public bool UsesMultiPot() { return usesMultiPot; }
+    public int GetPotsRequired() { return potsRequired; }
+
+    public override void Undo() { return; }
+    public override void Reset() { return; }
+    public override void EndMove() { return; }
+
+    public override string GetName() { return "Door";  }
 }

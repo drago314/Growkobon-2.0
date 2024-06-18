@@ -20,14 +20,34 @@ public class MoveAction
     }
 }
 
-public class GrabAction
+public class SpinAction
+{
+    public Vector2Int origPos;
+    public Vector2Int endPos;
+    public Vector2Int origDir;
+    public Vector2Int endDir;
+    public TLObject TLObj;
+    public GameState state;
+
+    public SpinAction(Vector2Int originalPos, Vector2Int endPosition, Vector2Int originalDirection, Vector2Int endDirection, TLObject obj, GameState gameState)
+    {
+        origPos = originalPos;
+        endPos = endPosition;
+        origDir = originalDirection;
+        endDir = endDirection;
+        TLObj = obj;
+        state = gameState;
+    }
+}
+
+public class InteractAction
 {
     public Vector2Int grabDirection;
     public TLPlayer player;
     public TLHoldableObject objectGrabbed;
     public GameState state;
 
-    public GrabAction(Vector2Int grabDirection, TLPlayer player, TLHoldableObject objectGrabbed, GameState gameState)
+    public InteractAction(Vector2Int grabDirection, TLPlayer player, TLHoldableObject objectGrabbed, GameState gameState)
     {
         this.grabDirection = grabDirection;
         this.player = player;

@@ -1,24 +1,128 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-public class TLPlant : TLObject
+public class TLPlant : TLMoveableObject
 {
-    public bool isDead;
+    private List<TLPlant> stateList;
+
+    private bool isAlive;
+
+    public Action<MoveAction> OnPlantMove;
+    public Action<MoveAction> OnUndoOrReset;
+    public Action OnPlantDeath;
+    public Action OnPlantRegrowth;
 
     public TLPlant(Vector2Int curPos, PlantSignature sig) : base(curPos)
     {
-        isDead = sig.isDead;
+        isAlive = sig.isAlive;
+        stateList = new List<TLPlant>();
+        stateList.Add(new TLPlant(this));
     }
 
-    public TLPlant(Vector2Int curPos, bool isDead) : base(curPos)
+    public TLPlant(Vector2Int curPos, bool isAlive) : base(curPos)
     {
-        this.isDead = isDead;
+        this.isAlive = isAlive;
+        stateList = new List<TLPlant>();
     }
 
-    public TLPlant(TLPlant obj) : base(obj)
+    private TLPlant(TLPlant obj) : base(obj)
     {
-        isDead = obj.isDead;
+        Initialize(obj);
+    }
+
+
+    public void Initialize(TLPlant obj)
+    {
+        isAlive = obj.isAlive;
+        curPos = obj.curPos;
+        OnUndoOrReset?.Invoke(new MoveAction(curPos, curPos, Vector2Int.zero, this, GameManager.Inst.currentState));
+    }
+
+    public bool IsAlive() { return isAlive; }
+
+    public void SetAlive(bool isAlive)
+    {
+        if (this.isAlive && !isAlive)
+        {
+            this.isAlive = false;
+            OnPlantDeath?.Invoke();
+        }
+        else if (!this.isAlive && isAlive)
+        {
+            this.isAlive = true;
+            OnPlantRegrowth?.Invoke();
+        }
+    }
+
+    public override void Move(Vector2Int pos)
+    {
+        OnPlantMove?.Invoke(new MoveAction(curPos, pos, pos - curPos, this, GameManager.Inst.currentState));
+        curPos = pos;
+    }
+
+    public override void EndMove()
+    {
+        PrintStateList();
+        stateList.Add(new TLPlant(this));
+        PrintStateList();
+    }
+
+    public override void Undo()
+    {
+        Debug.Log("UNDO CALLED: " + stateList.Count);
+        PrintStateList();
+
+        if (GameManager.Inst.currentState.AtInitialState())
+            return;
+
+        GameManager.Inst.currentState.RemoveObject(this);
+
+        if (stateList.Count >= 2)
+        {
+            Initialize(stateList[stateList.Count - 2]);
+            stateList.RemoveAt(stateList.Count - 1);
+            GameManager.Inst.currentState.AddObject(this);
+        }
+        else
+            Destroy();
+
+        PrintStateList();
+        Debug.Log("UNDO END: " + stateList.Count);
+    }
+
+    public override void Reset()
+    {
+        Debug.Log("RESET CALLED: " + stateList.Count);
+        PrintStateList();
+
+        GameManager.Inst.currentState.RemoveObject(this);
+
+        if (stateList.Count > GameManager.Inst.currentState.GetMoveCount())
+        {
+            Initialize(stateList[0]);
+            stateList = new List<TLPlant>();
+            stateList.Add(new TLPlant(this));
+            GameManager.Inst.currentState.AddObject(this);
+        }
+        else
+        {
+            Destroy();
+        }
+
+        PrintStateList();
+        Debug.Log("RESET END: " + stateList.Count);
+    }
+
+    private void PrintStateList()
+    {
+        string result = "Current Plant StateList:\n";
+        foreach (var state in stateList)
+        {
+            result += state.curPos + "\n";
+        }
+        Debug.Log(result);
     }
 
     public override string GetName() { return "Plant"; }

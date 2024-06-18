@@ -40,16 +40,15 @@ public class DoorAnimator : MonoBehaviour
         }
     }
 
-    private void OnLevelLoaded()
+    private void OnLevelLoaded(GameState currentState)
     {
-        door = GameManager.Inst.movementManager.currentState.GetDoorAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        door = currentState.GetTLOfTypeAtPos<TLDoor>(new Vector2Int((int)transform.position.x, (int)transform.position.y));
         InstantActivateDoor();
         UpdatePotCountOverlays();
     }
 
     private void OnMoveBegin()
     {
-        door = GameManager.Inst.movementManager.currentState.GetDoorAtPos(new Vector2Int((int)transform.position.x, (int)transform.position.y));
         doorOpen = door.IsOpen();
     }
 
@@ -80,16 +79,16 @@ public class DoorAnimator : MonoBehaviour
             animator.SetTrigger("InstantClose");
     }
 
-    private void  UpdatePotCountOverlays()
+    private void UpdatePotCountOverlays()
     {
-        if (!door.usesMultiPot)
+        if (!door.UsesMultiPot())
         {
             currentPotOverlay.color = new Color(0f, 0f, 0f, 0f);
             requiredPotOverlay.color = new Color(0f, 0f, 0f, 0f);
             return;
         }
 
-        var pots = GameManager.Inst.movementManager.currentState.GetAllTLPots();
+        var pots = GameManager.Inst.currentState.GetAllOfTLType<TLPot>();
         int potTotal = 0;
         foreach (var pot in pots)
         {
@@ -97,7 +96,7 @@ public class DoorAnimator : MonoBehaviour
         }
         currentPotOverlay.sprite = currentPotOverlays[potTotal];
 
-        requiredPotOverlay.sprite = requiredPotOverlays[door.potsRequired];
+        requiredPotOverlay.sprite = requiredPotOverlays[door.GetPotsRequired()];
 
         currentPotOverlay.color = new Color(255f, 255f, 255f, 1f);
         requiredPotOverlay.color = new Color(255f, 255f, 255f, 1f);
