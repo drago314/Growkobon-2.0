@@ -13,6 +13,7 @@ public class PlantAnimator : MonoBehaviour
 
     private TLPlant plant;
     private SpriteRenderer potOverlay;
+    private bool currentlyGrowing;
 
     private void Start()
     {
@@ -63,8 +64,7 @@ public class PlantAnimator : MonoBehaviour
         plant.OnPlantRegrowth += UpdateDeadOrAlive;
         plant.OnObjectDestroy += DoneWithObject;
 
-        animator.SetTrigger("Idle");
-        GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+        currentlyGrowing = true;
         UpdatePlantInPot();
         UpdateDeadOrAlive();
     }
@@ -82,6 +82,7 @@ public class PlantAnimator : MonoBehaviour
 
     public void Grow(Vector2Int growDir)
     {
+        GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
         StartCoroutine(GrowAsync(growDir));
     }
     public IEnumerator GrowAsync(Vector2Int growDir)
@@ -126,6 +127,9 @@ public class PlantAnimator : MonoBehaviour
             animator.SetBool("Dead", false);
         else
             animator.SetBool("Dead", true);
+
+        if (!currentlyGrowing)
+            animator.SetTrigger("Idle");
     }
 
     private void DoneWithObject()
