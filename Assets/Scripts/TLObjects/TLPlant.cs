@@ -8,9 +8,12 @@ public class TLPlant : TLMoveableObject
     private List<TLPlant> stateList;
 
     private bool isAlive;
+    private bool isSkewered;
 
     public Action<MoveAction> OnPlantMove;
     public Action<MoveAction> OnUndoOrReset;
+    public Action OnPlantSkewered;
+    public Action OnPlantUnskewered;
     public Action OnPlantDeath;
     public Action OnPlantRegrowth;
 
@@ -36,6 +39,7 @@ public class TLPlant : TLMoveableObject
     public void Initialize(TLPlant obj)
     {
         isAlive = obj.isAlive;
+        isSkewered = obj.isSkewered;
         curPos = obj.curPos;
         OnUndoOrReset?.Invoke(new MoveAction(curPos, curPos, Vector2Int.zero, this, GameManager.Inst.currentState));
     }
@@ -53,6 +57,23 @@ public class TLPlant : TLMoveableObject
         {
             this.isAlive = true;
             OnPlantRegrowth?.Invoke();
+        }
+    }
+
+    public bool IsSkewered() { return isSkewered; }
+
+    public void SetSkewered(bool isSkewered)
+    {
+        if (this.isSkewered && !isSkewered)
+        {
+            this.isSkewered = false;
+            OnPlantUnskewered?.Invoke();
+        }
+        else if (!this.isSkewered && isSkewered)
+        {
+            this.isSkewered = true;
+            this.isAlive = false;
+            OnPlantSkewered?.Invoke();
         }
     }
 
@@ -111,5 +132,14 @@ public class TLPlant : TLMoveableObject
         Debug.Log(result);
     }
 
-    public override string GetName() { return "Plant"; }
+    public override string GetName() 
+    {
+        string result = "";
+        if (IsAlive())
+            result += "Alive ";
+        else
+            result += "Dead ";
+        result += "Plant";
+        return result; 
+    }
 }

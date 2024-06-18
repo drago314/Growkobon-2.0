@@ -23,6 +23,7 @@ public class ShearsAnimator : MonoBehaviour
         {
             shears.OnMove -= OnShearsMove;
             shears.OnSpin -= OnShearsSpin;
+            shears.OnUndoOrReset -= OnShearsInsantMove;
         }
     }
 
@@ -31,11 +32,26 @@ public class ShearsAnimator : MonoBehaviour
         shears = GameManager.Inst.currentState.GetTLOfTypeAtPos<TLShears>(new Vector2Int((int)transform.position.x, (int)transform.position.y));
         shears.OnMove += OnShearsMove;
         shears.OnSpin += OnShearsSpin;
+        shears.OnUndoOrReset += OnShearsInsantMove;
     }
 
     private void OnShearsMove(MoveAction move)
     {
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
+    }
+
+    private void OnShearsInsantMove(InstantMoveRotatableObject action)
+    {
+        transform.position = new Vector3(action.pos.x, action.pos.y, 0);
+        float angle = 0;
+        if (action.direction == Vector2Int.up)
+            angle = 90;
+        else if (action.direction == Vector2Int.left)
+            angle = 180;
+        else if (action.direction == Vector2Int.down)
+            angle = 270;
+
+        shearSprite.transform.eulerAngles = new Vector3(shearSprite.transform.eulerAngles.x, shearSprite.transform.eulerAngles.y, angle);
     }
 
     private void OnShearsSpin(SpinAction spin)

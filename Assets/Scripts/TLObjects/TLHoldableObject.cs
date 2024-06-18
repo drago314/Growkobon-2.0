@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class TLHoldableObject : TLMoveableObject
+public abstract class TLHoldableObject : TLMoveableObject
 {
-    private List<TLHoldableObject> stateList;
-
     private Vector2Int directionFacing;
     private bool held = false;
 
@@ -19,8 +17,6 @@ public class TLHoldableObject : TLMoveableObject
     public TLHoldableObject(Vector2Int curPos, Vector2Int directionFacing) : base(curPos)
     {
         this.directionFacing = directionFacing;
-        stateList = new List<TLHoldableObject>();
-        stateList.Add(new TLHoldableObject(this));
     }
 
     protected TLHoldableObject(TLHoldableObject obj) : base(obj)
@@ -28,11 +24,11 @@ public class TLHoldableObject : TLMoveableObject
         Initialize(obj);
     }
 
-    private void Initialize(TLHoldableObject obj)
+    protected void Initialize(TLHoldableObject obj)
     {
-        SetDirectionFacing(obj.directionFacing);
-        Move(obj.GetPosition());
-        SetHeld(obj.held);
+        directionFacing = obj.directionFacing;
+        curPos = obj.curPos;
+        held = obj.held;
     }
 
     public Vector2Int GetDirectionFacing() { return directionFacing; }
@@ -162,45 +158,4 @@ public class TLHoldableObject : TLMoveableObject
                 directionFacing = clockwiseList[index - 1];
         }
     }
-
-    public override void EndMove() 
-    {
-        stateList.Add(new TLHoldableObject(this));
-    }
-
-    public override void Undo()
-    {
-        if (GameManager.Inst.currentState.AtInitialState())
-            return;
-
-        GameManager.Inst.currentState.RemoveObject(this);
-
-        if (stateList.Count >= 2)
-        {
-            Initialize(stateList[stateList.Count - 2]);
-            stateList.RemoveAt(stateList.Count - 1);
-            GameManager.Inst.currentState.AddObject(this);
-        }
-        else
-            Destroy();
-    }
-
-    public override void Reset()
-    {
-        GameManager.Inst.currentState.RemoveObject(this);
-
-        if (stateList.Count > GameManager.Inst.currentState.GetMoveCount())
-        {
-            Initialize(stateList[0]);
-            stateList = new List<TLHoldableObject>();
-            stateList.Add(new TLHoldableObject(this));
-            GameManager.Inst.currentState.AddObject(this);
-        }
-        else
-        {
-            Destroy();
-        }
-    }
-
-    public override string GetName() { return "Holdable Object"; }
 }

@@ -42,6 +42,22 @@ public class SpinAction
     }
 }
 
+public class InstantMoveRotatableObject
+{
+    public Vector2Int pos;
+    public Vector2Int direction;
+    public TLObject TLObj;
+    public GameState state;
+
+    public InstantMoveRotatableObject(Vector2Int pos, Vector2Int direction, TLObject obj, GameState gameState)
+    {
+        this.pos = pos;
+        this.direction = direction;
+        TLObj = obj;
+        state = gameState;
+    }
+}
+
 public class InteractAction
 {
     public Vector2Int grabDirection;
@@ -54,6 +70,24 @@ public class InteractAction
         this.grabDirection = grabDirection;
         this.player = player;
         this.objectGrabbed = objectGrabbed;
+        state = gameState;
+    }
+}
+
+public class SkewerAction
+{
+    public Vector2Int skewerDirection;
+    public TLPlayer player;
+    public TLShears shears;
+    public TLPlant plant;
+    public GameState state;
+
+    public SkewerAction(Vector2Int skewerDirection, TLPlayer player, TLShears shears, TLPlant plant, GameState gameState)
+    {
+        this.skewerDirection = skewerDirection;
+        this.player = player;
+        this.shears = shears;
+        this.plant = plant;
         state = gameState;
     }
 }
