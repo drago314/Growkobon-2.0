@@ -196,6 +196,17 @@ public class MovementManager : MonoBehaviour
         Vector2Int curPos = currentState.GetPosOf(player);
         TLShears shears = currentState.GetTLOfTypeAtPos<TLShears>(curPos + startingDir);
 
+        Vector2Int cornerSpot = curPos + endingDir + startingDir;
+        Vector2Int goalPos = curPos + endingDir;
+
+        Debug.Log("CORNER: " + cornerSpot);
+        Debug.Log("GOAL: " + goalPos);
+
+        if (currentState.GetTLOfTypeAtPos<TLWall>(cornerSpot) != null || currentState.GetTLOfTypeAtPos<TLShears>(cornerSpot) != null || currentState.GetTLOfTypeAtPos<TLDoor>(cornerSpot) != null)
+            return;
+        if (currentState.GetTLOfTypeAtPos<TLWall>(goalPos) != null || currentState.GetTLOfTypeAtPos<TLShears>(goalPos) != null || currentState.GetTLOfTypeAtPos<TLDoor>(goalPos) != null)
+            return;
+
         currentState.Move(shears, curPos + endingDir);
         player.SetDirectionFacing(endingDir);
 
@@ -214,6 +225,19 @@ public class MovementManager : MonoBehaviour
         TLPlayer player = currentState.GetPlayer();
         Vector2Int curPos = currentState.GetPosOf(player);
         TLShears shears = currentState.GetTLOfTypeAtPos<TLShears>(curPos + player.GetDirectionFacing());
+
+        Vector2Int goalPosPlayer = curPos + moveDir;
+        Vector2Int goalPosShears = shears.GetPosition() + moveDir;
+
+        Debug.Log("GOAL PLAYER: " + goalPosPlayer);
+        Debug.Log("GOAL SHEARS: " + goalPosShears);
+
+        if (currentState.GetTLOfTypeAtPos<TLWall>(goalPosPlayer) != null)
+            return;
+        if (currentState.GetTLOfTypeAtPos<TLDoor>(goalPosPlayer) != null && !currentState.GetTLOfTypeAtPos<TLDoor>(goalPosPlayer).IsOpen())
+            return;
+        if (currentState.GetTLOfTypeAtPos<TLWall>(goalPosShears) != null || currentState.GetTLOfTypeAtPos<TLShears>(goalPosShears) != null || currentState.GetTLOfTypeAtPos<TLDoor>(goalPosShears) != null)
+            return;
 
         currentState.MoveRelative(shears, moveDir);
         currentState.MoveRelative(player, moveDir);
@@ -300,8 +324,15 @@ public class MovementManager : MonoBehaviour
 
     public void EndMove()
     {
+        GameState currentState = GameManager.Inst.currentState;
+
+        if (currentState.GetTLOfTypeAtPos<TLDoor>(currentState.GetPlayer().GetPosition()) != null)
+        {
+            GameManager.Inst.CompleteLevel(SceneManager.GetActiveScene().name);
+        }
+
         OnMoveEnd?.Invoke();
-        GameManager.Inst.currentState.EndMove();
+        currentState.EndMove();
 
         /*int potNum = 0;
         foreach (var pot in currentState.GetAllTLPots())
