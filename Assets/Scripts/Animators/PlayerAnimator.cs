@@ -43,14 +43,12 @@ public class PlayerAnimator : MonoBehaviour
 
     private void OnPlayerMove(MoveAction move)
     {
-        Debug.Log("Recieved Player Move Action");
         PlayerFaceDir(move.moveDir);
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
     }
 
     public void OnInstantMove(MoveAction move, InteractAction interact)
     {
-        Debug.Log("Recieved Player Instant Action");
         PlayerFaceDir(move.moveDir);
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
     }

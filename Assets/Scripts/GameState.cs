@@ -34,11 +34,7 @@ public class GameState
 
     public void RemoveObject(TLObject TLObj)
     {
-        GameManager.Inst.DEBUG("BEFORE REMOVE");
-        GameManager.Inst.DEBUG(GameManager.Inst.currentState.ToString());
         posToTLObj[(GetPosOf(TLObj).x, GetPosOf(TLObj).y)].Remove(TLObj);
-        GameManager.Inst.DEBUG("AFTER REMOVE");
-        GameManager.Inst.DEBUG(GameManager.Inst.currentState.ToString());
     }
 
     public void ClearState()

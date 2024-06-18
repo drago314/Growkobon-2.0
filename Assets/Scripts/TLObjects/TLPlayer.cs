@@ -83,8 +83,14 @@ public class TLPlayer : TLMoveableObject
 
     public override void Move(Vector2Int pos)
     {
-        OnPlayerMove?.Invoke(new MoveAction(curPos, pos, pos - curPos, this, GameManager.Inst.currentState));
-        directionFacing = pos - curPos;
+        if (!IsObjectHeld())
+        {
+            OnPlayerMove?.Invoke(new MoveAction(curPos, pos, pos - curPos, this, GameManager.Inst.currentState));
+            directionFacing = pos - curPos;
+        }
+        else
+            OnPlayerMove?.Invoke(new MoveAction(curPos, pos, directionFacing, this, GameManager.Inst.currentState));
+
         curPos = pos;
     }
 

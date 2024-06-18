@@ -64,16 +64,11 @@ public class TLPlant : TLMoveableObject
 
     public override void EndMove()
     {
-        PrintStateList();
         stateList.Add(new TLPlant(this));
-        PrintStateList();
     }
 
     public override void Undo()
     {
-        Debug.Log("UNDO CALLED: " + stateList.Count);
-        PrintStateList();
-
         if (GameManager.Inst.currentState.AtInitialState())
             return;
 
@@ -87,16 +82,10 @@ public class TLPlant : TLMoveableObject
         }
         else
             Destroy();
-
-        PrintStateList();
-        Debug.Log("UNDO END: " + stateList.Count);
     }
 
     public override void Reset()
     {
-        Debug.Log("RESET CALLED: " + stateList.Count);
-        PrintStateList();
-
         GameManager.Inst.currentState.RemoveObject(this);
 
         if (stateList.Count > GameManager.Inst.currentState.GetMoveCount())
@@ -110,9 +99,6 @@ public class TLPlant : TLMoveableObject
         {
             Destroy();
         }
-
-        PrintStateList();
-        Debug.Log("RESET END: " + stateList.Count);
     }
 
     private void PrintStateList()

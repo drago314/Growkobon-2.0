@@ -19,6 +19,8 @@ public class TLHoldableObject : TLMoveableObject
     public TLHoldableObject(Vector2Int curPos, Vector2Int directionFacing) : base(curPos)
     {
         this.directionFacing = directionFacing;
+        stateList = new List<TLHoldableObject>();
+        stateList.Add(new TLHoldableObject(this));
     }
 
     protected TLHoldableObject(TLHoldableObject obj) : base(obj)
@@ -61,7 +63,6 @@ public class TLHoldableObject : TLMoveableObject
         if ((curPos - pos).x == 0 || (curPos - pos).y == 0)
         {
             OnMove?.Invoke(new MoveAction(curPos, pos, pos - curPos, this, GameManager.Inst.currentState));
-            curPos = pos;
         }
         else
         {
@@ -91,6 +92,7 @@ public class TLHoldableObject : TLMoveableObject
 
             OnSpin?.Invoke(new SpinAction(curPos, pos, startDir, endDir, this, GameManager.Inst.currentState));
         }
+        curPos = pos;
     }
 
     public override void EndMove() 

@@ -97,10 +97,7 @@ public class MovementManager : MonoBehaviour
 
         TLPlayer player = currentState.GetPlayer();
         Vector2Int curPos = currentState.GetPosOf(player);
-        Vector2Int grabDirection = Vector2Int.zero;
-
-        Debug.Log("Shears Direction: " + currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.up).GetDirectionFacing());
-        
+        Vector2Int grabDirection = Vector2Int.zero;        
 
         if (player.IsObjectHeld())
         {
@@ -138,9 +135,6 @@ public class MovementManager : MonoBehaviour
         print(GameManager.Inst.currentState.ToString());
 
         BeginMove();
-
-        Debug.Log("AFTER BEGIN");
-        print(GameManager.Inst.currentState.ToString());
 
         GameState currentState = GameManager.Inst.currentState;
 
@@ -185,15 +179,15 @@ public class MovementManager : MonoBehaviour
             currentState.MoveRelative(player, moveDir);
         }
 
-        Debug.Log("BEFORE END LOGIC");
-        print(GameManager.Inst.currentState.ToString());
-
         EndMove();
     }
 
     // A turn from right to up would have a starting Dir of Vector2Int.right and a ending dir of Vector2Int.up
     private void TurnHoldingShear(Vector2Int startingDir, Vector2Int endingDir)
     {
+        Debug.Log("BEGIN TURN");
+        print(GameManager.Inst.currentState.ToString());
+
         BeginMove();
 
         GameState currentState = GameManager.Inst.currentState;
@@ -202,7 +196,7 @@ public class MovementManager : MonoBehaviour
         Vector2Int curPos = currentState.GetPosOf(player);
         TLShears shears = currentState.GetTLOfTypeAtPos<TLShears>(curPos + startingDir);
 
-        currentState.MoveRelative(shears, curPos + endingDir);
+        currentState.Move(shears, curPos + endingDir);
         player.SetDirectionFacing(endingDir);
 
         EndMove();
@@ -210,6 +204,9 @@ public class MovementManager : MonoBehaviour
 
     private void MoveHoldingShear(Vector2Int moveDir)
     {
+        Debug.Log("BEGIN MOVE");
+        print(GameManager.Inst.currentState.ToString());
+
         BeginMove();
 
         GameState currentState = GameManager.Inst.currentState;
@@ -218,8 +215,8 @@ public class MovementManager : MonoBehaviour
         Vector2Int curPos = currentState.GetPosOf(player);
         TLShears shears = currentState.GetTLOfTypeAtPos<TLShears>(curPos + player.GetDirectionFacing());
 
-        currentState.MoveRelative(shears, curPos + moveDir);
-        currentState.MoveRelative(player, curPos + moveDir);
+        currentState.MoveRelative(shears, moveDir);
+        currentState.MoveRelative(player, moveDir);
 
         EndMove();
     }
@@ -312,7 +309,7 @@ public class MovementManager : MonoBehaviour
             potNum += pot.IsFull();
         }
         print(potNum);*/
-        Debug.Log("AFTER END");
+        Debug.Log("END");
         print(GameManager.Inst.currentState.ToString());
         //print("End Move: " + GameManager.Inst.stateList.Count);
     }

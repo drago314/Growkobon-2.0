@@ -19,6 +19,7 @@ public class ShearsAnimator : MonoBehaviour
         if (shears != null)
         {
             shears.OnMove -= OnShearsMove;
+            shears.OnSpin -= OnShearsSpin;
         }
     }
 
@@ -26,10 +27,16 @@ public class ShearsAnimator : MonoBehaviour
     {
         shears = GameManager.Inst.currentState.GetTLOfTypeAtPos<TLShears>(new Vector2Int((int)transform.position.x, (int)transform.position.y));
         shears.OnMove += OnShearsMove;
+        shears.OnSpin += OnShearsSpin;
     }
 
     private void OnShearsMove(MoveAction move)
     {
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
+    }
+
+    private void OnShearsSpin(SpinAction spin)
+    {
+        transform.position = new Vector3(spin.endPos.x, spin.endPos.y, 0);
     }
 }
