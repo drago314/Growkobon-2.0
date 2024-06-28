@@ -96,14 +96,14 @@ public class GrowAction
 {
     public Vector2Int newPos;
     public Vector2Int moveDir;
-    public TLObject TLObj;
+    public TLPlant plant;
     public GameState state;
 
-    public GrowAction(Vector2Int newPosition, Vector2Int moveDirection, TLObject obj, GameState gameState)
+    public GrowAction(Vector2Int newPosition, Vector2Int moveDirection, TLPlant plant, GameState gameState)
     {
         newPos = newPosition;
         moveDir = moveDirection;
-        TLObj = obj;
+        this.plant = plant;
         state = gameState;
     }
 }

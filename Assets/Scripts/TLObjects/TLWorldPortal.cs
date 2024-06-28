@@ -19,5 +19,11 @@ public class TLWorldPortal : TLObject
     public override void EndMove() { return; }
     public override void Undo() { return; }
     public override void Reset() { return; }
+
+    public override bool CanMove(TLObject pusher, Vector2Int moveDir)
+    {
+        return true;
+    }
+
     public override string GetName() { return worldToTravelTo; }
 }

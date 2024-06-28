@@ -21,8 +21,8 @@ public class ShearsAnimator : MonoBehaviour
         }
         if (shears != null)
         {
-            shears.OnMove -= OnShearsMove;
-            shears.OnSpin -= OnShearsSpin;
+            shears.OnShearsMove -= OnShearsMove;
+            shears.OnShearsSpin -= OnShearsSpin;
             shears.OnUndoOrReset -= OnShearsInsantMove;
         }
     }
@@ -30,8 +30,8 @@ public class ShearsAnimator : MonoBehaviour
     private void OnLevelLoaded(GameState state)
     {
         shears = GameManager.Inst.currentState.GetTLOfTypeAtPos<TLShears>(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-        shears.OnMove += OnShearsMove;
-        shears.OnSpin += OnShearsSpin;
+        shears.OnShearsMove += OnShearsMove;
+        shears.OnShearsSpin += OnShearsSpin;
         shears.OnUndoOrReset += OnShearsInsantMove;
     }
 

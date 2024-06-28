@@ -6,13 +6,14 @@ public abstract class TLMoveableObject : TLObject
 {
     public TLMoveableObject(Vector2Int pos) : base(pos)
     {
-        Move(pos);
+        SetPos(pos);
     }
 
     public TLMoveableObject(TLMoveableObject obj) : base(obj)
     {
-        Move(obj.GetPosition());
+        SetPos(obj.GetPosition());
     }
 
-    public abstract void Move(Vector2Int pos);
+    public abstract void SetPos(Vector2Int pos);
+    public abstract void Move(TLObject pusher, Vector2Int moveDir);
 }

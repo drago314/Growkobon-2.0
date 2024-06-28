@@ -37,6 +37,14 @@ public class TLDoor : TLObject
         }
     }
 
+    public override bool CanMove(TLObject pusher, Vector2Int moveDir)
+    {
+        if (pusher is TLPlayer && IsOpen())
+            return true;
+
+        return false;
+    }
+
     public bool UsesMultiPot() { return usesMultiPot; }
     public int GetPotsRequired() { return potsRequired; }
 

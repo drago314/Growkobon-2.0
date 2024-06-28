@@ -10,9 +10,6 @@ public abstract class TLHoldableObject : TLMoveableObject
 
     public event Action OnPickedUp;
     public event Action OnRelease;
-    public event Action<MoveAction> OnMove;
-    public event Action<SpinAction> OnSpin;
-
 
     public TLHoldableObject(Vector2Int curPos, Vector2Int directionFacing) : base(curPos)
     {
@@ -32,11 +29,6 @@ public abstract class TLHoldableObject : TLMoveableObject
     }
 
     public Vector2Int GetDirectionFacing() { return directionFacing; }
-    public void SetDirectionFacing(Vector2Int dir)
-    {
-        directionFacing = dir;
-        OnMove?.Invoke(new MoveAction(curPos, curPos, dir, this, GameManager.Inst.currentState));
-    }
 
     public bool IsHeld() { return held; }
     
@@ -54,7 +46,9 @@ public abstract class TLHoldableObject : TLMoveableObject
         }
     }
 
-    public override void Move(Vector2Int pos)
+    public abstract bool SpinMove(bool clockwise);
+
+    /*public override void Move(Vector2Int pos)
     {
         if ((curPos - pos).x == 0 || (curPos - pos).y == 0) // Straight move
         {
@@ -130,7 +124,7 @@ public abstract class TLHoldableObject : TLMoveableObject
             OnSpin?.Invoke(new SpinAction(curPos, pos, startDir, endDir, clockwise, this, GameManager.Inst.currentState));
         }
         curPos = pos;
-    }
+    }*/
 
     public void Rotate90Degrees(bool clockwise)
     {

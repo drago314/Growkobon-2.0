@@ -21,7 +21,7 @@ public class PlantCreationAnimator : MonoBehaviour
     private void GrowPlant(GrowAction grow)
     {
         var plantAnimator = Instantiate(clearPlantPrefab, new Vector3Int(grow.newPos.x, grow.newPos.y, 0), Quaternion.identity).GetComponent<PlantAnimator>();
-        plantAnimator.Instantiate(grow.state);
+        plantAnimator.Instantiate(grow.plant);
         plantAnimator.Grow(grow.moveDir);
     }
 }

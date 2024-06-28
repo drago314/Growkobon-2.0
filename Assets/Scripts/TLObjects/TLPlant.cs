@@ -77,10 +77,57 @@ public class TLPlant : TLMoveableObject
         }
     }
 
-    public override void Move(Vector2Int pos)
+    public override void SetPos(Vector2Int pos)
     {
         OnPlantMove?.Invoke(new MoveAction(curPos, pos, pos - curPos, this, GameManager.Inst.currentState));
         curPos = pos;
+    }
+
+    public override bool CanMove(TLObject pusher, Vector2Int moveDir)
+    {
+        GameState currentState = GameManager.Inst.currentState;
+
+        if (pusher is TLShears && ((TLShears)pusher).GetDirectionFacing() == moveDir && !((TLShears)pusher).IsPlantSkewered())
+            return true;
+
+        TLPlant[] plantGroup = currentState.GetPlantGroupAtPos(curPos);
+
+        foreach (var plant in plantGroup)
+        {
+            bool plantCanMove = true;
+            if (!currentState.IsTLOfTypeAtPos<TLPlant>(plant.GetPosition() + moveDir))
+                plantCanMove = currentState.CanPush(plant, moveDir);
+            if (!plantCanMove)
+                return false;
+        }
+
+        return true;
+    }
+
+    public override void Move(TLObject pusher, Vector2Int moveDir)
+    {
+        GameState currentState = GameManager.Inst.currentState;
+
+        if (pusher is TLShears && ((TLShears)pusher).GetDirectionFacing() == moveDir && !((TLShears)pusher).IsPlantSkewered())
+            ((TLShears)pusher).SkewerPlant(this);
+
+        TLPlant[] plantGroup = currentState.GetPlantGroupAtPos(curPos);
+
+        foreach (var plant in plantGroup)
+        {
+            if (!currentState.IsTLOfTypeAtPos<TLPlant>(plant.GetPosition() + moveDir))
+                currentState.Push(plant, moveDir);
+            if (IsSkewered())
+                currentState.GetTLOfTypeAtPos<TLShears>(curPos).Move(plant, moveDir);
+            plant.GroupedMove(moveDir);
+        }
+    }
+
+    public void GroupedMove(Vector2Int moveDir)
+    {
+        OnPlantMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+        curPos = curPos + moveDir;
+        GameManager.Inst.currentState.Move(this, curPos - moveDir);
     }
 
     public override void EndMove()
@@ -140,6 +187,10 @@ public class TLPlant : TLMoveableObject
         else
             result += "Dead ";
         result += "Plant";
+
+        if (IsSkewered())
+            result += " is skewered";
+
         return result; 
     }
 }

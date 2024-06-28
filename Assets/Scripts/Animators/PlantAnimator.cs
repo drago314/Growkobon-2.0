@@ -39,7 +39,7 @@ public class PlantAnimator : MonoBehaviour
             plant.OnPlantDeath -= UpdateDeadOrAlive;
             plant.OnPlantRegrowth -= UpdateDeadOrAlive;
             plant.OnPlantSkewered -= UpdateDeadOrAlive;
-            plant.OnPlantUnskewered -= UpdateDeadOrAlive;
+            plant.OnPlantUnskewered -= OnPlantSkewered;
             plant.OnObjectDestroy -= DoneWithObject;
         }
     }
@@ -52,16 +52,16 @@ public class PlantAnimator : MonoBehaviour
         plant.OnPlantDeath += UpdateDeadOrAlive;
         plant.OnPlantRegrowth += UpdateDeadOrAlive;
         plant.OnPlantSkewered += UpdateDeadOrAlive;
-        plant.OnPlantUnskewered += UpdateDeadOrAlive;
+        plant.OnPlantUnskewered += OnPlantSkewered;
         plant.OnObjectDestroy += DoneWithObject;
 
         UpdatePlantInPot();
         UpdateDeadOrAlive();
     }
 
-    public void Instantiate(GameState state)
+    public void Instantiate(TLPlant plant)
     {
-        plant = state.GetTLOfTypeAtPos<TLPlant>(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        this.plant = plant;
         plant.OnPlantMove += OnPlantMove;
         plant.OnUndoOrReset += OnUndoOrReset;
         plant.OnPlantDeath += UpdateDeadOrAlive;
@@ -75,11 +75,13 @@ public class PlantAnimator : MonoBehaviour
 
     private void OnPlantMove(MoveAction move)
     {
+        currentlyGrowing = false;
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
     }
 
     private void OnUndoOrReset(MoveAction move)
     {
+        currentlyGrowing = false;
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
         UpdateDeadOrAlive();
     }
@@ -123,6 +125,12 @@ public class PlantAnimator : MonoBehaviour
             potOverlay.color = new Color(1f, 1f, 1f, 1f);
             potOverlay.sprite = potOverlays[0];
         }
+    }
+
+    private void OnPlantSkewered()
+    {
+        currentlyGrowing = false;
+        UpdateDeadOrAlive();
     }
 
     private void UpdateDeadOrAlive()

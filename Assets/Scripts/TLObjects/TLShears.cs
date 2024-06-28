@@ -9,6 +9,8 @@ public class TLShears : TLHoldableObject
 
     private TLPlant plantSkewered = null;
 
+    public event Action<MoveAction> OnShearsMove;
+    public event Action<SpinAction> OnShearsSpin;
     public Action<SkewerAction> OnPlantSkewered;
     public Action<SkewerAction> OnPlantUnskewered;
     public Action<InstantMoveRotatableObject> OnUndoOrReset;
@@ -54,6 +56,70 @@ public class TLShears : TLHoldableObject
         plantSkewered = null;
     }
 
+    public override void SetPos(Vector2Int pos)
+    {
+        OnShearsMove?.Invoke(new MoveAction(curPos, pos, pos - curPos, this, GameManager.Inst.currentState));
+        curPos = pos;
+    }
+
+    public override bool CanMove(TLObject pusher, Vector2Int moveDir)
+    {
+        GameState currentState = GameManager.Inst.currentState;
+
+        if (pusher is TLPlayer && GetDirectionFacing() == -1 * moveDir)
+            return false;
+        if (currentState.IsTLOfTypeAtPos<TLPlayer>(curPos + moveDir))
+            return true;
+        if (currentState.IsTLOfTypeAtPos<TLPlant>(curPos + moveDir) && GetDirectionFacing() == moveDir)
+            return true;
+
+        if (IsPlantSkewered() && moveDir != -1 * GetDirectionFacing())
+            return plantSkewered.CanMove(this, moveDir);
+
+        return currentState.CanPush(this, moveDir);
+    }
+
+    public override void Move(TLObject pusher, Vector2Int moveDir)
+    {
+        GameState currentState = GameManager.Inst.currentState;
+
+
+        if (pusher is TLPlant && IsPlantSkewered())
+        {
+            OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+            curPos = curPos + moveDir;
+            currentState.Move(this, curPos - moveDir);
+        }
+        else if (pusher is TLPlant && !IsPlantSkewered())
+        {
+            if (GetDirectionFacing() == -1 * moveDir)
+                SkewerPlant((TLPlant) pusher);
+            else
+            {
+                currentState.Push(this, moveDir);
+                OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+                curPos = curPos + moveDir;
+                currentState.Move(this, curPos - moveDir);
+            }
+        }
+        else if (IsPlantSkewered())
+        {
+            return;
+        }
+        else
+        {
+            currentState.Push(this, moveDir);
+            OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+            curPos = curPos + moveDir;
+            currentState.Move(this, curPos - moveDir);
+        }
+    }
+
+    public override bool SpinMove(bool clockwise)
+    {
+        return false;
+    }
+
     public override void EndMove()
     {
         stateList.Add(new TLShears(this));
@@ -93,5 +159,11 @@ public class TLShears : TLHoldableObject
         }
     }
 
-    public override string GetName() { return "Shears facing " + GetDirectionFacing(); }
+    public override string GetName()
+    {
+        string result = "Shears facing " + GetDirectionFacing();
+        if (IsPlantSkewered())
+            result += " Skewering Plant";
+        return result;
+    }
 }

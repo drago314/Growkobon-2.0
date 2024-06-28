@@ -37,6 +37,11 @@ public class GameState
         posToTLObj[(GetPosOf(TLObj).x, GetPosOf(TLObj).y)].Remove(TLObj);
     }
 
+    public void RemoveObject(TLObject TLObj, Vector2Int oldPos)
+    {
+        posToTLObj[(oldPos.x, oldPos.y)].Remove(TLObj);
+    }
+
     public void ClearState()
     {
         posToTLObj = new Dictionary<(int, int), List<TLObject>>();
@@ -110,11 +115,30 @@ public class GameState
         return objectList;
     }
 
+    public bool IsTLObjectAtPos(Vector2Int pos)
+    {
+        if (!posToTLObj.ContainsKey((pos.x, pos.y)))
+            return false;
+        return true;
+    }
+
     public List<TLObject> GetTLObjectsAtPos(Vector2Int pos)
     {
         if (!posToTLObj.ContainsKey((pos.x, pos.y)))
             return null;
         return posToTLObj[(pos.x, pos.y)];
+    }
+
+    public bool IsTLOfTypeAtPos<T>(Vector2Int pos) where T : TLObject
+    {
+        if (GetTLObjectsAtPos(pos) == null)
+            return false;
+        foreach (var TLObj in GetTLObjectsAtPos(pos))
+        {
+            if (TLObj is T)
+                return true;
+        }
+        return false;
     }
 
     public T GetTLOfTypeAtPos<T>(Vector2Int pos) where T : TLObject
@@ -129,9 +153,42 @@ public class GameState
         return null;
     }
 
+    public bool CanPush(TLObject pusher, Vector2Int moveDir)
+    {
+        if (!IsTLObjectAtPos(pusher.GetPosition() + moveDir))
+            return true;
+
+        bool objectCanMove = true;
+        foreach (var obj in GetTLObjectsAtPos(pusher.GetPosition() + moveDir))
+        {
+            bool canMove = obj.CanMove(pusher, moveDir);
+            if (!canMove)
+            {
+                objectCanMove = false;
+                break;
+            }
+        }
+
+        return objectCanMove;
+    }
+
+    public void Push(TLObject pusher, Vector2Int moveDir)
+    {
+        if (!IsTLObjectAtPos(pusher.GetPosition() + moveDir))
+            return;
+
+        TLObject[] objectsToMove = GetTLObjectsAtPos(pusher.GetPosition() + moveDir).ToArray();
+
+        foreach (var obj in objectsToMove)
+        {
+            if (obj is TLMoveableObject && obj is not TLPlayer)
+                ((TLMoveableObject)obj).Move(pusher, moveDir);
+        }
+    }
+
     public Vector2Int GetPosOf(TLObject TLObj)
     {
-        return TLObj.GetPosition(); ;
+        return TLObj.GetPosition();
     }
 
     public TLPlant[] GetPlantGroupOf(TLPlant plant)
@@ -173,17 +230,10 @@ public class GameState
             return null;
     }
 
-    public void MoveRelative(TLMoveableObject obj, Vector2Int posChange)
-    {
-        Vector2Int newPos = GetPosOf(obj) + posChange;
-        Move(obj, newPos);
-    }
-
-    public void Move(TLMoveableObject obj, Vector2Int newPos)
+    public void Move(TLMoveableObject obj, Vector2Int oldPos)
     {
         //GameManager.Inst.DEBUG("ORIGINAL " + obj.gameObject.name + ": " + GetPosOf(obj).x + " " + GetPosOf(obj).y);
-        RemoveObject(obj);
-        obj.Move(newPos);
+        RemoveObject(obj, oldPos);
         AddObject(obj);
         //GameManager.Inst.DEBUG("FINAL " + obj.gameObject.name + ": " + GetPosOf(obj).x + " " + GetPosOf(obj).y);
     }

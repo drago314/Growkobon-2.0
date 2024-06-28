@@ -81,17 +81,38 @@ public class TLPlayer : TLMoveableObject
         OnPlayerMove?.Invoke(new MoveAction(curPos, curPos, directionFacing, this, GameManager.Inst.currentState));
     }
 
-    public override void Move(Vector2Int pos)
+    public override void SetPos(Vector2Int pos)
     {
-        if (!IsObjectHeld())
-        {
-            OnPlayerMove?.Invoke(new MoveAction(curPos, pos, pos - curPos, this, GameManager.Inst.currentState));
-            directionFacing = pos - curPos;
-        }
-        else
-            OnPlayerMove?.Invoke(new MoveAction(curPos, pos, directionFacing, this, GameManager.Inst.currentState));
-
+        OnPlayerMove?.Invoke(new MoveAction(curPos, pos, pos - curPos, this, GameManager.Inst.currentState));
         curPos = pos;
+    }
+
+    public override bool CanMove(TLObject pusher, Vector2Int moveDir)
+    {
+        GameState currentState = GameManager.Inst.currentState;
+
+        if (!IsObjectHeld() || objectHeld.GetPosition() == curPos + moveDir)
+            return currentState.CanPush(this, moveDir);
+        else
+            return currentState.CanPush(this, moveDir) && currentState.CanPush(objectHeld, moveDir);
+    }
+
+    public override void Move(TLObject pusher, Vector2Int moveDir)
+    {
+        GameState currentState = GameManager.Inst.currentState;
+
+        if (!IsObjectHeld() || objectHeld.GetPosition() == curPos + moveDir)
+            currentState.Push(this, moveDir);
+        else
+        {
+            currentState.Push(this, moveDir);
+            currentState.Push(objectHeld, moveDir);
+        }
+
+
+        OnPlayerMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+        curPos = curPos + moveDir;
+        GameManager.Inst.currentState.Move(this, curPos - moveDir);
     }
 
     public override void EndMove()

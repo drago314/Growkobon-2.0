@@ -49,26 +49,12 @@ public class MapManager : MonoBehaviour
     {
         //print(currentState.ToString());
 
-        GameState currentState = GameManager.Inst.currentState;
+        GameManager.Inst.currentState.GetPlayer().SetDirectionFacing(moveDir);
 
-        TLPlayer player = currentState.GetPlayer();
-        Vector2Int curPos = currentState.GetPosOf(player);
-        Vector2Int goalPos = curPos + moveDir;
+        bool canMove = GameManager.Inst.currentState.GetPlayer().CanMove(null, moveDir);
 
-        if (currentState.GetTLOfTypeAtPos<TLWorldPortal>(goalPos) != null)
-        {
-            GameManager.Inst.OpenMap(currentState.GetTLOfTypeAtPos<TLWorldPortal>(goalPos).GetWorldToTravelTo(), currentState.GetTLOfTypeAtPos<TLWorldPortal>(goalPos).GetPosToTravelTo());
-        }
-
-        bool wallBlocking = currentState.GetTLOfTypeAtPos<TLWall>(goalPos) != null;
-        bool doorBlocking = currentState.GetTLOfTypeAtPos<TLWorldDoor>(goalPos) != null && !currentState.GetTLOfTypeAtPos<TLWorldDoor>(goalPos).IsOpen();
-        if (wallBlocking || doorBlocking)
-        {
-            player.SetDirectionFacing(moveDir);
-            return;
-        }
-
-        currentState.MoveRelative(player, moveDir);
+        if (canMove)
+            GameManager.Inst.currentState.GetPlayer().Move(null, moveDir);
     }
 
     private void EnterLevel(InputAction.CallbackContext obj)

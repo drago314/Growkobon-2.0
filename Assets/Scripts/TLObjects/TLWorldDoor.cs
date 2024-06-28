@@ -26,5 +26,14 @@ public class TLWorldDoor : TLObject
     public override void EndMove() { return; }
     public override void Undo() { return; }
     public override void Reset() { return; }
+
+    public override bool CanMove(TLObject pusher, Vector2Int moveDir)
+    {
+        if (pusher is TLPlayer && IsOpen())
+            return true;
+
+        return false;
+    }
+
     public override string GetName() { return "World Door"; }
 }

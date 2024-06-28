@@ -29,6 +29,7 @@ public abstract class TLObject
     public abstract void EndMove();
     public abstract void Undo();
     public abstract void Reset();
+    public abstract bool CanMove(TLObject pusher, Vector2Int moveDir);
 
     public virtual void Destroy()
     {
