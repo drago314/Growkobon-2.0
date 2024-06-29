@@ -115,9 +115,10 @@ public class TLPlayer : TLMoveableObject
         GameManager.Inst.currentState.Move(this, curPos - moveDir);
     }
 
-    public override void EndMove()
+    public override void EndMove(bool changeHappened)
     {
-        stateList.Add(new TLPlayer(this));
+        if (changeHappened)
+            stateList.Add(new TLPlayer(this));
     }
 
     public override void Undo()

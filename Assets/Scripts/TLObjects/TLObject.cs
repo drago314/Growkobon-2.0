@@ -26,7 +26,7 @@ public abstract class TLObject
     }
 
     public abstract string GetName();
-    public abstract void EndMove();
+    public abstract void EndMove(bool changeHappened);
     public abstract void Undo();
     public abstract void Reset();
     public abstract bool CanMove(TLObject pusher, Vector2Int moveDir);

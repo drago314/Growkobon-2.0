@@ -89,7 +89,7 @@ public class MovementManager : MonoBehaviour
 
         TLPlayer player = currentState.GetPlayer();
         Vector2Int curPos = currentState.GetPosOf(player);
-        Vector2Int grabDirection = Vector2Int.zero;        
+        Vector2Int grabDirection = Vector2Int.zero;
 
         if (player.IsObjectHeld())
         {
@@ -106,7 +106,10 @@ public class MovementManager : MonoBehaviour
         else if (currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.right) != null && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.right).GetDirectionFacing() != Vector2Int.left)
             grabDirection = Vector2Int.right;
         else
+        {
+            EndMove(false);
             return;
+        }
 
         Debug.Log("Grab Direction: " + grabDirection);
 
@@ -118,7 +121,7 @@ public class MovementManager : MonoBehaviour
             Debug.Log("Player Holding: " + player.GetObjectHeld());
         }
 
-        EndMove();
+        EndMove(true);
     }
 
     private void TypicalMove(Vector2Int moveDir)
@@ -155,8 +158,7 @@ public class MovementManager : MonoBehaviour
         if (attemptGrowPlant)
             plantGrown = GrowPlant(currentState.GetPlayer().GetPosition() + moveDir + addition, moveDir);
 
-        if (canMove || plantGrown)
-            EndMove();
+        EndMove(canMove || plantGrown);
     }
 
     // A turn from right to up would have a starting Dir of Vector2Int.right and a ending dir of Vector2Int.up
@@ -180,14 +182,20 @@ public class MovementManager : MonoBehaviour
         Debug.Log("GOAL: " + goalPos);
 
         if (currentState.GetTLOfTypeAtPos<TLWall>(cornerSpot) != null || currentState.GetTLOfTypeAtPos<TLShears>(cornerSpot) != null || currentState.GetTLOfTypeAtPos<TLDoor>(cornerSpot) != null)
+        { 
+            EndMove(false);
             return;
+        }
         if (currentState.GetTLOfTypeAtPos<TLWall>(goalPos) != null || currentState.GetTLOfTypeAtPos<TLShears>(goalPos) != null || currentState.GetTLOfTypeAtPos<TLDoor>(goalPos) != null)
+        {
+            EndMove(false);
             return;
+        }
 
         currentState.Move(shears, curPos + endingDir);
         player.SetDirectionFacing(endingDir);
 
-        EndMove();
+        EndMove(true);
     }
 
 
@@ -275,9 +283,15 @@ public class MovementManager : MonoBehaviour
         OnMoveBegin?.Invoke();
     }
 
-    public void EndMove()
+    public void EndMove(bool somethingChanged)
     {
         GameState currentState = GameManager.Inst.currentState;
+
+        if (!somethingChanged)
+        {
+            currentState.EndMove(false);
+            return;
+        }
 
         if (currentState.GetTLOfTypeAtPos<TLDoor>(currentState.GetPlayer().GetPosition()) != null)
         {
@@ -285,7 +299,7 @@ public class MovementManager : MonoBehaviour
         }
 
         OnMoveEnd?.Invoke();
-        currentState.EndMove();
+        currentState.EndMove(true);
 
         /*int potNum = 0;
         foreach (var pot in currentState.GetAllTLPots())

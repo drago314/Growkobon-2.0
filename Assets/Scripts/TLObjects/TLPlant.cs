@@ -9,6 +9,7 @@ public class TLPlant : TLMoveableObject
 
     private bool isAlive;
     private bool isSkewered;
+    private bool checkedForPush = false;
     private bool pushed = false;
 
     public Action<MoveAction> OnPlantMove;
@@ -63,6 +64,7 @@ public class TLPlant : TLMoveableObject
         }
     }
 
+    public bool HasBeenCheckedForPush() { return checkedForPush; }
     public bool HasBeenPushed() { return pushed; }
     public bool IsSkewered() { return isSkewered; }
 
@@ -91,6 +93,9 @@ public class TLPlant : TLMoveableObject
     {
         GameState currentState = GameManager.Inst.currentState;
 
+        if (checkedForPush)
+            return true;
+
         if (pusher is TLShears && ((TLShears)pusher).GetDirectionFacing() == moveDir && !((TLShears)pusher).IsPlantSkewered())
             return true;
 
@@ -101,6 +106,7 @@ public class TLPlant : TLMoveableObject
             bool plantCanMove = true;
             if (!currentState.IsTLOfTypeAtPos<TLPlant>(plant.GetPosition() + moveDir))
                 plantCanMove = currentState.CanPush(plant, moveDir);
+            plant.checkedForPush = true;
             if (!plantCanMove)
                 return false;
         }
@@ -144,10 +150,12 @@ public class TLPlant : TLMoveableObject
         pushed = true;
     }
 
-    public override void EndMove()
+    public override void EndMove(bool changeHappened)
     {
-        stateList.Add(new TLPlant(this));
+        if (changeHappened)
+            stateList.Add(new TLPlant(this));
         pushed = false;
+        checkedForPush = false;
     }
 
     public override void Undo()

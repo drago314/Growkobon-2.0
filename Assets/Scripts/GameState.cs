@@ -48,11 +48,13 @@ public class GameState
         moveCount = 0;
     }
 
-    public void EndMove()
+    public void EndMove(bool changeHappened)
     {
         foreach (var obj in GetAllTLObjects())
-            obj.EndMove();
-        moveCount += 1;
+            obj.EndMove(changeHappened);
+
+        if (changeHappened)
+            moveCount += 1;
     }
 
     public void Undo()

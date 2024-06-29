@@ -107,9 +107,10 @@ public class TLShears : TLHoldableObject
         return false;
     }
 
-    public override void EndMove()
+    public override void EndMove(bool changeHappened)
     {
-        stateList.Add(new TLShears(this));
+        if (changeHappened)
+            stateList.Add(new TLShears(this));
     }
 
     public override void Undo()

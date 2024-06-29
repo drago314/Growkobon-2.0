@@ -23,7 +23,7 @@ public class TLWorldDoor : TLObject
         return levelsCompleted == levelsRequired;
     }
 
-    public override void EndMove() { return; }
+    public override void EndMove(bool changeHappened) { return; }
     public override void Undo() { return; }
     public override void Reset() { return; }
 
