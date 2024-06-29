@@ -66,7 +66,7 @@ public class TLShears : TLHoldableObject
     {
         GameState currentState = GameManager.Inst.currentState;
 
-        if (pusher is TLPlayer && GetDirectionFacing() == -1 * moveDir)
+        if (pusher is TLPlayer && GetDirectionFacing() == -1 * moveDir && !IsPlantSkewered())
             return false;
         if (currentState.IsTLOfTypeAtPos<TLPlayer>(curPos + moveDir))
             return true;
@@ -81,38 +81,25 @@ public class TLShears : TLHoldableObject
 
     public override void Move(TLObject pusher, Vector2Int moveDir)
     {
+        Debug.Log("Move Shears Called By " + pusher.GetName() + ": " + pusher.GetPosition());
+
         GameState currentState = GameManager.Inst.currentState;
 
+        if (IsPlantSkewered() && pusher is not TLPlant)
+            return;
 
-        if (pusher is TLPlant && IsPlantSkewered())
+        if (pusher is TLPlant && !IsPlantSkewered() && GetDirectionFacing() == -1 * moveDir)
         {
-            OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
-            curPos = curPos + moveDir;
-            currentState.Move(this, curPos - moveDir);
-        }
-        else if (pusher is TLPlant && !IsPlantSkewered())
-        {
-            if (GetDirectionFacing() == -1 * moveDir)
-                SkewerPlant((TLPlant) pusher);
-            else
-            {
-                currentState.Push(this, moveDir);
-                OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
-                curPos = curPos + moveDir;
-                currentState.Move(this, curPos - moveDir);
-            }
-        }
-        else if (IsPlantSkewered())
-        {
+            SkewerPlant((TLPlant)pusher);
             return;
         }
-        else
-        {
+
+        if (!IsPlantSkewered())
             currentState.Push(this, moveDir);
-            OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
-            curPos = curPos + moveDir;
-            currentState.Move(this, curPos - moveDir);
-        }
+
+        OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+        curPos = curPos + moveDir;
+        currentState.Move(this, curPos - moveDir);
     }
 
     public override bool SpinMove(bool clockwise)

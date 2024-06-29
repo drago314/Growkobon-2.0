@@ -20,6 +20,7 @@ public class TLPlant : TLMoveableObject
     public TLPlant(Vector2Int curPos, PlantSignature sig) : base(curPos)
     {
         isAlive = sig.isAlive;
+        isSkewered = false;
         stateList = new List<TLPlant>();
         stateList.Add(new TLPlant(this));
     }
@@ -27,6 +28,7 @@ public class TLPlant : TLMoveableObject
     public TLPlant(Vector2Int curPos, bool isAlive) : base(curPos)
     {
         this.isAlive = isAlive;
+        isSkewered = false;
         stateList = new List<TLPlant>();
     }
 
@@ -106,19 +108,25 @@ public class TLPlant : TLMoveableObject
 
     public override void Move(TLObject pusher, Vector2Int moveDir)
     {
+        Debug.Log("Move Plant Called By " + pusher.GetName() + ": " + pusher.GetPosition());
+
         GameState currentState = GameManager.Inst.currentState;
 
         if (pusher is TLShears && ((TLShears)pusher).GetDirectionFacing() == moveDir && !((TLShears)pusher).IsPlantSkewered())
+        {
             ((TLShears)pusher).SkewerPlant(this);
+            return;
+        }
 
         TLPlant[] plantGroup = currentState.GetPlantGroupAtPos(curPos);
 
         foreach (var plant in plantGroup)
         {
+            bool wasSkewered = plant.IsSkewered();
             if (!currentState.IsTLOfTypeAtPos<TLPlant>(plant.GetPosition() + moveDir))
                 currentState.Push(plant, moveDir);
-            if (IsSkewered())
-                currentState.GetTLOfTypeAtPos<TLShears>(curPos).Move(plant, moveDir);
+            if (wasSkewered)
+                currentState.GetTLOfTypeAtPos<TLShears>(plant.GetPosition()).Move(plant, moveDir);
             plant.GroupedMove(moveDir);
         }
     }

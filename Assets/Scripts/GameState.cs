@@ -161,6 +161,9 @@ public class GameState
         bool objectCanMove = true;
         foreach (var obj in GetTLObjectsAtPos(pusher.GetPosition() + moveDir))
         {
+            if (obj is TLPlayer)
+                continue;
+
             bool canMove = obj.CanMove(pusher, moveDir);
             if (!canMove)
             {
@@ -183,6 +186,20 @@ public class GameState
         {
             if (obj is TLMoveableObject && obj is not TLPlayer)
                 ((TLMoveableObject)obj).Move(pusher, moveDir);
+        }
+    }
+
+    public void Pull(TLObject pusher, Vector2Int pullPos, Vector2Int pullDir)
+    {
+        if (!IsTLObjectAtPos(pullPos))
+            return;
+
+        TLObject[] objectsToMove = GetTLObjectsAtPos(pullPos).ToArray();
+
+        foreach (var obj in objectsToMove)
+        {
+            if (obj is TLMoveableObject && obj is not TLPlayer)
+                ((TLMoveableObject)obj).Move(pusher, pullDir);
         }
     }
 

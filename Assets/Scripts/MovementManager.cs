@@ -46,7 +46,7 @@ public class MovementManager : MonoBehaviour
     private void MoveUp(InputAction.CallbackContext obj)
     {
         GameState currentState = GameManager.Inst.currentState;
-        if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears
+        if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right))
             return; //TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
         else
@@ -56,7 +56,7 @@ public class MovementManager : MonoBehaviour
     private void MoveDown(InputAction.CallbackContext obj)
     {
         GameState currentState = GameManager.Inst.currentState;
-        if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears
+        if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right))
             return; //TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
         else
@@ -65,7 +65,7 @@ public class MovementManager : MonoBehaviour
     private void MoveRight(InputAction.CallbackContext obj)
     {
         GameState currentState = GameManager.Inst.currentState;
-        if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears
+        if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down))
             return; //TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
         else
@@ -74,7 +74,7 @@ public class MovementManager : MonoBehaviour
     private void MoveLeft(InputAction.CallbackContext obj)
     {
         GameState currentState = GameManager.Inst.currentState;
-        if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears
+        if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down))
             return; //TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
         else
