@@ -123,20 +123,39 @@ public class MovementManager : MonoBehaviour
 
     private void TypicalMove(Vector2Int moveDir)
     {
+        GameState currentState = GameManager.Inst.currentState;
+
         Debug.Log("BEGIN");
-        print(GameManager.Inst.currentState.ToString());
+        print(currentState.ToString());
 
         BeginMove();
         GameManager.Inst.currentState.GetPlayer().SetDirectionFacing(moveDir);
 
-        bool canMove = GameManager.Inst.currentState.GetPlayer().CanMove(null, moveDir);
-
+        bool canMove = currentState.GetPlayer().CanMove(null, moveDir);
         Debug.Log("Can Move: " + canMove);
 
-        if (canMove)
-            GameManager.Inst.currentState.GetPlayer().Move(null, moveDir);
+        bool attemptGrowPlant = false;
+        Vector2Int addition = Vector2Int.zero;
+
+        Vector2Int goal = currentState.GetPlayer().GetPosition() + moveDir;
+        if (currentState.IsTLOfTypeAtPos<TLPlant>(goal))
+            attemptGrowPlant = true;
+        else if (currentState.IsTLOfTypeAtPos<TLShears>(goal) && currentState.IsTLOfTypeAtPos<TLPlant>(goal + moveDir))
+        {
+            attemptGrowPlant = true;
+            addition = moveDir;
+        }
+
+        Debug.Log("Should Grow Plant: " + attemptGrowPlant);
 
         if (canMove)
+            currentState.GetPlayer().Move(null, moveDir);
+
+        bool plantGrown = false;
+        if (attemptGrowPlant)
+            plantGrown = GrowPlant(currentState.GetPlayer().GetPosition() + moveDir + addition, moveDir);
+
+        if (canMove || plantGrown)
             EndMove();
     }
 
@@ -178,24 +197,50 @@ public class MovementManager : MonoBehaviour
 
         Vector2Int desiredPlantGrowth = goalPos + moveDir;
 
-        // If we are pushing into a dead plant, stop
-        if (currentState.GetTLOfTypeAtPos<TLPlant>(goalPos) != null && !currentState.GetTLOfTypeAtPos<TLPlant>(goalPos).IsAlive())
+        // If we are pushing into a dead plant or there is no plant, stop
+        if (!currentState.IsTLOfTypeAtPos<TLPlant>(goalPos) || !currentState.GetTLOfTypeAtPos<TLPlant>(goalPos).IsAlive())
             return false;
 
-        while (currentState.GetTLOfTypeAtPos<TLPlant>(desiredPlantGrowth) != null && currentState.GetTLOfTypeAtPos<TLPlant>(desiredPlantGrowth).IsAlive())
+        // If this plant we think is a growth was actually "pushed" by a plant connected to it with shears then do not grow
+        TLPlant[] plantGroup = currentState.GetPlantGroupAtPos(goalPos);
+        TLPlayer player = currentState.GetPlayer();
+
+        if (player.IsObjectHeld() && player.GetObjectHeld() is TLShears)
+        {
+            TLShears shearsHeld = (TLShears) player.GetObjectHeld();
+            if (shearsHeld.IsPlantSkewered())
+            {
+                foreach (var plant in plantGroup)
+                {
+                    if (plant.IsSkewered() && shearsHeld.GetPlantSkewered() == plant)
+                        return false;
+                }
+            }
+        }
+
+        while (currentState.IsTLOfTypeAtPos<TLPlant>(desiredPlantGrowth) && currentState.GetTLOfTypeAtPos<TLPlant>(desiredPlantGrowth).IsAlive())
         {
             desiredPlantGrowth += moveDir;
         }
-        if (currentState.GetTLOfTypeAtPos<TLWall>(desiredPlantGrowth) == null && currentState.GetTLOfTypeAtPos<TLDoor>(desiredPlantGrowth) == null && currentState.GetTLOfTypeAtPos<TLPlant>(desiredPlantGrowth) == null)
+        if (!currentState.IsTLOfTypeAtPos<TLWall>(desiredPlantGrowth) && !currentState.IsTLOfTypeAtPos<TLDoor>(desiredPlantGrowth) && !currentState.IsTLOfTypeAtPos<TLPlant>(desiredPlantGrowth))
         {
+            if (currentState.IsTLOfTypeAtPos<TLShears>(desiredPlantGrowth) && currentState.GetTLOfTypeAtPos<TLShears>(desiredPlantGrowth).GetDirectionFacing() != -1 * moveDir)
+                return GrowPlant(desiredPlantGrowth + moveDir, moveDir); // Grow through shears that aren't poking
+
             TLPlant plant = new TLPlant(desiredPlantGrowth, true);
             currentState.AddObject(plant);
             OnPlantGrow?.Invoke(new GrowAction(desiredPlantGrowth, moveDir, plant, currentState));
+
+            if (currentState.IsTLOfTypeAtPos<TLShears>(desiredPlantGrowth))
+                currentState.GetTLOfTypeAtPos<TLShears>(desiredPlantGrowth).SkewerPlant(plant);
+
             return true;
         }
-        else if (currentState.GetTLOfTypeAtPos<TLWall>(desiredPlantGrowth) == null && currentState.GetTLOfTypeAtPos<TLDoor>(desiredPlantGrowth) == null && !currentState.GetTLOfTypeAtPos<TLPlant>(desiredPlantGrowth).IsAlive())
+        else if (!currentState.IsTLOfTypeAtPos<TLWall>(desiredPlantGrowth) && !currentState.IsTLOfTypeAtPos<TLDoor>(desiredPlantGrowth) && !currentState.GetTLOfTypeAtPos<TLPlant>(desiredPlantGrowth).IsAlive())
         {
             TLPlant plant = currentState.GetTLOfTypeAtPos<TLPlant>(desiredPlantGrowth);
+            if (plant.IsSkewered())
+                return false;
             plant.SetAlive(true);
             return true;
         }
