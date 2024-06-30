@@ -132,7 +132,9 @@ public class MovementManager : MonoBehaviour
         print(currentState.ToString());
 
         BeginMove();
-        GameManager.Inst.currentState.GetPlayer().SetDirectionFacing(moveDir);
+
+        if (!currentState.GetPlayer().IsObjectHeld())
+            GameManager.Inst.currentState.GetPlayer().SetDirectionFacing(moveDir);
 
         bool canMove = currentState.GetPlayer().CanMove(null, moveDir);
         Debug.Log("Can Move: " + canMove);
