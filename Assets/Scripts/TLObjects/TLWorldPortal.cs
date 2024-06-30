@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class TLWorldPortal : TLObject
 { 
-    public string worldToTravelTo;
-    public Vector2Int posToTravelTo;
+    private string worldToTravelTo;
+    private Vector2Int posToTravelTo;
 
     public TLWorldPortal(Vector2Int pos, WorldSignature sig) : base(pos)
     {
@@ -13,10 +13,16 @@ public class TLWorldPortal : TLObject
         posToTravelTo = sig.posToTravelTo;
     }
 
-    public TLWorldPortal(TLWorldPortal obj) : base(obj)
+    public string GetWorldToTravelTo() { return worldToTravelTo; }
+    public Vector2Int GetPosToTravelTo() { return posToTravelTo; }
+
+    public override void EndMove(bool changeHappened) { return; }
+    public override void Undo() { return; }
+    public override void Reset() { return; }
+
+    public override bool CanMove(TLObject pusher, Vector2Int moveDir)
     {
-        worldToTravelTo = obj.worldToTravelTo;
-        posToTravelTo = obj.posToTravelTo;
+        return true;
     }
 
     public override string GetName() { return worldToTravelTo; }

@@ -5,64 +5,81 @@ using UnityEngine;
 public class GameState 
 {
     protected Dictionary<(int, int), List<TLObject>> posToTLObj;
+    private int moveCount = 0;
 
-    public GameState(List<TLObject> TLObjects)
+    public GameState()
     {
+        moveCount = 0;
         posToTLObj = new Dictionary<(int, int), List<TLObject>>();
-        foreach (var TLObj in TLObjects)
-        {
-            //TODO MAKE BETTER
-            if (TLObj is TLPlayer)
-            {
-                AddObject(new TLPlayer(TLObj.curPos));
-            }
-            else if (TLObj is TLPlant)
-            {
-                AddObject(new TLPlant((TLPlant) TLObj));
-            }
-            else if (TLObj is TLWall)
-            {
-                AddObject(new TLWall(TLObj.curPos));    
-            }
-            else if (TLObj is TLDoor)
-            {
-                AddObject(new TLDoor((TLDoor) TLObj));
-            }
-            else if (TLObj is TLPot)
-            {
-                AddObject(new TLPot((TLPot) TLObj));
-            }
-            else if (TLObj is TLPath)
-            {
-                AddObject(new TLPath((TLPath)TLObj));
-            }
-            else if (TLObj is TLLevel)
-            {
-                AddObject(new TLLevel((TLLevel)TLObj));
-            }
-            else if (TLObj is TLWorldPortal)
-            {
-                AddObject(new TLWorldPortal((TLWorldPortal)TLObj));
-            }
-            else if (TLObj is TLWorldDoor)
-            {
-                AddObject(new TLWorldDoor((TLWorldDoor)TLObj));
-            }
-        }
-
-        //DEBUG
-        /*
-        foreach (var kvp in stateDict)
-        {
-            GameManager.Inst.DEBUG("Key = " + kvp.Key +  "Value = ");
-            foreach (var val in kvp.Value)
-            {
-                GameManager.Inst.DEBUG(val.ToString());
-            }
-        }*/
     }
 
-    public GameState(GameState prevState) : this (prevState.GetAllTLObjects()) {}
+    public int GetMoveCount() { return moveCount; }
+    public bool AtInitialState() { return moveCount == 0; }
+
+    public void AddObject(TLObject TLObj)
+    {
+        (int, int) posTuple = (TLObj.GetPosition().x, TLObj.GetPosition().y);
+
+        if (posToTLObj.ContainsKey(posTuple))
+        {
+            posToTLObj[posTuple].Add(TLObj);
+        }
+        else
+        {
+            List<TLObject> key = new List<TLObject>();
+            key.Add(TLObj);
+            posToTLObj.Add(posTuple, key);
+        }
+    }
+
+    public void RemoveObject(TLObject TLObj)
+    {
+        posToTLObj[(GetPosOf(TLObj).x, GetPosOf(TLObj).y)].Remove(TLObj);
+    }
+
+    public void RemoveObject(TLObject TLObj, Vector2Int oldPos)
+    {
+        posToTLObj[(oldPos.x, oldPos.y)].Remove(TLObj);
+    }
+
+    public void ClearState()
+    {
+        posToTLObj = new Dictionary<(int, int), List<TLObject>>();
+        moveCount = 0;
+    }
+
+    public void EndMove(bool changeHappened)
+    {
+        foreach (var obj in GetAllTLObjects())
+            obj.EndMove(changeHappened);
+
+        if (changeHappened)
+            moveCount += 1;
+    }
+
+    public void Undo()
+    {
+        if (moveCount == 0)
+            return;
+
+        foreach (var obj in GetAllTLObjects())
+        {
+            obj.Undo();
+        }
+        moveCount -= 1;
+    }
+
+    public void Reset()
+    {
+        if (moveCount == 0)
+            return;
+
+        foreach (var obj in GetAllTLObjects())
+        {
+            obj.Reset();
+        }
+        moveCount = 0;
+    }
 
     public List<TLObject> GetAllTLObjects()
     {
@@ -89,59 +106,22 @@ public class GameState
         return null;
     }
 
-    public List<TLPot> GetAllTLPots()
+    public List<T> GetAllOfTLType<T>() where T : TLObject
     {
-        List<TLPot> potList = new List<TLPot>();
+        List<T> objectList = new List<T>();
         foreach (var obj in GetAllTLObjects())
         {
-            if (obj is TLPot)
-                potList.Add((TLPot)obj);
+            if (obj is T)
+                objectList.Add((T)obj);
         }
-        return potList;
+        return objectList;
     }
 
-    public List<TLDoor> GetAllTLDoors()
+    public bool IsTLObjectAtPos(Vector2Int pos)
     {
-        List<TLDoor> doorList = new List<TLDoor>();
-        foreach (var obj in GetAllTLObjects())
-        {
-            if (obj is TLDoor)
-                doorList.Add((TLDoor)obj);
-        }
-        return doorList;
-    }
-
-    public List<TLPath> GetAllTLPaths()
-    {
-        List<TLPath> pathList = new List<TLPath>();
-        foreach (var obj in GetAllTLObjects())
-        {
-            if (obj is TLPath)
-                pathList.Add((TLPath)obj);
-        }
-        return pathList;
-    }
-
-    public List<TLLevel> GetAllTLLevels()
-    {
-        List<TLLevel> levelList = new List<TLLevel>();
-        foreach (var obj in GetAllTLObjects())
-        {
-            if (obj is TLLevel)
-                levelList.Add((TLLevel)obj);
-        }
-        return levelList;
-    }
-
-    public List<TLWorldPortal> GetAllTLWorlds()
-    {
-        List<TLWorldPortal> worldList = new List<TLWorldPortal>();
-        foreach (var obj in GetAllTLObjects())
-        {
-            if (obj is TLWorldPortal)
-                worldList.Add((TLWorldPortal)obj);
-        }
-        return worldList;
+        if (!posToTLObj.ContainsKey((pos.x, pos.y)))
+            return false;
+        return true;
     }
 
     public List<TLObject> GetTLObjectsAtPos(Vector2Int pos)
@@ -151,104 +131,95 @@ public class GameState
         return posToTLObj[(pos.x, pos.y)];
     }
 
-    public TLPlant GetPlantAtPos(Vector2Int pos)
+    public bool IsTLOfTypeAtPos<T>(Vector2Int pos) where T : TLObject
     {
         if (GetTLObjectsAtPos(pos) == null)
-            return null;
+            return false;
         foreach (var TLObj in GetTLObjectsAtPos(pos))
         {
-            if (TLObj is TLPlant)
-                return (TLPlant) TLObj;
+            if (TLObj is T)
+                return true;
         }
-        return null;
+        return false;
     }
-    public TLWall GetWallAtPos(Vector2Int pos)
+
+    public T GetTLOfTypeAtPos<T>(Vector2Int pos) where T : TLObject
     {
         if (GetTLObjectsAtPos(pos) == null)
             return null;
         foreach (var TLObj in GetTLObjectsAtPos(pos))
         {
-            if (TLObj is TLWall)
-                return (TLWall)TLObj;
+            if (TLObj is T)
+                return (T)TLObj;
         }
         return null;
     }
 
-    public TLDoor GetDoorAtPos(Vector2Int pos)
+    public bool CanPush(TLObject pusher, Vector2Int moveDir)
     {
-        if (GetTLObjectsAtPos(pos) == null)
-            return null;
-        foreach (var TLObj in GetTLObjectsAtPos(pos))
+        if (!IsTLObjectAtPos(pusher.GetPosition() + moveDir))
+            return true;
+
+        bool objectCanMove = true;
+        foreach (var obj in GetTLObjectsAtPos(pusher.GetPosition() + moveDir))
         {
-            if (TLObj is TLDoor)
-                return (TLDoor)TLObj;
+            if (obj is TLPlayer)
+                continue;
+
+            bool canMove = obj.CanMove(pusher, moveDir);
+            if (!canMove)
+            {
+                objectCanMove = false;
+                break;
+            }
         }
-        return null;
+
+        return objectCanMove;
     }
 
-    public TLWorldDoor GetWorldDoorAtPos(Vector2Int pos)
+    public void Push(TLObject pusher, Vector2Int moveDir)
     {
-        if (GetTLObjectsAtPos(pos) == null)
-            return null;
-        foreach (var TLObj in GetTLObjectsAtPos(pos))
-        {
-            if (TLObj is TLWorldDoor)
-                return (TLWorldDoor)TLObj;
-        }
-        return null;
+        Pull(pusher, pusher.GetPosition() + moveDir, moveDir);
     }
 
-    public TLPot GetPotAtPos(Vector2Int pos)
+    public void Pull(TLObject pusher, Vector2Int pullPos, Vector2Int pullDir)
     {
-        if (GetTLObjectsAtPos(pos) == null)
-            return null;
-        foreach (var TLObj in GetTLObjectsAtPos(pos))
-        {
-            if (TLObj is TLPot)
-                return (TLPot)TLObj;
-        }
-        return null;
-    }
+        if (!IsTLObjectAtPos(pullPos))
+            return;
 
-    public TLPath GetPathAtPos(Vector2Int pos)
-    {
-        if (GetTLObjectsAtPos(pos) == null)
-            return null;
-        foreach (var TLObj in GetTLObjectsAtPos(pos))
-        {
-            if (TLObj is TLPath)
-                return (TLPath)TLObj;
-        }
-        return null;
-    }
+        TLObject[] objectsToMove = GetTLObjectsAtPos(pullPos).ToArray();
 
-    public TLLevel GetLevelAtPos(Vector2Int pos)
-    {
-        if (GetTLObjectsAtPos(pos) == null)
-            return null;
-        foreach (var TLObj in GetTLObjectsAtPos(pos))
+        foreach (var obj in objectsToMove)
         {
-            if (TLObj is TLLevel)
-                return (TLLevel)TLObj;
+            if (obj is TLShears)
+            {
+                ((TLMoveableObject)obj).Move(pusher, pullDir);
+                return;
+            }
         }
-        return null;
-    }
 
-    public TLWorldPortal GetWorldAtPos(Vector2Int pos)
-    {
-        if (GetTLObjectsAtPos(pos) == null)
-            return null;
-        foreach (var TLObj in GetTLObjectsAtPos(pos))
+        foreach (var obj in objectsToMove)
         {
-            if (TLObj is TLWorldPortal)
-                return (TLWorldPortal)TLObj;
+            if (obj is TLPlant)
+            {
+                ((TLMoveableObject)obj).Move(pusher, pullDir);
+                return;
+            }
         }
-        return null;
+
+        foreach (var obj in objectsToMove)
+        {
+            if (obj is TLMoveableObject && obj is not TLPlayer)
+            {
+                ((TLMoveableObject)obj).Move(pusher, pullDir);
+                return;
+            }
+        }
     }
 
     public Vector2Int GetPosOf(TLObject TLObj)
     {
-        return TLObj.curPos;
+        return TLObj.GetPosition();
     }
 
     public TLPlant[] GetPlantGroupOf(TLPlant plant)
@@ -262,19 +233,19 @@ public class GameState
             Vector2Int plantPos = GetPosOf(plantsList[i]);
             //GameManager.Inst.DEBUG("" + plantPos.x + " " + plantPos.y);
             //GameManager.Inst.DEBUG("" + plantsList.Count);
-            TLPlant currentcheck = GetPlantAtPos(plantPos + new Vector2Int(0, 1));
+            TLPlant currentcheck = GetTLOfTypeAtPos<TLPlant>(plantPos + new Vector2Int(0, 1));
             if (currentcheck != null && !plantsList.Contains(currentcheck))
                 plantsList.Add(currentcheck);
 
-            currentcheck = GetPlantAtPos(plantPos + new Vector2Int(0, -1));
+            currentcheck = GetTLOfTypeAtPos<TLPlant>(plantPos + new Vector2Int(0, -1));
             if (currentcheck != null && !plantsList.Contains(currentcheck))
                 plantsList.Add(currentcheck);
 
-            currentcheck = GetPlantAtPos(plantPos + new Vector2Int(1, 0));
+            currentcheck = GetTLOfTypeAtPos<TLPlant>(plantPos + new Vector2Int(1, 0));
             if (currentcheck != null && !plantsList.Contains(currentcheck))
                 plantsList.Add(currentcheck);
 
-            currentcheck = GetPlantAtPos(plantPos + new Vector2Int(-1, 0));
+            currentcheck = GetTLOfTypeAtPos<TLPlant>(plantPos + new Vector2Int(-1, 0));
             if (currentcheck != null && !plantsList.Contains(currentcheck))
                 plantsList.Add(currentcheck);
         }
@@ -284,44 +255,16 @@ public class GameState
 
     public TLPlant[]  GetPlantGroupAtPos(Vector2Int pos)
     {
-        if (GetPlantAtPos(pos) != null)
-            return GetPlantGroupOf(GetPlantAtPos(pos));
+        if (GetTLOfTypeAtPos<TLPlant>(pos) != null)
+            return GetPlantGroupOf(GetTLOfTypeAtPos<TLPlant>(pos));
         else
             return null;
     }
 
-    public void AddObject(TLObject TLObj)
-    {
-        (int, int) posTuple = (TLObj.curPos.x, TLObj.curPos.y);
-
-        if (posToTLObj.ContainsKey(posTuple))
-        {
-            posToTLObj[posTuple].Add(TLObj);
-        }
-        else
-        {
-            List<TLObject> key = new List<TLObject>();
-            key.Add(TLObj);
-            posToTLObj.Add(posTuple, key);
-        }
-    }
-
-    public void RemoveObject(TLObject TLObj)
-    {
-        posToTLObj[(GetPosOf(TLObj).x, GetPosOf(TLObj).y)].Remove(TLObj);
-    }
-
-    public void MoveRelative(TLObject obj, Vector2Int posChange)
-    {
-        Vector2Int newPos = GetPosOf(obj) + posChange;
-        Move(obj, newPos);
-    }
-
-    public void Move(TLObject obj, Vector2Int newPos)
+    public void Move(TLMoveableObject obj, Vector2Int oldPos)
     {
         //GameManager.Inst.DEBUG("ORIGINAL " + obj.gameObject.name + ": " + GetPosOf(obj).x + " " + GetPosOf(obj).y);
-        RemoveObject(obj);
-        obj.curPos = newPos;
+        RemoveObject(obj, oldPos);
         AddObject(obj);
         //GameManager.Inst.DEBUG("FINAL " + obj.gameObject.name + ": " + GetPosOf(obj).x + " " + GetPosOf(obj).y);
     }
@@ -348,7 +291,8 @@ public class GameState
 
     public override string ToString()
     {
-        string result = "POS TO TLOBJ:\n";
+        string result = "MOVE COUNT: " + moveCount + "\n"; 
+        result += "POS TO TLOBJ:\n";
 
         foreach (var kvp in posToTLObj)
         {
@@ -358,8 +302,6 @@ public class GameState
                 foreach (var TLObj in kvp.Value)
                 {
                     result += " " + TLObj.GetName();
-                    if (TLObj is TLPath)
-                        result += " " + ((TLPath)TLObj).unlocked.ToString();
                     result += ",";
                 }
                 result += "\n";

@@ -12,5 +12,14 @@ public class TLWall : TLObject
     {
     }
 
+    public override void EndMove(bool changeHappened) { return; }
+    public override void Undo() { return; }
+    public override void Reset() { return; }
+
+    public override bool CanMove(TLObject pusher, Vector2Int moveDir)
+    {
+        return false;
+    }
+
     public override string GetName() { return "Wall"; }
 }

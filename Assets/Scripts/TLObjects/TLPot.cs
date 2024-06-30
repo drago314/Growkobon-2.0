@@ -4,24 +4,30 @@ using UnityEngine;
 
 public class TLPot : TLObject
 {
-    public int potNumber = 1;
+    private int potNumber = 1;
 
     public TLPot(Vector2Int curPos, int potNum) : base(curPos)
     {
         potNumber = potNum;
     }
 
-    public TLPot(TLPot obj) : base(obj)
-    {
-        potNumber = obj.potNumber;
-    }
+    public int GetPotNumber() { return potNumber; }
 
     public int IsFull()
     {
-        if (GameManager.Inst.movementManager.currentState.GetPlantAtPos(curPos) != null)
+        if (GameManager.Inst.currentState.GetTLOfTypeAtPos<TLPlant>(curPos) != null)
             return potNumber;
         else
             return 0;
+    }
+
+    public override void EndMove(bool changeHappened) { return; }
+    public override void Undo() { return; }
+    public override void Reset() { return; }
+
+    public override bool CanMove(TLObject pusher, Vector2Int moveDir)
+    {
+        return true;
     }
 
     public override string GetName() { return "Pot"; }

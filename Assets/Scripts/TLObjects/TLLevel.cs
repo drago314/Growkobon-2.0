@@ -6,19 +6,36 @@ using System;
 
 public class TLLevel : TLObject
 {
-    public string levelName;
-    public bool unlocked;
+    private string levelName;
+    private bool isCompleted;
 
-    public TLLevel(Vector2Int pos, LevelSignature sig) : base(pos)
+    public Action OnCompletion;
+
+    public TLLevel(Vector2Int pos, LevelSignature sig, bool isCompleted) : base(pos)
     {
         levelName = sig.levelName;
     }
-
-    public TLLevel(TLLevel obj) : base(obj)
-    {
-        levelName = obj.levelName;
-        unlocked = obj.unlocked;
-    }
     
+    public string GetLevelName() { return levelName; }
+
+    public bool IsCompleted() { return isCompleted; }
+    public void SetCompleted(bool completed)
+    {
+        if (completed && !isCompleted)
+        {
+            OnCompletion?.Invoke();
+            isCompleted = completed;
+        }
+    }
+
+    public override void EndMove(bool changeHappened) { return; }
+    public override void Undo() { return; }
+    public override void Reset() { return; }
+
+    public override bool CanMove(TLObject pusher, Vector2Int moveDir)
+    {
+        return true;
+    }
+
     public override string GetName() { return levelName; }
 }

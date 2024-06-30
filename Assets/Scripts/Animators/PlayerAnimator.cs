@@ -9,31 +9,46 @@ public class PlayerAnimator : MonoBehaviour
     [SerializeField] private Sprite playerFacingRight;
     [SerializeField] private Sprite playerFacingDown;
 
+    private TLPlayer player;
+
     private void Start()
     {
-        GameManager.Inst.gameObject.GetComponent<MovementManager>().OnPlayerMove += OnPlayerMove;
-        GameManager.Inst.gameObject.GetComponent<MapManager>().OnPlayerMove += OnPlayerMove;
-        GameManager.Inst.OnMapEnter += OnMapEnter;
+        GameManager.Inst.OnMapEnter += OnLoad;
+        GameManager.Inst.OnLevelEnter += OnLoad;
     }
 
     private void OnDestroy()
     {
         if (GameManager.Inst != null)
         {
-            GameManager.Inst.gameObject.GetComponent<MovementManager>().OnPlayerMove -= OnPlayerMove;
-            GameManager.Inst.gameObject.GetComponent<MapManager>().OnPlayerMove -= OnPlayerMove;
-            GameManager.Inst.OnMapEnter -= OnMapEnter;
+            GameManager.Inst.OnMapEnter -= OnLoad;
+            GameManager.Inst.OnLevelEnter -= OnLoad;
+        }
+        if (player != null)
+        {
+            player.OnPlayerMove -= OnPlayerMove;
+            player.OnUndoOrReset -= OnInstantMove;
         }
     }
-
-    private void OnMapEnter(GameState gameState)
+        
+    private void OnLoad(GameState gameState)
     {
-        TLPlayer player = gameState.GetPlayer();
-        gameObject.transform.position = new Vector3Int(player.curPos.x, player.curPos.y, 0);
-       PlayerFaceDir(player.directionFacing);
+        player = gameState.GetPlayer();
+        player.OnPlayerMove += OnPlayerMove;
+        player.OnUndoOrReset += OnInstantMove;
+
+        gameObject.transform.position = new Vector3Int(player.GetPosition().x, player.GetPosition().y, 0);
+        PlayerFaceDir(player.GetDirectionFacing());
     }
 
     private void OnPlayerMove(MoveAction move)
+    {
+        if (!player.IsObjectHeld())
+            PlayerFaceDir(move.moveDir);
+        transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
+    }
+
+    public void OnInstantMove(MoveAction move, InteractAction interact)
     {
         PlayerFaceDir(move.moveDir);
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
