@@ -46,7 +46,7 @@ public class MovementManager : MonoBehaviour
         GameState currentState = GameManager.Inst.currentState;
         if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right))
-            return; //TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
+            TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
         else
             TypicalMove(Vector2Int.up);
     }
@@ -56,7 +56,7 @@ public class MovementManager : MonoBehaviour
         GameState currentState = GameManager.Inst.currentState;
         if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right))
-            return; //TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
+            TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
         else
             TypicalMove(Vector2Int.down);
     }
@@ -65,7 +65,7 @@ public class MovementManager : MonoBehaviour
         GameState currentState = GameManager.Inst.currentState;
         if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down))
-            return; //TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
+            TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
         else
             TypicalMove(Vector2Int.right);
     }
@@ -74,7 +74,7 @@ public class MovementManager : MonoBehaviour
         GameState currentState = GameManager.Inst.currentState;
         if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down))
-            return; //TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
+            TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
         else
             TypicalMove(Vector2Int.left);
     }
@@ -178,22 +178,33 @@ public class MovementManager : MonoBehaviour
         Vector2Int cornerSpot = curPos + endingDir + startingDir;
         Vector2Int goalPos = curPos + endingDir;
 
-        Debug.Log("CORNER: " + cornerSpot);
-        Debug.Log("GOAL: " + goalPos);
-
-        if (currentState.GetTLOfTypeAtPos<TLWall>(cornerSpot) != null || currentState.GetTLOfTypeAtPos<TLShears>(cornerSpot) != null || currentState.GetTLOfTypeAtPos<TLDoor>(cornerSpot) != null)
-        { 
-            EndMove(false);
-            return;
-        }
-        if (currentState.GetTLOfTypeAtPos<TLWall>(goalPos) != null || currentState.GetTLOfTypeAtPos<TLShears>(goalPos) != null || currentState.GetTLOfTypeAtPos<TLDoor>(goalPos) != null)
+        if (shears.GetDirectionFacing() != endingDir)
         {
-            EndMove(false);
-            return;
-        }
+            bool canMoveCorner = currentState.CanPush(shears, endingDir);
 
-        currentState.Move(shears, curPos + endingDir);
-        player.SetDirectionFacing(endingDir);
+            bool attemptGrowPlant = false;
+            Vector2Int addition = Vector2Int.zero;
+
+            if (currentState.IsTLOfTypeAtPos<TLPlant>(cornerSpot))
+                attemptGrowPlant = true;
+            else if (currentState.IsTLOfTypeAtPos<TLShears>(cornerSpot) && currentState.IsTLOfTypeAtPos<TLPlant>(cornerSpot))
+            {
+                attemptGrowPlant = true;
+                addition = endingDir;
+            }
+
+            if (canMoveCorner)
+                shears.Move(player, endingDir);
+
+            bool plantGrown = false;
+            if (attemptGrowPlant)
+                plantGrown = GrowPlant(currentState.GetPlayer().GetPosition() + moveDir + addition, moveDir);
+
+        }
+        else
+        {
+
+        }
 
         EndMove(true);
     }

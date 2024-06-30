@@ -46,8 +46,6 @@ public abstract class TLHoldableObject : TLMoveableObject
         }
     }
 
-    public abstract bool SpinMove(bool clockwise);
-
     /*public override void Move(Vector2Int pos)
     {
         if ((curPos - pos).x == 0 || (curPos - pos).y == 0) // Straight move

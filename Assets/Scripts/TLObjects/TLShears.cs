@@ -131,7 +131,13 @@ public class TLShears : TLHoldableObject
         currentState.Move(this, curPos - moveDir);
     }
 
-    public override bool SpinMove(bool clockwise)
+
+    public bool SpinMoveCorner(Vector2Int startDir, Vector2Int endDir)
+    {
+        return false;
+    }
+
+    public bool SpinMoveEdge(Vector2Int startDir, Vector2Int endDir)
     {
         return false;
     }
