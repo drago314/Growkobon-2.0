@@ -17,8 +17,6 @@ public class MovementManager : MonoBehaviour
     public event Action OnResetEnd;
     public event Action<GrowAction> OnPlantGrow;
 
-    Dictionary<TLDoor, bool> originalDoorStates; //  TODO this is bad and should be fixed with new animation / game state system
-
     private void Start()
     {
         moveUp.action.performed += MoveUp;
