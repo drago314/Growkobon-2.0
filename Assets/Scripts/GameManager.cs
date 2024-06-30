@@ -219,7 +219,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         currentLevel = level;
 
-        levelTransitioner.StartLevelTransition();
+        levelTransitioner.StartLevelTransition(level);
         yield return new WaitForSeconds(40f / 60f);
         var asyncLoadLevel = SceneManager.LoadSceneAsync(level, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
@@ -242,7 +242,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         PrintLevelsCompleted();
         inputManager.SwitchCurrentActionMap("No Control");
 
-        levelTransitioner.StartLevelTransition();
+        levelTransitioner.StartLevelTransition(levelName);
         yield return new WaitForSeconds(40f / 60f);
         var asyncLoadLevel = SceneManager.LoadSceneAsync(currentWorld, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
@@ -283,7 +283,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         currentWorld = mapName;
 
-        levelTransitioner.StartLevelTransition();
+        levelTransitioner.StartLevelTransition(mapName);
         yield return new WaitForSeconds(40f / 60f);
         var asyncLoadLevel = SceneManager.LoadSceneAsync(mapName, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
@@ -309,7 +309,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         currentWorld = mapName;
 
-        levelTransitioner.StartLevelTransition();
+        levelTransitioner.StartLevelTransition(mapName);
         yield return new WaitForSeconds(40f / 60f);
         var asyncLoadLevel = SceneManager.LoadSceneAsync(mapName, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
@@ -345,7 +345,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         currentWorld = mapName;
 
-        levelTransitioner.StartLevelTransition();
+        levelTransitioner.StartLevelTransition(mapName);
         yield return new WaitForSeconds(40f / 60f);
         var asyncLoadLevel = SceneManager.LoadSceneAsync(mapName, LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);
@@ -366,7 +366,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     }
     private IEnumerator OpenTitleScreenAsync()
     {
-        levelTransitioner.StartLevelTransition();
+        levelTransitioner.StartLevelTransition("");
         yield return new WaitForSeconds(40f / 60f);
         var asyncLoadLevel = SceneManager.LoadSceneAsync("Title Screen", LoadSceneMode.Single);
         yield return new WaitUntil(() => asyncLoadLevel.isDone);

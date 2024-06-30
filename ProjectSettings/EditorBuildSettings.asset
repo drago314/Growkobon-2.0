@@ -24,6 +24,9 @@ EditorBuildSettings:
     path: Assets/Scenes/World 1/Old World 1/World 1 Level 3.unity
     guid: 701cca89c6db10d408bd7f6e60d39591
   - enabled: 1
+    path: Assets/Scenes/World 1/Lateral.unity
+    guid: 19f89ad416386ef4c91f444a3f4bb1ae
+  - enabled: 1
     path: Assets/Scenes/World 1/Hook.unity
     guid: 2e65b905a64fcdb4f92a8399f6fed716
   - enabled: 1
