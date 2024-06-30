@@ -85,13 +85,42 @@ public class TLShears : TLHoldableObject
 
         GameState currentState = GameManager.Inst.currentState;
 
-        if (IsPlantSkewered() && pusher is not TLPlant)
+        if (pusher is TLPlant && IsPlantSkewered() && pusher == GetPlantSkewered()) // If we are be moved inside a moving plant block
+        {
+            OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+            curPos = curPos + moveDir;
+            currentState.Move(this, curPos - moveDir);
             return;
+        }
+
+        if (pusher is TLPlant && IsPlantSkewered() && pusher != GetPlantSkewered())
+        {
+            Debug.LogError("THIS SHEAR WAS NOT PUSHED CORRECTLY!!");
+            return;
+        }
 
         if (pusher is TLPlant && !IsPlantSkewered() && GetDirectionFacing() == -1 * moveDir)
         {
             SkewerPlant((TLPlant)pusher);
             return;
+        }
+
+        if (pusher is TLPlant && !IsPlantSkewered())
+        {
+            currentState.Push(this, moveDir);
+            OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+            curPos = curPos + moveDir;
+            currentState.Move(this, curPos - moveDir);
+            return;
+        }
+
+        if (IsPlantSkewered())
+        {
+            if (pusher is TLPlayer && GetDirectionFacing() == -1 * moveDir)
+                UnskewerPlant();
+            else
+                plantSkewered.Move(this, moveDir);
+
         }
 
         if (!IsPlantSkewered())

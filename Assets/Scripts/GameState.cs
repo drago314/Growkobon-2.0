@@ -179,16 +179,7 @@ public class GameState
 
     public void Push(TLObject pusher, Vector2Int moveDir)
     {
-        if (!IsTLObjectAtPos(pusher.GetPosition() + moveDir))
-            return;
-
-        TLObject[] objectsToMove = GetTLObjectsAtPos(pusher.GetPosition() + moveDir).ToArray();
-
-        foreach (var obj in objectsToMove)
-        {
-            if (obj is TLMoveableObject && obj is not TLPlayer)
-                ((TLMoveableObject)obj).Move(pusher, moveDir);
-        }
+        Pull(pusher, pusher.GetPosition() + moveDir, moveDir);
     }
 
     public void Pull(TLObject pusher, Vector2Int pullPos, Vector2Int pullDir)
@@ -200,8 +191,29 @@ public class GameState
 
         foreach (var obj in objectsToMove)
         {
-            if (obj is TLMoveableObject && obj is not TLPlayer)
+            if (obj is TLShears)
+            {
                 ((TLMoveableObject)obj).Move(pusher, pullDir);
+                return;
+            }
+        }
+
+        foreach (var obj in objectsToMove)
+        {
+            if (obj is TLPlant)
+            {
+                ((TLMoveableObject)obj).Move(pusher, pullDir);
+                return;
+            }
+        }
+
+        foreach (var obj in objectsToMove)
+        {
+            if (obj is TLMoveableObject && obj is not TLPlayer)
+            {
+                ((TLMoveableObject)obj).Move(pusher, pullDir);
+                return;
+            }
         }
     }
 

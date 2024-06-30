@@ -121,6 +121,8 @@ public class TLPlant : TLMoveableObject
         if (pushed)
             return;
 
+        Debug.Log("Plant was not already pushed");
+
         GameState currentState = GameManager.Inst.currentState;
 
         if (pusher is TLShears && ((TLShears)pusher).GetDirectionFacing() == moveDir && !((TLShears)pusher).IsPlantSkewered())
@@ -132,11 +134,14 @@ public class TLPlant : TLMoveableObject
         TLPlant[] plantGroup = currentState.GetPlantGroupAtPos(curPos);
 
         foreach (var plant in plantGroup)
+            plant.pushed = true;
+
+        foreach (var plant in plantGroup)
         {
             bool wasSkewered = plant.IsSkewered();
             if (!currentState.IsTLOfTypeAtPos<TLPlant>(plant.GetPosition() + moveDir))
                 currentState.Push(plant, moveDir);
-            if (wasSkewered)
+            if (wasSkewered && currentState.GetTLOfTypeAtPos<TLShears>(plant.GetPosition()) != pusher)
                 currentState.GetTLOfTypeAtPos<TLShears>(plant.GetPosition()).Move(plant, moveDir);
             plant.GroupedMove(moveDir);
         }
@@ -147,7 +152,6 @@ public class TLPlant : TLMoveableObject
         OnPlantMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
         curPos = curPos + moveDir;
         GameManager.Inst.currentState.Move(this, curPos - moveDir);
-        pushed = true;
     }
 
     public override void EndMove(bool changeHappened)
