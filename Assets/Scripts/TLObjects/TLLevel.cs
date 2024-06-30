@@ -14,6 +14,7 @@ public class TLLevel : TLObject
     public TLLevel(Vector2Int pos, LevelSignature sig, bool isCompleted) : base(pos)
     {
         levelName = sig.levelName;
+        this.isCompleted = isCompleted;
     }
     
     public string GetLevelName() { return levelName; }
@@ -37,5 +38,11 @@ public class TLLevel : TLObject
         return true;
     }
 
-    public override string GetName() { return levelName; }
+    public override string GetName() 
+    {
+        string result = levelName;
+        if (IsCompleted())
+            result += " Completed";
+        return result; 
+    }
 }
