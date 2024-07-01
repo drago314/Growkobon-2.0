@@ -16,6 +16,7 @@ public class TLPlant : TLMoveableObject
     public Action<MoveAction> OnUndoOrReset;
     public Action OnPlantSkewered;
     public Action OnPlantUnskewered;
+    public Action OnPlantCornerSpinSheared;
     public Action OnPlantDeath;
     public Action OnPlantRegrowth;
 
@@ -78,10 +79,17 @@ public class TLPlant : TLMoveableObject
         else if (!this.isSkewered && isSkewered)
         {
             this.isSkewered = true;
-            this.isAlive = false;
+            isAlive = false;
             OnPlantSkewered?.Invoke();
         }
     }
+
+    public void Shear()
+    {
+        isAlive = false;
+        OnPlantCornerSpinSheared?.Invoke();
+    }
+
 
     public override void SetPos(Vector2Int pos)
     {
@@ -97,7 +105,11 @@ public class TLPlant : TLMoveableObject
             return true;
 
         if (pusher is TLShears && ((TLShears)pusher).GetDirectionFacing() == moveDir && !((TLShears)pusher).IsPlantSkewered())
-            return true;
+        {
+            TLShears shears = (TLShears)pusher;
+            if (!shears.IsCurrentlyCornerSpinning())
+                return true;
+        }
 
         TLPlant[] plantGroup = currentState.GetPlantGroupAtPos(curPos);
 
@@ -127,8 +139,17 @@ public class TLPlant : TLMoveableObject
 
         if (pusher is TLShears && ((TLShears)pusher).GetDirectionFacing() == moveDir && !((TLShears)pusher).IsPlantSkewered())
         {
-            ((TLShears)pusher).SkewerPlant(this);
-            return;
+            TLShears shears = (TLShears)pusher;
+            if (!shears.IsCurrentlyCornerSpinning())
+            {
+                shears.SkewerPlant(this);
+                return;
+            }
+            else
+            {
+                isAlive = false;
+                OnPlantCornerSpinSheared?.Invoke();
+            }
         }
 
         TLPlant[] plantGroup = currentState.GetPlantGroupAtPos(curPos);

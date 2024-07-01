@@ -15,10 +15,10 @@ EditorBuildSettings:
     path: Assets/Scenes/World 1/World 1 Map.unity
     guid: 5730a91d6c941c648a4bd3e7bb4645f8
   - enabled: 1
-    path: Assets/Scenes/World 1/World 1 Level 1.unity
+    path: Assets/Scenes/World 1/World 1 Level 2.unity
     guid: 63fc4fabee96ce04490396cd93b5af37
   - enabled: 1
-    path: Assets/Scenes/World 1/World 1 Level 2.unity
+    path: Assets/Scenes/World 1/Old World 1/World 1 Level 2.unity
     guid: d571f5201b1b8f44db499abf4368f12c
   - enabled: 1
     path: Assets/Scenes/World 1/World 1 Level 3.unity

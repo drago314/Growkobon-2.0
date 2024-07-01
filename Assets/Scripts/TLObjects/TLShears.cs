@@ -8,6 +8,7 @@ public class TLShears : TLHoldableObject
     private List<TLShears> stateList;
 
     private TLPlant plantSkewered = null;
+    private bool currentlyCornerSpinning = false;
 
     public event Action<MoveAction> OnShearsMove;
     public event Action<SpinAction> OnShearsSpin;
@@ -33,6 +34,7 @@ public class TLShears : TLHoldableObject
         OnUndoOrReset?.Invoke(new InstantMoveRotatableObject(curPos, GetDirectionFacing(), this, GameManager.Inst.currentState)); ;
     }
 
+    public bool IsCurrentlyCornerSpinning() { return currentlyCornerSpinning; }
     public bool IsPlantSkewered() { return plantSkewered != null; }
     public TLPlant GetPlantSkewered() { return plantSkewered; }
 
@@ -81,13 +83,19 @@ public class TLShears : TLHoldableObject
 
     public override void Move(TLObject pusher, Vector2Int moveDir)
     {
+        Move(pusher, moveDir, false);
+    }
+
+    public void Move(TLObject pusher, Vector2Int moveDir, bool spinning)
+    {
         Debug.Log("Move Shears Called By " + pusher.GetName() + ": " + pusher.GetPosition());
 
         GameState currentState = GameManager.Inst.currentState;
 
         if (pusher is TLPlant && IsPlantSkewered() && pusher == GetPlantSkewered()) // If we are be moved inside a moving plant block
         {
-            OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+            if (!spinning)
+                OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
             curPos = curPos + moveDir;
             currentState.Move(this, curPos - moveDir);
             return;
@@ -108,7 +116,8 @@ public class TLShears : TLHoldableObject
         if (pusher is TLPlant && !IsPlantSkewered())
         {
             currentState.Push(this, moveDir);
-            OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+            if (!spinning)
+                OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
             curPos = curPos + moveDir;
             currentState.Move(this, curPos - moveDir);
             return;
@@ -126,24 +135,57 @@ public class TLShears : TLHoldableObject
         if (!IsPlantSkewered())
             currentState.Push(this, moveDir);
 
-        OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+        if (!spinning)
+            OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
         curPos = curPos + moveDir;
         currentState.Move(this, curPos - moveDir);
     }
 
 
-    public bool SpinMoveCorner(Vector2Int startDir, Vector2Int endDir)
+    public override bool SpinMove(TLObject spinner, bool clockwise, Vector2Int startDir, Vector2Int endDir)
     {
-        return false;
-    }
+        GameState currentState = GameManager.Inst.currentState;
+        Vector2Int startingPos = curPos;
+        Vector2Int cornerSpot = curPos + endDir;
+        Vector2Int goalPos = curPos + endDir - startDir;
 
-    public bool SpinMoveEdge(Vector2Int startDir, Vector2Int endDir)
-    {
-        return false;
+        // CORNER
+        currentlyCornerSpinning = true;
+
+        bool canMoveCorner = CanMove(spinner, endDir);
+
+        if (!canMoveCorner && currentState.IsTLOfTypeAtPos<TLPlant>(cornerSpot))
+        {
+            currentState.GetTLOfTypeAtPos<TLPlant>(cornerSpot).Shear();
+            return true;
+        }
+        else if (!canMoveCorner)
+        {
+            return false;
+        }
+
+        bool somethingChanged = currentState.IsTLOfTypeAtPos<TLMoveableObject>(cornerSpot);
+
+        Move(spinner, endDir, true);
+
+        // FINAL POSITION
+        currentlyCornerSpinning = false;
+        Rotate90Degrees(clockwise);
+
+        bool canMoveFinal = CanMove(spinner, startDir * -1);
+
+        if (!canMoveFinal)
+            return somethingChanged;
+
+        Move(spinner, startDir * -1, true);
+        OnShearsSpin?.Invoke(new SpinAction(startingPos, goalPos, startDir, endDir, clockwise, this, currentState));
+        return true;
     }
 
     public override void EndMove(bool changeHappened)
     {
+        currentlyCornerSpinning = false;
+
         if (changeHappened)
             stateList.Add(new TLShears(this));
     }

@@ -28,6 +28,7 @@ public class PlayerAnimator : MonoBehaviour
         {
             player.OnPlayerMove -= OnPlayerMove;
             player.OnUndoOrReset -= OnInstantMove;
+            player.OnPlayerSpin -= OnPlayerSpin;
         }
     }
         
@@ -36,6 +37,7 @@ public class PlayerAnimator : MonoBehaviour
         player = gameState.GetPlayer();
         player.OnPlayerMove += OnPlayerMove;
         player.OnUndoOrReset += OnInstantMove;
+        player.OnPlayerSpin += OnPlayerSpin;
 
         gameObject.transform.position = new Vector3Int(player.GetPosition().x, player.GetPosition().y, 0);
         PlayerFaceDir(player.GetDirectionFacing());
@@ -48,10 +50,15 @@ public class PlayerAnimator : MonoBehaviour
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
     }
 
-    public void OnInstantMove(MoveAction move, InteractAction interact)
+    private void OnInstantMove(MoveAction move, InteractAction interact)
     {
         PlayerFaceDir(move.moveDir);
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
+    }
+
+    private void OnPlayerSpin(SpinAction spin)
+    {
+        PlayerFaceDir(spin.endDir);
     }
 
     public void PlayerFaceDir(Vector2Int faceDir)
