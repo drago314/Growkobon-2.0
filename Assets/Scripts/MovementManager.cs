@@ -8,7 +8,7 @@ using System;
 public class MovementManager : MonoBehaviour
 {
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, interact, undo, reset, finishLevel;
-
+    [SerializeField] private bool DebugCompleteOn;
     public event Action OnMoveBegin;
     public event Action OnMoveEnd;
     public event Action OnUndoBegin;
@@ -295,6 +295,7 @@ public class MovementManager : MonoBehaviour
 
     private void DebugFinishLevel(InputAction.CallbackContext obj)
     {
-        GameManager.Inst.CompleteLevel(SceneManager.GetActiveScene().name);
+        if (DebugCompleteOn)
+            GameManager.Inst.CompleteLevel(SceneManager.GetActiveScene().name);
     }
 }
