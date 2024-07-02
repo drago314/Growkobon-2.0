@@ -66,13 +66,18 @@ public class TLShears : TLHoldableObject
 
     public override bool CanMove(TLObject pusher, Vector2Int moveDir)
     {
+        return CanMove(pusher, moveDir, false, false);
+    }
+
+    public bool CanMove(TLObject pusher, Vector2Int moveDir, bool cornerSpinning, bool finalSpinning)
+    {
         GameState currentState = GameManager.Inst.currentState;
 
-        if (pusher is TLPlayer && GetDirectionFacing() == -1 * moveDir && !IsPlantSkewered())
+        if (pusher is TLPlayer && GetDirectionFacing() == -1 * moveDir && !IsPlantSkewered() && !cornerSpinning && !finalSpinning)
             return false;
         if (currentState.IsTLOfTypeAtPos<TLPlayer>(curPos + moveDir))
             return true;
-        if (currentState.IsTLOfTypeAtPos<TLPlant>(curPos + moveDir) && GetDirectionFacing() == moveDir)
+        if (currentState.IsTLOfTypeAtPos<TLPlant>(curPos + moveDir) && GetDirectionFacing() == moveDir && !cornerSpinning)
             return true;
 
         if (IsPlantSkewered() && moveDir != -1 * GetDirectionFacing())
@@ -94,8 +99,7 @@ public class TLShears : TLHoldableObject
 
         if (pusher is TLPlant && IsPlantSkewered() && pusher == GetPlantSkewered()) // If we are be moved inside a moving plant block
         {
-            if (!spinning)
-                OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+            OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
             curPos = curPos + moveDir;
             currentState.Move(this, curPos - moveDir);
             return;
@@ -116,8 +120,7 @@ public class TLShears : TLHoldableObject
         if (pusher is TLPlant && !IsPlantSkewered())
         {
             currentState.Push(this, moveDir);
-            if (!spinning)
-                OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
+            OnShearsMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
             curPos = curPos + moveDir;
             currentState.Move(this, curPos - moveDir);
             return;
@@ -152,9 +155,10 @@ public class TLShears : TLHoldableObject
         // CORNER
         currentlyCornerSpinning = true;
 
-        bool canMoveCorner = CanMove(spinner, endDir);
+        bool canMoveCorner = CanMove(spinner, endDir, true, false);
+        Debug.Log("Can Move Corner: " + canMoveCorner);
 
-        if (!canMoveCorner && currentState.IsTLOfTypeAtPos<TLPlant>(cornerSpot))
+        if (!canMoveCorner && currentState.IsTLOfTypeAtPos<TLPlant>(cornerSpot) && directionFacing == endDir)
         {
             currentState.GetTLOfTypeAtPos<TLPlant>(cornerSpot).Shear();
             return true;
@@ -168,14 +172,20 @@ public class TLShears : TLHoldableObject
 
         Move(spinner, endDir, true);
 
+        Debug.Log("After Corner: " + currentState.ToString());
+
         // FINAL POSITION
         currentlyCornerSpinning = false;
         Rotate90Degrees(clockwise);
 
-        bool canMoveFinal = CanMove(spinner, startDir * -1);
+        bool canMoveFinal = CanMove(spinner, startDir * -1, false, true);
+        Debug.Log("Can Move Final: " + canMoveFinal);
 
         if (!canMoveFinal)
+        {
+            Move(spinner, endDir * -1);
             return somethingChanged;
+        }
 
         Move(spinner, startDir * -1, true);
         OnShearsSpin?.Invoke(new SpinAction(startingPos, goalPos, startDir, endDir, clockwise, this, currentState));
