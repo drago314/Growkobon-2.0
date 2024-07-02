@@ -58,8 +58,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
         else
         {
-            // TODO WILL NOT WORK FOR WORLDS 10+
-            currentWorld = SceneManager.GetActiveScene().name.Substring(0, 7) + " Map";
             OpenLevel(SceneManager.GetActiveScene().name);
         }
     }       
