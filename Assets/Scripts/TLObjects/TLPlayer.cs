@@ -6,6 +6,9 @@ using System;
 public class TLPlayer : TLMoveableObject
 {
     private List<TLPlayer> stateList;
+    private TLPlayer initialState;
+    private bool deleted = false;
+    public Action OnDoneWithObject;
 
     private Vector2Int directionFacing;
     private TLHoldableObject objectHeld = null;
@@ -18,9 +21,9 @@ public class TLPlayer : TLMoveableObject
 
     public TLPlayer(Vector2Int curPos) : base(curPos)
     {
-        directionFacing = Vector2Int.right;
+        initialState = new TLPlayer(this);
         stateList = new List<TLPlayer>();
-        stateList.Add(new TLPlayer(this));
+        stateList.Add(initialState);
     }
     
     private TLPlayer(TLPlayer obj) : base(obj)
@@ -33,6 +36,7 @@ public class TLPlayer : TLMoveableObject
         curPos = obj.curPos;
         directionFacing = obj.directionFacing;
         objectHeld = obj.objectHeld;
+        deleted = obj.deleted;
         OnUndoOrReset?.Invoke(new MoveAction(curPos, curPos, directionFacing, this, GameManager.Inst.currentState), 
             new InteractAction(directionFacing, this, objectHeld, GameManager.Inst.currentState));
     }
@@ -73,6 +77,8 @@ public class TLPlayer : TLMoveableObject
         OnObjectPutDown?.Invoke(new InteractAction(releaseDirection, this, objectHeld, GameManager.Inst.currentState));
         objectHeld = null;
     }
+
+    public bool IsDeleted() { return deleted; }
 
     public Vector2Int GetDirectionFacing() { return directionFacing; }
 
@@ -150,32 +156,52 @@ public class TLPlayer : TLMoveableObject
         if (GameManager.Inst.currentState.AtInitialState())
             return;
 
-        GameManager.Inst.currentState.RemoveObject(this);
-
-        if (stateList.Count >= 2)
+        if (stateList.Count >= 2 && !deleted)
         {
+            GameManager.Inst.currentState.RemoveObject(this);
             Initialize(stateList[stateList.Count - 2]);
             stateList.RemoveAt(stateList.Count - 1);
             GameManager.Inst.currentState.AddObject(this);
         }
+        else if (stateList.Count >= 2 && deleted)
+        {
+            if (stateList[stateList.Count - 2].IsDeleted())
+            {
+                Initialize(stateList[stateList.Count - 2]);
+                stateList.RemoveAt(stateList.Count - 1);
+            }
+            else
+            {
+                Initialize(stateList[stateList.Count - 2]);
+                stateList.RemoveAt(stateList.Count - 1);
+                GameManager.Inst.currentState.ReviveObject(this);
+            }
+        }
         else
-            Destroy();
+        {
+            GameManager.Inst.currentState.RemoveObject(this);
+            OnDoneWithObject?.Invoke();
+        }
     }
 
     public override void Reset()
     {
-        GameManager.Inst.currentState.RemoveObject(this);
-
-        if (stateList.Count > GameManager.Inst.currentState.GetMoveCount())
+        if (initialState != null)
         {
-            Initialize(stateList[0]);
-            stateList = new List<TLPlayer>();
+            GameManager.Inst.currentState.RemoveObject(this);
+            Initialize(initialState);
             stateList.Add(new TLPlayer(this));
             GameManager.Inst.currentState.AddObject(this);
         }
+        else if (deleted)
+        {
+            stateList.Add(new TLPlayer(this));
+        }
         else
         {
-            Destroy();
+            GameManager.Inst.currentState.DeleteObject(this);
+            deleted = true;
+            stateList.Add(new TLPlayer(this));
         }
     }
 

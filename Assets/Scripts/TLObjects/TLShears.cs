@@ -6,6 +6,9 @@ using System;
 public class TLShears : TLHoldableObject
 {
     private List<TLShears> stateList;
+    private TLShears initialState;
+    private bool deleted = false;
+    public Action OnDoneWithObject;
 
     private TLPlant plantSkewered = null;
     private bool currentlyCornerSpinning = false;
@@ -18,8 +21,9 @@ public class TLShears : TLHoldableObject
 
     public TLShears(Vector2Int curPos, ShearSignature sig) : base(curPos, sig.directionFacing)
     {
+        initialState = new TLShears(this);
         stateList = new List<TLShears>();
-        stateList.Add(new TLShears(this));
+        stateList.Add(initialState);
     }
 
     private TLShears(TLShears obj) : base(obj)
@@ -30,10 +34,12 @@ public class TLShears : TLHoldableObject
     private void Initialize(TLShears obj)
     {
         base.Initialize(obj);
+        deleted = obj.deleted;
         plantSkewered = obj.plantSkewered;
         OnUndoOrReset?.Invoke(new InstantMoveRotatableObject(curPos, GetDirectionFacing(), this, GameManager.Inst.currentState)); ;
     }
 
+    public bool IsDeleted() { return deleted; }
     public bool IsCurrentlyCornerSpinning() { return currentlyCornerSpinning; }
     public bool IsPlantSkewered() { return plantSkewered != null; }
     public TLPlant GetPlantSkewered() { return plantSkewered; }
@@ -213,32 +219,52 @@ public class TLShears : TLHoldableObject
         if (GameManager.Inst.currentState.AtInitialState())
             return;
 
-        GameManager.Inst.currentState.RemoveObject(this);
-
-        if (stateList.Count >= 2)
+        if (stateList.Count >= 2 && !deleted)
         {
+            GameManager.Inst.currentState.RemoveObject(this);
             Initialize(stateList[stateList.Count - 2]);
             stateList.RemoveAt(stateList.Count - 1);
             GameManager.Inst.currentState.AddObject(this);
         }
+        else if (stateList.Count >= 2 && deleted)
+        {
+            if (stateList[stateList.Count - 2].IsDeleted())
+            {
+                Initialize(stateList[stateList.Count - 2]);
+                stateList.RemoveAt(stateList.Count - 1);
+            }
+            else
+            {
+                Initialize(stateList[stateList.Count - 2]);
+                stateList.RemoveAt(stateList.Count - 1);
+                GameManager.Inst.currentState.ReviveObject(this);
+            }
+        }
         else
-            Destroy();
+        {
+            GameManager.Inst.currentState.RemoveObject(this);
+            OnDoneWithObject?.Invoke();
+        }
     }
 
     public override void Reset()
     {
-        GameManager.Inst.currentState.RemoveObject(this);
-
-        if (stateList.Count > GameManager.Inst.currentState.GetMoveCount())
+        if (initialState != null)
         {
-            Initialize(stateList[0]);
-            stateList = new List<TLShears>();
+            GameManager.Inst.currentState.RemoveObject(this);
+            Initialize(initialState);
             stateList.Add(new TLShears(this));
             GameManager.Inst.currentState.AddObject(this);
         }
+        else if (deleted)
+        {
+            stateList.Add(new TLShears(this));
+        }
         else
         {
-            Destroy();
+            GameManager.Inst.currentState.DeleteObject(this);
+            deleted = true;
+            stateList.Add(new TLShears(this));
         }
     }
 

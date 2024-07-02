@@ -5,12 +5,14 @@ using UnityEngine;
 public class GameState 
 {
     protected Dictionary<(int, int), List<TLObject>> posToTLObj;
+    protected List<TLMoveableObject> deletedObjects;
     private int moveCount = 0;
 
     public GameState()
     {
         moveCount = 0;
         posToTLObj = new Dictionary<(int, int), List<TLObject>>();
+        deletedObjects = new List<TLMoveableObject>();
     }
 
     public int GetMoveCount() { return moveCount; }
@@ -30,6 +32,18 @@ public class GameState
             key.Add(TLObj);
             posToTLObj.Add(posTuple, key);
         }
+    }
+
+    public void DeleteObject(TLMoveableObject TLObj)
+    {
+        RemoveObject(TLObj);
+        deletedObjects.Add(TLObj);
+    }
+
+    public void ReviveObject(TLMoveableObject TLObj)
+    {
+        deletedObjects.Remove(TLObj);
+        AddObject(TLObj);
     }
 
     public void RemoveObject(TLObject TLObj)
@@ -78,7 +92,7 @@ public class GameState
         {
             obj.Reset();
         }
-        moveCount = 0;
+        moveCount += 1;
     }
 
     public List<TLObject> GetAllTLObjects()
@@ -105,6 +119,8 @@ public class GameState
                     list.Add((TLMoveableObject)obj);
             }
         }
+        foreach (var obj in deletedObjects)
+            list.Add(obj);
         return list;
     }
 

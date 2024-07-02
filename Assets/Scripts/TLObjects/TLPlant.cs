@@ -6,6 +6,9 @@ using System;
 public class TLPlant : TLMoveableObject
 {
     private List<TLPlant> stateList;
+    private TLPlant initialState;
+    private bool deleted = false;
+    public Action OnDoneWithObject;
 
     private bool isAlive;
     private bool isSkewered;
@@ -13,7 +16,6 @@ public class TLPlant : TLMoveableObject
     private bool pushed = false;
 
     public Action<MoveAction> OnPlantMove;
-    public Action<MoveAction> OnUndoOrReset;
     public Action OnPlantSkewered;
     public Action OnPlantUnskewered;
     public Action OnPlantCornerSpinSheared;
@@ -24,8 +26,9 @@ public class TLPlant : TLMoveableObject
     {
         isAlive = sig.isAlive;
         isSkewered = false;
+        initialState = new TLPlant(this);
         stateList = new List<TLPlant>();
-        stateList.Add(new TLPlant(this));
+        stateList.Add(initialState);
     }
 
     public TLPlant(Vector2Int curPos, bool isAlive) : base(curPos)
@@ -43,10 +46,10 @@ public class TLPlant : TLMoveableObject
 
     public void Initialize(TLPlant obj)
     {
+        deleted = obj.deleted;
         isAlive = obj.isAlive;
         isSkewered = obj.isSkewered;
         curPos = obj.curPos;
-        OnUndoOrReset?.Invoke(new MoveAction(curPos, curPos, Vector2Int.zero, this, GameManager.Inst.currentState));
     }
 
     public bool IsAlive() { return isAlive; }
@@ -65,6 +68,7 @@ public class TLPlant : TLMoveableObject
         }
     }
 
+    public bool IsDeleted() { return deleted; }
     public bool HasBeenCheckedForPush() { return checkedForPush; }
     public bool HasBeenPushed() { return pushed; }
     public bool IsSkewered() { return isSkewered; }
@@ -188,32 +192,52 @@ public class TLPlant : TLMoveableObject
         if (GameManager.Inst.currentState.AtInitialState())
             return;
 
-        GameManager.Inst.currentState.RemoveObject(this);
-
-        if (stateList.Count >= 2)
+        if (stateList.Count >= 2 && !deleted)
         {
+            GameManager.Inst.currentState.RemoveObject(this);
             Initialize(stateList[stateList.Count - 2]);
             stateList.RemoveAt(stateList.Count - 1);
             GameManager.Inst.currentState.AddObject(this);
         }
+        else if (stateList.Count >= 2 && deleted)
+        {
+            if(stateList[stateList.Count - 2].IsDeleted())
+            {
+                Initialize(stateList[stateList.Count - 2]);
+                stateList.RemoveAt(stateList.Count - 1);
+            }
+            else
+            {
+                Initialize(stateList[stateList.Count - 2]);
+                stateList.RemoveAt(stateList.Count - 1);
+                GameManager.Inst.currentState.ReviveObject(this);
+            }
+        }
         else
-            Destroy();
+        {
+            GameManager.Inst.currentState.RemoveObject(this);
+            OnDoneWithObject?.Invoke();
+        }
     }
 
     public override void Reset()
     {
-        GameManager.Inst.currentState.RemoveObject(this);
-
-        if (stateList.Count > GameManager.Inst.currentState.GetMoveCount())
+        if (initialState != null)
         {
-            Initialize(stateList[0]);
-            stateList = new List<TLPlant>();
+            GameManager.Inst.currentState.RemoveObject(this);
+            Initialize(initialState);
             stateList.Add(new TLPlant(this));
             GameManager.Inst.currentState.AddObject(this);
         }
+        else if (deleted)
+        {
+            stateList.Add(new TLPlant(this));
+        }
         else
         {
-            Destroy();
+            GameManager.Inst.currentState.DeleteObject(this);
+            deleted = true;
+            stateList.Add(new TLPlant(this));
         }
     }
 

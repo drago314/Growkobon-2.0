@@ -6,7 +6,6 @@ using System;
 public abstract class TLObject
 {
     protected Vector2Int curPos;
-    public Action OnObjectDestroy;
 
     public TLObject(Vector2Int pos)
     {
@@ -27,10 +26,4 @@ public abstract class TLObject
 
     public abstract string GetName();
     public abstract bool CanMove(TLObject pusher, Vector2Int moveDir);
-
-    public virtual void Destroy()
-    {
-        GameManager.Inst.currentState.RemoveObject(this);
-        OnObjectDestroy?.Invoke();
-    }
 }
