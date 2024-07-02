@@ -165,12 +165,16 @@ public class TLShears : TLHoldableObject
         }
         else if (!canMoveCorner)
         {
+            GameManager.Inst.movementManager.GrowPlant(cornerSpot, endDir);
             return false;
         }
 
         bool somethingChanged = currentState.IsTLOfTypeAtPos<TLMoveableObject>(cornerSpot);
 
+        bool attemptGrowPlant = currentState.IsTLOfTypeAtPos<TLPlant>(cornerSpot);
         Move(spinner, endDir, true);
+        if (attemptGrowPlant)
+            GameManager.Inst.movementManager.GrowPlant(cornerSpot + endDir, endDir);
 
         Debug.Log("After Corner: " + currentState.ToString());
 
@@ -183,11 +187,15 @@ public class TLShears : TLHoldableObject
 
         if (!canMoveFinal)
         {
+            GameManager.Inst.movementManager.GrowPlant(goalPos, -1 * startDir);
             Move(spinner, endDir * -1);
             return somethingChanged;
         }
 
+        attemptGrowPlant = currentState.IsTLOfTypeAtPos<TLPlant>(goalPos);
         Move(spinner, startDir * -1, true);
+        if (attemptGrowPlant)
+            GameManager.Inst.movementManager.GrowPlant(goalPos - startDir, -1 * startDir);
         OnShearsSpin?.Invoke(new SpinAction(startingPos, goalPos, startDir, endDir, clockwise, this, currentState));
         return true;
     }

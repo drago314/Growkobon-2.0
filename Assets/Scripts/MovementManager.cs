@@ -179,7 +179,7 @@ public class MovementManager : MonoBehaviour
     }
 
 
-    private bool GrowPlant(Vector2Int goalPos, Vector2Int moveDir)
+    public bool GrowPlant(Vector2Int goalPos, Vector2Int moveDir)
     {
         GameState currentState = GameManager.Inst.currentState;
 
