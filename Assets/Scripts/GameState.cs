@@ -50,7 +50,7 @@ public class GameState
 
     public void EndMove(bool changeHappened)
     {
-        foreach (var obj in GetAllTLObjects())
+        foreach (var obj in GetAllMoveableObjects())
             obj.EndMove(changeHappened);
 
         if (changeHappened)
@@ -62,7 +62,7 @@ public class GameState
         if (moveCount == 0)
             return;
 
-        foreach (var obj in GetAllTLObjects())
+        foreach (var obj in GetAllMoveableObjects())
         {
             obj.Undo();
         }
@@ -74,7 +74,7 @@ public class GameState
         if (moveCount == 0)
             return;
 
-        foreach (var obj in GetAllTLObjects())
+        foreach (var obj in GetAllMoveableObjects())
         {
             obj.Reset();
         }
@@ -94,16 +94,18 @@ public class GameState
         return list;
     }
 
-    public TLPlayer GetPlayer()
+    public List<TLMoveableObject> GetAllMoveableObjects()
     {
-        foreach (var obj in GetAllTLObjects())
+        var list = new List<TLMoveableObject>();
+        foreach (var objList in posToTLObj.Values)
         {
-            if (obj is TLPlayer)
-                return (TLPlayer)obj;
+            foreach (var obj in objList)
+            {
+                if (obj is TLMoveableObject)
+                    list.Add((TLMoveableObject)obj);
+            }
         }
-
-        GameManager.Inst.DEBUG("NO PLAYER FOUND");
-        return null;
+        return list;
     }
 
     public List<T> GetAllOfTLType<T>() where T : TLObject
@@ -115,6 +117,19 @@ public class GameState
                 objectList.Add((T)obj);
         }
         return objectList;
+    }
+
+
+    public TLPlayer GetPlayer()
+    {
+        foreach (var obj in GetAllTLObjects())
+        {
+            if (obj is TLPlayer)
+                return (TLPlayer)obj;
+        }
+
+        GameManager.Inst.DEBUG("NO PLAYER FOUND");
+        return null;
     }
 
     public bool IsTLObjectAtPos(Vector2Int pos)

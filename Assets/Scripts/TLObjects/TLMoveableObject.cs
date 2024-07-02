@@ -16,4 +16,7 @@ public abstract class TLMoveableObject : TLObject
 
     public abstract void SetPos(Vector2Int pos);
     public abstract void Move(TLObject pusher, Vector2Int moveDir);
+    public abstract void EndMove(bool changeHappened);
+    public abstract void Undo();
+    public abstract void Reset();
 }

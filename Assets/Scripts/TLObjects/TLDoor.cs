@@ -48,9 +48,5 @@ public class TLDoor : TLObject
     public bool UsesMultiPot() { return usesMultiPot; }
     public int GetPotsRequired() { return potsRequired; }
 
-    public override void Undo() { return; }
-    public override void Reset() { return; }
-    public override void EndMove(bool changeHappened) { return; }
-
     public override string GetName() { return "Door";  }
 }

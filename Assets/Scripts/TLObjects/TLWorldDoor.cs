@@ -23,10 +23,6 @@ public class TLWorldDoor : TLObject
         return levelsCompleted == levelsRequired;
     }
 
-    public override void EndMove(bool changeHappened) { return; }
-    public override void Undo() { return; }
-    public override void Reset() { return; }
-
     public override bool CanMove(TLObject pusher, Vector2Int moveDir)
     {
         if (pusher is TLPlayer && IsOpen())

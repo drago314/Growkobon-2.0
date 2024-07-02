@@ -21,10 +21,6 @@ public class TLPot : TLObject
             return 0;
     }
 
-    public override void EndMove(bool changeHappened) { return; }
-    public override void Undo() { return; }
-    public override void Reset() { return; }
-
     public override bool CanMove(TLObject pusher, Vector2Int moveDir)
     {
         return true;
