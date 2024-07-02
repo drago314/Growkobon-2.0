@@ -5,8 +5,8 @@ using System;
 
 public abstract class TLHoldableObject : TLMoveableObject
 {
-    private Vector2Int directionFacing;
-    private bool held = false;
+    protected Vector2Int directionFacing;
+    protected bool held = false;
 
     public event Action OnPickedUp;
     public event Action OnRelease;
@@ -46,85 +46,7 @@ public abstract class TLHoldableObject : TLMoveableObject
         }
     }
 
-    public abstract bool SpinMove(bool clockwise);
-
-    /*public override void Move(Vector2Int pos)
-    {
-        if ((curPos - pos).x == 0 || (curPos - pos).y == 0) // Straight move
-        {
-            OnMove?.Invoke(new MoveAction(curPos, pos, pos - curPos, this, GameManager.Inst.currentState));
-        }
-        else // Spin Move
-        {
-            Vector2Int moveDiff = pos - curPos;
-            Vector2Int playerPos = GameManager.Inst.currentState.GetPlayer().GetPosition();
-            Vector2Int fromStartToPlayerDiff = curPos - playerPos;
-            Debug.Log("Player: " + playerPos);
-            Debug.Log("Shears: " + curPos);
-            Debug.Log("Diff: " + fromStartToPlayerDiff);
-            Vector2Int startDir;
-            bool clockwise;
-
-            if (moveDiff == new Vector2Int(1, 1))
-            {
-                if (fromStartToPlayerDiff == Vector2Int.left)
-                {
-                    startDir = new Vector2Int(-1, 0);
-                    clockwise = true;
-                }
-                else
-                {
-                    startDir = new Vector2Int(0, -1);
-                    clockwise = false;
-                }
-            }
-            else if (moveDiff == new Vector2Int(-1, 1))
-            {
-                if (fromStartToPlayerDiff == Vector2Int.down)
-                {
-                    startDir = new Vector2Int(0, -1);
-                    clockwise = true;
-                }
-                else
-                {
-                    startDir = new Vector2Int(1, 0);
-                    clockwise = false;
-                }
-            }
-            else if (moveDiff == new Vector2Int(-1, -1))
-            {
-                if (fromStartToPlayerDiff == Vector2Int.right)
-                {
-                    startDir = new Vector2Int(1, 0);
-                    clockwise = true;
-                }
-                else
-                {
-                    startDir = new Vector2Int(0, 1);
-                    clockwise = false;
-                }
-            }
-            else
-            {
-                if (fromStartToPlayerDiff == Vector2Int.up)
-                {
-                    startDir = new Vector2Int(0, 1);
-                    clockwise = true;
-                }
-                else
-                {
-                    startDir = new Vector2Int(-1, 0);
-                    clockwise = false;
-                }
-            }
-
-            Vector2Int endDir = startDir + moveDiff;
-
-            Rotate90Degrees(clockwise);
-            OnSpin?.Invoke(new SpinAction(curPos, pos, startDir, endDir, clockwise, this, GameManager.Inst.currentState));
-        }
-        curPos = pos;
-    }*/
+    public abstract bool SpinMove(TLObject spinner, bool clockwise, Vector2Int startDir, Vector2Int endDir);
 
     public void Rotate90Degrees(bool clockwise)
     {

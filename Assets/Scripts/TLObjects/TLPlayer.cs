@@ -13,6 +13,7 @@ public class TLPlayer : TLMoveableObject
     public Action<InteractAction> OnObjectPickedUp;
     public Action<InteractAction> OnObjectPutDown;
     public Action<MoveAction> OnPlayerMove;
+    public Action<SpinAction> OnPlayerSpin;
     public Action<MoveAction, InteractAction> OnUndoOrReset;
 
     public TLPlayer(Vector2Int curPos) : base(curPos)
@@ -113,6 +114,29 @@ public class TLPlayer : TLMoveableObject
         OnPlayerMove?.Invoke(new MoveAction(curPos, curPos + moveDir, moveDir, this, GameManager.Inst.currentState));
         curPos = curPos + moveDir;
         GameManager.Inst.currentState.Move(this, curPos - moveDir);
+    }
+
+    public bool SpinHeldObject(bool clockwise, Vector2Int startDir, Vector2Int endDir)
+    {
+        if (!IsObjectHeld())
+        {
+            Debug.LogError("Spin Held Object Called when No Object is Held");
+            return false;
+        }
+
+        Vector2Int originalPos = objectHeld.GetPosition();
+        Debug.Log("original pos: " + originalPos);
+
+        bool somethingChanged = objectHeld.SpinMove(this, clockwise, startDir, endDir);
+
+        Debug.Log("new pos: " + objectHeld.GetPosition());
+        if (objectHeld.GetPosition() != originalPos)
+        {
+            OnPlayerSpin?.Invoke(new SpinAction(curPos, curPos, startDir, endDir, clockwise, this, GameManager.Inst.currentState));
+            directionFacing = endDir;
+        }
+
+        return somethingChanged;
     }
 
     public override void EndMove(bool changeHappened)

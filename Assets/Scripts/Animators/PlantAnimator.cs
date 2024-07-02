@@ -40,6 +40,7 @@ public class PlantAnimator : MonoBehaviour
             plant.OnPlantRegrowth -= UpdateDeadOrAlive;
             plant.OnPlantSkewered -= UpdateDeadOrAlive;
             plant.OnPlantUnskewered -= OnPlantSkewered;
+            plant.OnPlantCornerSpinSheared -= OnPlantSkewered;
             plant.OnObjectDestroy -= DoneWithObject;
         }
     }
@@ -53,6 +54,7 @@ public class PlantAnimator : MonoBehaviour
         plant.OnPlantRegrowth += UpdateDeadOrAlive;
         plant.OnPlantSkewered += UpdateDeadOrAlive;
         plant.OnPlantUnskewered += OnPlantSkewered;
+        plant.OnPlantCornerSpinSheared += OnPlantSkewered;
         plant.OnObjectDestroy += DoneWithObject;
 
         UpdatePlantInPot();

@@ -56,6 +56,7 @@ public class ShearsAnimator : MonoBehaviour
 
     private void OnShearsSpin(SpinAction spin)
     {
+        Debug.Log("On Shears Spin Called: " + spin.endPos);
         transform.position = new Vector3(spin.endPos.x, spin.endPos.y, 0);
         if (spin.clockwise)
             shearSprite.transform.eulerAngles = new Vector3(shearSprite.transform.eulerAngles.x, shearSprite.transform.eulerAngles.y, shearSprite.transform.eulerAngles.z - 90);

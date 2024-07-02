@@ -46,7 +46,7 @@ public class MovementManager : MonoBehaviour
         GameState currentState = GameManager.Inst.currentState;
         if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right))
-            return; //TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
+            TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left, currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
         else
             TypicalMove(Vector2Int.up);
     }
@@ -56,7 +56,7 @@ public class MovementManager : MonoBehaviour
         GameState currentState = GameManager.Inst.currentState;
         if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right))
-            return; //TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
+            TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right, currentState.GetPlayer().GetDirectionFacing(), Vector2Int.down);
         else
             TypicalMove(Vector2Int.down);
     }
@@ -65,7 +65,7 @@ public class MovementManager : MonoBehaviour
         GameState currentState = GameManager.Inst.currentState;
         if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down))
-            return; //TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
+            TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up, currentState.GetPlayer().GetDirectionFacing(), Vector2Int.right);
         else
             TypicalMove(Vector2Int.right);
     }
@@ -74,7 +74,7 @@ public class MovementManager : MonoBehaviour
         GameState currentState = GameManager.Inst.currentState;
         if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down))
-            return; //TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
+            TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down, currentState.GetPlayer().GetDirectionFacing(), Vector2Int.left);
         else
             TypicalMove(Vector2Int.left);
     }
@@ -162,7 +162,7 @@ public class MovementManager : MonoBehaviour
     }
 
     // A turn from right to up would have a starting Dir of Vector2Int.right and a ending dir of Vector2Int.up
-    private void TurnHoldingShear(Vector2Int startingDir, Vector2Int endingDir)
+    private void TurnHoldingShear(bool clockwise, Vector2Int startingDir, Vector2Int endingDir)
     {
         Debug.Log("BEGIN TURN");
         print(GameManager.Inst.currentState.ToString());
@@ -172,34 +172,14 @@ public class MovementManager : MonoBehaviour
         GameState currentState = GameManager.Inst.currentState;
 
         TLPlayer player = currentState.GetPlayer();
-        Vector2Int curPos = currentState.GetPosOf(player);
-        TLShears shears = currentState.GetTLOfTypeAtPos<TLShears>(curPos + startingDir);
 
-        Vector2Int cornerSpot = curPos + endingDir + startingDir;
-        Vector2Int goalPos = curPos + endingDir;
+        bool somethingChanged = player.SpinHeldObject(clockwise, startingDir, endingDir);
 
-        Debug.Log("CORNER: " + cornerSpot);
-        Debug.Log("GOAL: " + goalPos);
-
-        if (currentState.GetTLOfTypeAtPos<TLWall>(cornerSpot) != null || currentState.GetTLOfTypeAtPos<TLShears>(cornerSpot) != null || currentState.GetTLOfTypeAtPos<TLDoor>(cornerSpot) != null)
-        { 
-            EndMove(false);
-            return;
-        }
-        if (currentState.GetTLOfTypeAtPos<TLWall>(goalPos) != null || currentState.GetTLOfTypeAtPos<TLShears>(goalPos) != null || currentState.GetTLOfTypeAtPos<TLDoor>(goalPos) != null)
-        {
-            EndMove(false);
-            return;
-        }
-
-        currentState.Move(shears, curPos + endingDir);
-        player.SetDirectionFacing(endingDir);
-
-        EndMove(true);
+        EndMove(somethingChanged);
     }
 
 
-    private bool GrowPlant(Vector2Int goalPos, Vector2Int moveDir)
+    public bool GrowPlant(Vector2Int goalPos, Vector2Int moveDir)
     {
         GameState currentState = GameManager.Inst.currentState;
 
