@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
+using System;
 
 public class MapManager : MonoBehaviour
 {
     [SerializeField] public InputActionReference moveUp, moveDown, moveRight, moveLeft, enter;
+    public event Action OnLevelCompleted;
 
     private void Start()
     {
@@ -78,6 +80,7 @@ public class MapManager : MonoBehaviour
             if (level.GetLevelName() == levelName)
             {
                 level.SetCompleted(true);
+                OnLevelCompleted?.Invoke();
                 return;
             }
         }
