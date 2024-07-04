@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] public InputActionReference OpenMenuLevel, OpenMenuMap, CloseMenu;
-    [SerializeField] public GameObject pauseMenuUI;
+    [SerializeField] public GameObject pauseMenuUI, settingsUI;
     [SerializeField] public Button titleScreenButton, mapButton;
     private bool menuOpen;
     private bool inMap;
@@ -54,6 +54,7 @@ public class MenuManager : MonoBehaviour
     {
         GameManager.Inst.inputManager.SwitchCurrentActionMap("Pause Menu");
         pauseMenuUI.SetActive(true);
+        settingsUI.SetActive(false);
         if (inMap)
         {
             titleScreenButton.gameObject.SetActive(true);
@@ -75,7 +76,20 @@ public class MenuManager : MonoBehaviour
             GameManager.Inst.inputManager.SwitchCurrentActionMap("Gameplay");
 
         pauseMenuUI.SetActive(false);
+        settingsUI.SetActive(false);
         menuOpen = false;
+    }
+
+    public void OpenSettings()
+    {
+        settingsUI.SetActive(true);
+        pauseMenuUI.SetActive(false);
+    }
+
+    public void CloseSettings()
+    {
+        settingsUI.SetActive(false);
+        pauseMenuUI.SetActive(true);
     }
 
     public void OpenMap()
