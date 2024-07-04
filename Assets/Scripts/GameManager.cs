@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public PlantCreationAnimator animator;
     public PlayerInput inputManager;
     public LevelTransitioner levelTransitioner;
+    public SoundFXManager soundFXManager;
 
     public GameState currentState;
 
