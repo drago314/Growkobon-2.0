@@ -7,42 +7,30 @@ using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
-    [SerializeField] public InputActionReference OpenMenuLevel, OpenMenuMap, CloseMenu;
-    [SerializeField] public GameObject pauseMenuUI, settingsUI, remapKeybindsUI;
-    [SerializeField] public Button titleScreenButton, mapButton;
+    [SerializeField] private InputActionReference OpenMenuAction, CloseMenuAction;
+    [SerializeField] private GameObject pauseMenuUI, settingsUI, remapKeybindsUI;
+    [SerializeField] private Button titleScreenButton, mapButton;
     private bool menuOpen;
     private bool inMap;
 
     private void Start()
     {
-        OpenMenuLevel.action.performed += OpenLevelMenu;
-        OpenMenuMap.action.performed += OpenMapMenu;
-        CloseMenu.action.performed += OpenMenu;
+        OpenMenuAction.action.performed += OpenMenu;
+        CloseMenuAction.action.performed += OpenMenu;
     }
 
     private void OnDestroy()
     {
-        OpenMenuLevel.action.performed -= OpenLevelMenu;
-        OpenMenuMap.action.performed -= OpenMapMenu;
-        CloseMenu.action.performed -= OpenMenu;
-    }
-
-    private void OpenMapMenu(InputAction.CallbackContext obj)
-    {
-        inMap = true;
-        OpenMenu(obj);
-    }
-
-    private void OpenLevelMenu(InputAction.CallbackContext obj)
-    {
-        inMap = false;
-        OpenMenu(obj);
+        OpenMenuAction.action.performed -= OpenMenu;
+        CloseMenuAction.action.performed -= OpenMenu;
     }
 
     private void OpenMenu(InputAction.CallbackContext obj)
     {
         if (SceneManager.GetActiveScene().name.Contains("Title"))
             return;
+
+        inMap = GameManager.Inst.inMap;
 
         if (menuOpen)
             Resume();
@@ -70,10 +58,7 @@ public class MenuManager : MonoBehaviour
 
     public void Resume()
     { 
-        if (inMap)
-            GameManager.Inst.inputManager.SwitchCurrentActionMap("World Map");
-        else
-            GameManager.Inst.inputManager.SwitchCurrentActionMap("Gameplay");
+        GameManager.Inst.inputManager.SwitchCurrentActionMap("Gameplay");
 
         DeactivateAllMenus();
         menuOpen = false;

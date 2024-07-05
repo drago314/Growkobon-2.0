@@ -15,6 +15,7 @@ public class MovementManager : MonoBehaviour
     public event Action OnUndoEnd;
     public event Action OnResetBegin;
     public event Action OnResetEnd;
+    public event Action OnLevelCompleted;
     public event Action<GrowAction> OnPlantGrow;
 
     private void Start()
@@ -89,6 +90,10 @@ public class MovementManager : MonoBehaviour
         Vector2Int curPos = currentState.GetPosOf(player);
         Vector2Int grabDirection = Vector2Int.zero;
 
+        // Enter Level When in Map
+        if (currentState.IsTLOfTypeAtPos<TLLevel>(curPos))
+            GameManager.Inst.OpenLevel(currentState.GetTLOfTypeAtPos<TLLevel>(curPos).GetLevelName());
+        
         if (player.IsObjectHeld())
         {
             //player.objectHeld.SetHeld(false);
@@ -292,10 +297,25 @@ public class MovementManager : MonoBehaviour
         //print("End Move: " + GameManager.Inst.stateList.Count);
     }
 
+    public void CompleteLevel(string levelName)
+    {
+        GameState currentState = GameManager.Inst.currentState;
+
+        var TLLevels = currentState.GetAllOfTLType<TLLevel>();
+        foreach (var level in TLLevels)
+        {
+            if (level.GetLevelName() == levelName)
+            {
+                level.SetCompleted(true);
+                OnLevelCompleted?.Invoke();
+                return;
+            }
+        }
+    }
 
     private void DebugFinishLevel(InputAction.CallbackContext obj)
     {
-        if (DebugCompleteOn)
+        if (DebugCompleteOn && !GameManager.Inst.inMap)
             GameManager.Inst.CompleteLevel(SceneManager.GetActiveScene().name);
     }
 }

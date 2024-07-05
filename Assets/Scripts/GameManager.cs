@@ -17,10 +17,10 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public List<string> levelsCompleted;
     public string currentLevel;
     public string currentWorld;
+    public bool inMap = true;
 
     public static GameManager Inst;
     public MovementManager movementManager;
-    public MapManager mapManager;
     public PlantCreationAnimator animator;
     public PlayerInput inputManager;
     public LevelTransitioner levelTransitioner;
@@ -56,10 +56,13 @@ public class GameManager : MonoBehaviour, IDataPersistence
         else if (SceneManager.GetActiveScene().name.Contains("Map"))
         {
             OpenMap(SceneManager.GetActiveScene().name);
+            inMap = true;
         }
         else
         {
             OpenLevel(SceneManager.GetActiveScene().name);
+            currentWorld = "World 1 Map"; // TODO FIX
+            inMap = false;
         }
     }       
 
@@ -260,7 +263,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             levelsCompleted.Add(levelName);
             DataPersistenceManager.instance.SaveGame();
-            mapManager.CompleteLevel(levelName);
+            movementManager.CompleteLevel(levelName);
         }
 
         Debug.Log("Finished Map Setup");
@@ -268,7 +271,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         PrintLevelsCompleted();
 
         yield return new WaitForSeconds(20f / 60f);
-        inputManager.SwitchCurrentActionMap("World Map");
+        inputManager.SwitchCurrentActionMap("Gameplay");
     }
 
     public void OpenMap(string mapName, Vector2Int pos)
@@ -293,7 +296,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         OnMapEnter?.Invoke(currentState);
 
         yield return new WaitForSeconds(20f / 60f);
-        inputManager.SwitchCurrentActionMap("World Map");
+        inputManager.SwitchCurrentActionMap("Gameplay");
     }
 
     public void OpenMap(string mapName, string levelName)
@@ -329,7 +332,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
 
         yield return new WaitForSeconds(20f / 60f);
-        inputManager.SwitchCurrentActionMap("World Map");
+        inputManager.SwitchCurrentActionMap("Gameplay");
     }
 
     public void OpenMap(string mapName)
@@ -355,7 +358,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         Debug.Log("Pre Wait");
         yield return new WaitForSeconds(20f / 60f);
-        inputManager.SwitchCurrentActionMap("World Map");
+        inputManager.SwitchCurrentActionMap("Gameplay");
         Debug.Log("Finished Complete Level Coroutine");
     }
 

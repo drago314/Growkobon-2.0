@@ -2287,7 +2287,6 @@ GameObject:
   - component: {fileID: 2971636088457720204}
   - component: {fileID: 4777826634627551701}
   - component: {fileID: 3077985321389285311}
-  - component: {fileID: 5490834138412588229}
   - component: {fileID: 8921392625247923110}
   - component: {fileID: 3339727401158546822}
   - component: {fileID: 8565691529311702107}
@@ -2392,8 +2391,8 @@ MonoBehaviour:
   - 
   currentLevel: 
   currentWorld: 
+  inMap: 1
   movementManager: {fileID: 3077985321389285311}
-  mapManager: {fileID: 5490834138412588229}
   animator: {fileID: 8565691529311702107}
   inputManager: {fileID: 561370031755289853}
   levelTransitioner: {fileID: 8619201408100567790}
@@ -2419,23 +2418,6 @@ MonoBehaviour:
   reset: {fileID: 9029940788691076395, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   finishLevel: {fileID: -1928604609368515483, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   DebugCompleteOn: 0
---- !u!114 &5490834138412588229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4848350101653444800}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93736465f18602d458978f477f2579ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveUp: {fileID: 5536412998195584913, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
-  moveDown: {fileID: 4929436957986363429, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
-  moveRight: {fileID: -5645837413309641247, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
-  moveLeft: {fileID: 8464485211255316129, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
-  enter: {fileID: -6591409340151360113, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
 --- !u!114 &8921392625247923110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2448,9 +2430,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23298cfb7a8179845a1977a9bebe4d71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OpenMenuLevel: {fileID: 8175912855649578119, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
-  OpenMenuMap: {fileID: 2953609243104009286, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
-  CloseMenu: {fileID: -2410471381532546122, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  OpenMenuAction: {fileID: 8175912855649578119, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
+  CloseMenuAction: {fileID: -2410471381532546122, guid: fe492d68bcdb39f4780695c2fa3cb829, type: 3}
   pauseMenuUI: {fileID: 1911995550000775158}
   settingsUI: {fileID: 4811052772460787710}
   remapKeybindsUI: {fileID: 6098235211802878018}
