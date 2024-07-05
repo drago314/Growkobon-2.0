@@ -26,13 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8086639633654412458}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6001351348794691447
 SpriteRenderer:
@@ -114,3 +114,7 @@ MonoBehaviour:
   playerFacingLeft: {fileID: -1976143745, guid: ab059f8d9f246b542a066d42237121dd, type: 3}
   playerFacingRight: {fileID: -943117343, guid: ab059f8d9f246b542a066d42237121dd, type: 3}
   playerFacingDown: {fileID: -804484684, guid: ab059f8d9f246b542a066d42237121dd, type: 3}
+  playerMoveSoundClips:
+  - {fileID: 8300000, guid: 76d3dce6a473fa0479d4542b4135ac1e, type: 3}
+  undoSoundClips:
+  - {fileID: 8300000, guid: 4bca2de41b074e5448b2b696e5c11419, type: 3}

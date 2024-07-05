@@ -8,6 +8,8 @@ public class PlayerAnimator : MonoBehaviour
     [SerializeField] private Sprite playerFacingLeft;
     [SerializeField] private Sprite playerFacingRight;
     [SerializeField] private Sprite playerFacingDown;
+    [SerializeField] private AudioClip[] playerMoveSoundClips;
+    [SerializeField] private AudioClip[] undoSoundClips;
 
     private TLPlayer player;
 
@@ -27,7 +29,7 @@ public class PlayerAnimator : MonoBehaviour
         if (player != null)
         {
             player.OnPlayerMove -= OnPlayerMove;
-            player.OnUndoOrReset -= OnInstantMove;
+            player.OnUndoOrReset -= OnUndoOrReset;
             player.OnPlayerSpin -= OnPlayerSpin;
         }
     }
@@ -36,7 +38,7 @@ public class PlayerAnimator : MonoBehaviour
     {
         player = gameState.GetPlayer();
         player.OnPlayerMove += OnPlayerMove;
-        player.OnUndoOrReset += OnInstantMove;
+        player.OnUndoOrReset += OnUndoOrReset;
         player.OnPlayerSpin += OnPlayerSpin;
 
         gameObject.transform.position = new Vector3Int(player.GetPosition().x, player.GetPosition().y, 0);
@@ -48,12 +50,14 @@ public class PlayerAnimator : MonoBehaviour
         if (!player.IsObjectHeld())
             PlayerFaceDir(move.moveDir);
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
+        GameManager.Inst.soundFXManager.PlayRandomSoundFXClip(playerMoveSoundClips);
     }
 
-    private void OnInstantMove(MoveAction move, InteractAction interact)
+    private void OnUndoOrReset(MoveAction move, InteractAction interact)
     {
         PlayerFaceDir(move.moveDir);
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
+        GameManager.Inst.soundFXManager.PlayRandomSoundFXClip(undoSoundClips);
     }
 
     private void OnPlayerSpin(SpinAction spin)
