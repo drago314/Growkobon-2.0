@@ -255,7 +255,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         foreach (var level in currentState.GetAllOfTLType<TLLevel>())
         {
             if (level.GetLevelName() == levelName)
-                currentState.GetPlayer().SetPos(level.GetPosition());
+                currentState.GetPlayer().SetInitialPos(level.GetPosition());
         }
 
         OnMapEnter?.Invoke(currentState);
@@ -294,7 +294,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         levelTransitioner.EndLevelTransition();
 
         SetMapManagerFromScene();
-        currentState.GetPlayer().SetPos(pos);
+        currentState.GetPlayer().SetInitialPos(pos);
         OnMapEnter?.Invoke(currentState);
 
         yield return new WaitForSeconds(20f / 60f);
@@ -324,12 +324,12 @@ public class GameManager : MonoBehaviour, IDataPersistence
         foreach (var level in currentState.GetAllOfTLType<TLLevel>())
         {
             if (level.GetLevelName() == levelName)
-                currentState.GetPlayer().SetPos(level.GetPosition());
+                currentState.GetPlayer().SetInitialPos(level.GetPosition());
         }
         foreach (var world in currentState.GetAllOfTLType<TLWorldPortal>())
         {
             if (world.GetWorldToTravelTo() == levelName)
-                currentState.GetPlayer().SetPos(world.GetPosition());
+                currentState.GetPlayer().SetInitialPos(world.GetPosition());
         }
         OnMapEnter?.Invoke(currentState);
 

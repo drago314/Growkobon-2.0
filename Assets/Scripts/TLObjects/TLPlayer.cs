@@ -94,6 +94,14 @@ public class TLPlayer : TLMoveableObject
         curPos = pos;
     }
 
+    public void SetInitialPos(Vector2Int pos)
+    {
+        curPos = pos;
+        initialState = new TLPlayer(this);
+        stateList = new List<TLPlayer>();
+        stateList.Add(initialState);
+    }
+
     public override bool CanMove(TLObject pusher, Vector2Int moveDir)
     {
         GameState currentState = GameManager.Inst.currentState;
