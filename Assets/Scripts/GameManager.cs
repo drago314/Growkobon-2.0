@@ -220,6 +220,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         inputManager.SwitchCurrentActionMap("No Control");
 
         currentLevel = level;
+        inMap = false;
 
         levelTransitioner.StartLevelTransition(level);
         yield return new WaitForSeconds(40f / 60f);
@@ -240,9 +241,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
     }
     private IEnumerator CompleteLevelAsync(string levelName)
     {
-        Debug.Log("Finish Level: " + levelName);
-        PrintLevelsCompleted();
         inputManager.SwitchCurrentActionMap("No Control");
+
+        inMap = true;
 
         levelTransitioner.StartLevelTransition(levelName);
         yield return new WaitForSeconds(40f / 60f);
@@ -284,6 +285,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         inputManager.SwitchCurrentActionMap("No Control");
 
         currentWorld = mapName;
+        inMap = true;
 
         levelTransitioner.StartLevelTransition(mapName);
         yield return new WaitForSeconds(40f / 60f);
@@ -310,6 +312,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         inputManager.SwitchCurrentActionMap("No Control");
 
         currentWorld = mapName;
+        inMap = true;
 
         levelTransitioner.StartLevelTransition(mapName);
         yield return new WaitForSeconds(40f / 60f);
@@ -346,6 +349,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         inputManager.SwitchCurrentActionMap("No Control");
 
         currentWorld = mapName;
+        inMap = true;
 
         levelTransitioner.StartLevelTransition(mapName);
         yield return new WaitForSeconds(40f / 60f);
