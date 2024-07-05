@@ -60,6 +60,13 @@ public class WorldDoorAnimator : MonoBehaviour
 
     private void UpdateLevelCountOverlays()
     {
+        if (door.IsOpen())
+        {
+            currentLevelsOverlay.color = new Color(255f, 255f, 255f, 0f);
+            requiredLevelsOverlay.color = new Color(255f, 255f, 255f, 0f);
+            return;
+        }
+
         var levels = GameManager.Inst.currentState.GetAllOfTLType<TLLevel>();
         int levelsTotal = 0;
         foreach (var level in levels)
@@ -70,5 +77,8 @@ public class WorldDoorAnimator : MonoBehaviour
 
         currentLevelsOverlay.sprite = currentLevelsOverlays[levelsTotal];
         requiredLevelsOverlay.sprite = requiredLevelsOverlays[door.GetLevelsRequired()];
+
+        currentLevelsOverlay.color = new Color(255f, 255f, 255f, 1f);
+        requiredLevelsOverlay.color = new Color(255f, 255f, 255f, 1f);
     }
 }
