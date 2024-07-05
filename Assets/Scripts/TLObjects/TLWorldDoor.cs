@@ -11,6 +11,8 @@ public class TLWorldDoor : TLObject
         levelsRequired = doorSig.levelsRequired;
     }
 
+    public int GetLevelsRequired() { return levelsRequired; }
+
     public bool IsOpen()
     {
         var levelsCompleted = GameManager.Inst.levelsCompleted.Count;

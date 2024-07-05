@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class WorldDoorAnimator : MonoBehaviour
 {
+    [SerializeField] private SpriteRenderer currentLevelsOverlay;
+    [SerializeField] private SpriteRenderer requiredLevelsOverlay;
+
+    [SerializeField] private Sprite[] currentLevelsOverlays;
+    [SerializeField] private Sprite[] requiredLevelsOverlays;
+
     private Animator animator;
 
     private TLWorldDoor door;
@@ -28,6 +34,7 @@ public class WorldDoorAnimator : MonoBehaviour
     {
         door = gameState.GetTLOfTypeAtPos<TLWorldDoor>(new Vector2Int((int)transform.position.x, (int)transform.position.y));
         InstantActivateDoor();
+        UpdateLevelCountOverlays();
     }
 
     private void OnLevelComplete()
@@ -39,6 +46,7 @@ public class WorldDoorAnimator : MonoBehaviour
             animator.SetTrigger("OpenDoor");
             Debug.Log("Opening Door");  
         }
+        UpdateLevelCountOverlays();
     }
 
     private void InstantActivateDoor()
@@ -48,5 +56,19 @@ public class WorldDoorAnimator : MonoBehaviour
         else
             animator.SetTrigger("InstantClose");
         Debug.Log("Instant Activating Door");
+    }
+
+    private void UpdateLevelCountOverlays()
+    {
+        var levels = GameManager.Inst.currentState.GetAllOfTLType<TLLevel>();
+        int levelsTotal = 0;
+        foreach (var level in levels)
+        {
+            if (level.IsCompleted())
+                levelsTotal += 1;
+        }
+
+        currentLevelsOverlay.sprite = currentLevelsOverlays[levelsTotal];
+        requiredLevelsOverlay.sprite = requiredLevelsOverlays[door.GetLevelsRequired()];
     }
 }
