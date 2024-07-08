@@ -654,7 +654,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7456747215725147225, guid: 81cfa803b11c2d142b9317f8a6347a97, type: 3}
       propertyPath: isAlive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4185,7 +4185,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 7
-      m_TileSpriteIndex: 5
+      m_TileSpriteIndex: 4
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -4245,7 +4245,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 7
-      m_TileSpriteIndex: 6
+      m_TileSpriteIndex: 5
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -4280,8 +4280,6 @@ Tilemap:
     m_Data: {fileID: -2143097782, guid: 8f2cbe5cd252c45479bcea910a14c20e, type: 3}
   - m_RefCount: 10
     m_Data: {fileID: 869231780, guid: 8f2cbe5cd252c45479bcea910a14c20e, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
   - m_RefCount: 1
     m_Data: {fileID: 1076049351, guid: 8f2cbe5cd252c45479bcea910a14c20e, type: 3}
   - m_RefCount: 1
@@ -4525,10 +4523,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4777826634627551701, guid: 7a101c58103cdd74c9c9ed6dd27c2e9c, type: 3}
       propertyPath: playerAnimator
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4777826634627551701, guid: 7a101c58103cdd74c9c9ed6dd27c2e9c, type: 3}
-      propertyPath: soundFXManager
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4848350101653444800, guid: 7a101c58103cdd74c9c9ed6dd27c2e9c, type: 3}

@@ -4463,10 +4463,6 @@ PrefabInstance:
       propertyPath: playerAnimator
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 4777826634627551701, guid: 7a101c58103cdd74c9c9ed6dd27c2e9c, type: 3}
-      propertyPath: soundFXManager
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 4848350101653444800, guid: 7a101c58103cdd74c9c9ed6dd27c2e9c, type: 3}
       propertyPath: m_Name
       value: GameManager
