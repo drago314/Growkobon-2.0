@@ -193,6 +193,7 @@ public class TLShears : TLHoldableObject
         {
             GameManager.Inst.movementManager.GrowPlant(goalPos, -1 * startDir);
             Move(spinner, endDir * -1);
+            Rotate90Degrees(!clockwise);
             return somethingChanged;
         }
 
