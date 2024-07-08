@@ -64,6 +64,7 @@ public class GameState
 
     public void EndMove(bool changeHappened)
     {
+        Debug.Log("END MOVE, CHANGE HAPPENED: " + changeHappened);
         foreach (var obj in GetAllMoveableObjects())
             obj.EndMove(changeHappened);
 

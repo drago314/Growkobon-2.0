@@ -41,7 +41,7 @@ public class PlantAnimator : MonoBehaviour
             plant.OnPlantMove -= OnPlantMove;
             plant.OnPlantDeath -= UpdateDeadOrAlive;
             plant.OnPlantRegrowth -= UpdateDeadOrAlive;
-            plant.OnPlantSkewered -= UpdateDeadOrAlive;
+            plant.OnPlantSkewered -= OnPlantSkewered;
             plant.OnPlantUnskewered -= OnPlantSkewered;
             plant.OnPlantCornerSpinSheared -= OnPlantSkewered;
             plant.OnDoneWithObject -= DoneWithObject;
@@ -54,7 +54,7 @@ public class PlantAnimator : MonoBehaviour
         plant.OnPlantMove += OnPlantMove;
         plant.OnPlantDeath += UpdateDeadOrAlive;
         plant.OnPlantRegrowth += UpdateDeadOrAlive;
-        plant.OnPlantSkewered += UpdateDeadOrAlive;
+        plant.OnPlantSkewered += OnPlantSkewered;
         plant.OnPlantUnskewered += OnPlantSkewered;
         plant.OnPlantCornerSpinSheared += OnPlantSkewered;
         plant.OnDoneWithObject += DoneWithObject;
@@ -69,6 +69,9 @@ public class PlantAnimator : MonoBehaviour
         plant.OnPlantMove += OnPlantMove;
         plant.OnPlantDeath += UpdateDeadOrAlive;
         plant.OnPlantRegrowth += UpdateDeadOrAlive;
+        plant.OnPlantSkewered += OnPlantSkewered;
+        plant.OnPlantUnskewered += OnPlantSkewered;
+        plant.OnPlantCornerSpinSheared += OnPlantSkewered;
         plant.OnDoneWithObject += DoneWithObject;
 
         currentlyGrowing = true;
@@ -122,6 +125,7 @@ public class PlantAnimator : MonoBehaviour
 
     private void OnMoveEnd()
     {
+        currentlyGrowing = false;
         if (plant.IsDeleted())
             return;
         UpdatePlantInPot();
