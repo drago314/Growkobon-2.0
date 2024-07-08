@@ -161,6 +161,14 @@ public class TLPlant : TLMoveableObject
         foreach (var plant in plantGroup)
             plant.pushed = true;
 
+        foreach (var plant in plantGroup) // Check which shears will unskewer from plant in the movement
+        {
+            if (plant.IsSkewered() && currentState.GetTLOfTypeAtPos<TLShears>(plant.GetPosition()) != pusher
+                && currentState.GetTLOfTypeAtPos<TLShears>(plant.GetPosition()).GetDirectionFacing() == moveDir
+                && !currentState.IsTLOfTypeAtPos<TLPlant>(plant.GetPosition() - moveDir))
+                currentState.GetTLOfTypeAtPos<TLShears>(plant.GetPosition()).UnskewerPlant();
+        }
+
         foreach (var plant in plantGroup)
         {
             bool wasSkewered = plant.IsSkewered();
