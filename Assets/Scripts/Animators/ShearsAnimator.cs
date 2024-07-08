@@ -10,6 +10,8 @@ public class ShearsAnimator : MonoBehaviour
     private void Start()
     {
         GameManager.Inst.OnLevelEnter += OnLevelLoaded;
+        GameManager.Inst.movementManager.OnUndoEnd += OnShearsInsantMove;
+        GameManager.Inst.movementManager.OnResetEnd += OnShearsInsantMove;
         shearSprite = GetComponentInChildren<SpriteRenderer>().gameObject;
     }
 
@@ -18,12 +20,13 @@ public class ShearsAnimator : MonoBehaviour
         if (GameManager.Inst != null)
         {
             GameManager.Inst.OnLevelEnter -= OnLevelLoaded;
+            GameManager.Inst.movementManager.OnUndoEnd -= OnShearsInsantMove;
+            GameManager.Inst.movementManager.OnResetEnd -= OnShearsInsantMove;
         }
         if (shears != null)
         {
             shears.OnShearsMove -= OnShearsMove;
             shears.OnShearsSpin -= OnShearsSpin;
-            shears.OnUndoOrReset -= OnShearsInsantMove;
         }
     }
 
@@ -32,7 +35,8 @@ public class ShearsAnimator : MonoBehaviour
         shears = GameManager.Inst.currentState.GetTLOfTypeAtPos<TLShears>(new Vector2Int((int)transform.position.x, (int)transform.position.y));
         shears.OnShearsMove += OnShearsMove;
         shears.OnShearsSpin += OnShearsSpin;
-        shears.OnUndoOrReset += OnShearsInsantMove;
+
+        OnShearsInsantMove();
     }
 
     private void OnShearsMove(MoveAction move)
@@ -40,15 +44,15 @@ public class ShearsAnimator : MonoBehaviour
         transform.position = new Vector3(move.endPos.x, move.endPos.y, 0);
     }
 
-    private void OnShearsInsantMove(InstantMoveRotatableObject action)
+    private void OnShearsInsantMove()
     {
-        transform.position = new Vector3(action.pos.x, action.pos.y, 0);
+        transform.position = new Vector3(shears.GetPosition().x, shears.GetPosition().y, 0);
         float angle = 0;
-        if (action.direction == Vector2Int.up)
+        if (shears.GetDirectionFacing() == Vector2Int.up)
             angle = 90;
-        else if (action.direction == Vector2Int.left)
+        else if (shears.GetDirectionFacing() == Vector2Int.left)
             angle = 180;
-        else if (action.direction == Vector2Int.down)
+        else if (shears.GetDirectionFacing() == Vector2Int.down)
             angle = 270;
 
         shearSprite.transform.eulerAngles = new Vector3(shearSprite.transform.eulerAngles.x, shearSprite.transform.eulerAngles.y, angle);

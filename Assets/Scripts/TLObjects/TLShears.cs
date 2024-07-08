@@ -17,7 +17,6 @@ public class TLShears : TLHoldableObject
     public event Action<SpinAction> OnShearsSpin;
     public Action<SkewerAction> OnPlantSkewered;
     public Action<SkewerAction> OnPlantUnskewered;
-    public Action<InstantMoveRotatableObject> OnUndoOrReset;
 
     public TLShears(Vector2Int curPos, ShearSignature sig) : base(curPos, sig.directionFacing)
     {
@@ -36,7 +35,6 @@ public class TLShears : TLHoldableObject
         base.Initialize(obj);
         deleted = obj.deleted;
         plantSkewered = obj.plantSkewered;
-        OnUndoOrReset?.Invoke(new InstantMoveRotatableObject(curPos, GetDirectionFacing(), this, GameManager.Inst.currentState)); ;
     }
 
     public bool IsDeleted() { return deleted; }
