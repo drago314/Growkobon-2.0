@@ -77,7 +77,7 @@ public class TLShears : TLHoldableObject
     {
         GameState currentState = GameManager.Inst.currentState;
 
-        if (pusher is TLPlayer && GetDirectionFacing() == -1 * moveDir && !IsPlantSkewered() && !cornerSpinning && !finalSpinning)
+        if (pusher is TLPlayer && pusher.GetPosition() == GetPosition() + GetDirectionFacing() && GetDirectionFacing() == -1 * moveDir && !IsPlantSkewered() && !cornerSpinning && !finalSpinning)
             return false;
         if (!IsPlantSkewered() && currentState.IsTLOfTypeAtPos<TLPlayer>(curPos + moveDir))
             return true;
