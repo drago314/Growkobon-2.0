@@ -79,13 +79,16 @@ public class TLShears : TLHoldableObject
 
         if (pusher is TLPlayer && GetDirectionFacing() == -1 * moveDir && !IsPlantSkewered() && !cornerSpinning && !finalSpinning)
             return false;
-        if (currentState.IsTLOfTypeAtPos<TLPlayer>(curPos + moveDir))
+        if (!IsPlantSkewered() && currentState.IsTLOfTypeAtPos<TLPlayer>(curPos + moveDir))
             return true;
-        if (currentState.IsTLOfTypeAtPos<TLPlant>(curPos + moveDir) && GetDirectionFacing() == moveDir && !cornerSpinning)
+        if (!IsPlantSkewered() && currentState.IsTLOfTypeAtPos<TLPlant>(curPos + moveDir) && GetDirectionFacing() == moveDir && !cornerSpinning)
             return true;
 
         if (IsPlantSkewered() && moveDir != -1 * GetDirectionFacing())
             return plantSkewered.CanMove(this, moveDir);
+
+        if (pusher is TLPlant && GetDirectionFacing() == -1 * moveDir)
+            return true; 
 
         return currentState.CanPush(this, moveDir);
     }
@@ -132,7 +135,7 @@ public class TLShears : TLHoldableObject
 
         if (IsPlantSkewered())
         {
-            if (pusher is TLPlayer && GetDirectionFacing() == -1 * moveDir)
+            if (pusher is TLPlayer && GetDirectionFacing() == -1 * moveDir && pusher.GetPosition() != GetPosition() - moveDir)
                 UnskewerPlant();
             else
                 plantSkewered.Move(this, moveDir);

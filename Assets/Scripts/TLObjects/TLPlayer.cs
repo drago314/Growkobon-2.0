@@ -109,7 +109,7 @@ public class TLPlayer : TLMoveableObject
         if (!IsObjectHeld() || objectHeld.GetPosition() == curPos + moveDir)
             return currentState.CanPush(this, moveDir);
         else
-            return currentState.CanPush(this, moveDir) && currentState.CanPush(objectHeld, moveDir);
+            return currentState.CanPush(this, moveDir) && objectHeld.CanMove(this, moveDir);
     }
 
     public override void Move(TLObject pusher, Vector2Int moveDir)
