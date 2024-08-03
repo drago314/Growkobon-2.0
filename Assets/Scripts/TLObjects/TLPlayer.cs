@@ -120,8 +120,8 @@ public class TLPlayer : TLMoveableObject
             currentState.Push(this, moveDir);
         else
         {
-            currentState.Push(this, moveDir);
             currentState.Pull(this, objectHeld.GetPosition(), moveDir);
+            currentState.Push(this, moveDir);
         }
 
 
