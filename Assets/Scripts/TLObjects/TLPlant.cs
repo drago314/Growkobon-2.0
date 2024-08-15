@@ -115,6 +115,9 @@ public class TLPlant : TLMoveableObject
                 return true;
         }
 
+        if (pusher is TLTrimmers && ((TLTrimmers)pusher).IsHeld())
+            return true;
+
         TLPlant[] plantGroup = currentState.GetPlantGroupAtPos(curPos);
 
         foreach (var plant in plantGroup)
@@ -154,6 +157,11 @@ public class TLPlant : TLMoveableObject
                 isAlive = false;
                 OnPlantCornerSpinSheared?.Invoke();
             }
+        }
+
+        if (pusher is TLTrimmers && ((TLTrimmers)pusher).IsHeld())
+        {
+            return;
         }
 
         TLPlant[] plantGroup = currentState.GetPlantGroupAtPos(curPos);

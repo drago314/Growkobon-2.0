@@ -45,9 +45,9 @@ public class MovementManager : MonoBehaviour
     private void MoveUp(InputAction.CallbackContext obj)
     {
         GameState currentState = GameManager.Inst.currentState;
-        if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
+        if (currentState.GetPlayer().IsObjectHeld() && ((currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()) || currentState.GetPlayer().GetObjectHeld() is TLTrimmers)
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right))
-            TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left, currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
+            TurnHoldingObject(currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left, currentState.GetPlayer().GetDirectionFacing(), Vector2Int.up);
         else
             TypicalMove(Vector2Int.up);
     }
@@ -55,27 +55,27 @@ public class MovementManager : MonoBehaviour
     private void MoveDown(InputAction.CallbackContext obj)
     {
         GameState currentState = GameManager.Inst.currentState;
-        if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
+        if (currentState.GetPlayer().IsObjectHeld() && ((currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()) || currentState.GetPlayer().GetObjectHeld() is TLTrimmers)
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.left || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right))
-            TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right, currentState.GetPlayer().GetDirectionFacing(), Vector2Int.down);
+            TurnHoldingObject(currentState.GetPlayer().GetDirectionFacing() == Vector2Int.right, currentState.GetPlayer().GetDirectionFacing(), Vector2Int.down);
         else
             TypicalMove(Vector2Int.down);
     }
     private void MoveRight(InputAction.CallbackContext obj)
     {
         GameState currentState = GameManager.Inst.currentState;
-        if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
+        if (currentState.GetPlayer().IsObjectHeld() && ((currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()) || currentState.GetPlayer().GetObjectHeld() is TLTrimmers)
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down))
-            TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up, currentState.GetPlayer().GetDirectionFacing(), Vector2Int.right);
+            TurnHoldingObject(currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up, currentState.GetPlayer().GetDirectionFacing(), Vector2Int.right);
         else
             TypicalMove(Vector2Int.right);
     }
     private void MoveLeft(InputAction.CallbackContext obj)
     {
         GameState currentState = GameManager.Inst.currentState;
-        if (currentState.GetPlayer().IsObjectHeld() && currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()
+        if (currentState.GetPlayer().IsObjectHeld() && ((currentState.GetPlayer().GetObjectHeld() is TLShears && !((TLShears)currentState.GetPlayer().GetObjectHeld()).IsPlantSkewered()) || currentState.GetPlayer().GetObjectHeld() is TLTrimmers)
         && (currentState.GetPlayer().GetDirectionFacing() == Vector2Int.up || currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down))
-            TurnHoldingShear(currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down, currentState.GetPlayer().GetDirectionFacing(), Vector2Int.left);
+            TurnHoldingObject(currentState.GetPlayer().GetDirectionFacing() == Vector2Int.down, currentState.GetPlayer().GetDirectionFacing(), Vector2Int.left);
         else
             TypicalMove(Vector2Int.left);
     }
@@ -100,13 +100,27 @@ public class MovementManager : MonoBehaviour
             //player.objectHeld = null;
             player.ReleaseObject();
         }
-        else if (currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.up) != null && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.up).GetDirectionFacing() != Vector2Int.down)
+        // shears
+        else if (currentState.IsTLOfTypeAtPos<TLShears>(curPos + Vector2Int.up) && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.up).GetDirectionFacing() != Vector2Int.down)
             grabDirection = Vector2Int.up;
-        else if (currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.down) != null && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.down).GetDirectionFacing() != Vector2Int.up)
+        else if (currentState.IsTLOfTypeAtPos<TLShears>(curPos + Vector2Int.down) && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.down).GetDirectionFacing() != Vector2Int.up)
             grabDirection = Vector2Int.down;
-        else if (currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.left) != null && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.left).GetDirectionFacing() != Vector2Int.right)
+        else if (currentState.IsTLOfTypeAtPos<TLShears>(curPos + Vector2Int.left) && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.left).GetDirectionFacing() != Vector2Int.right)
             grabDirection = Vector2Int.left;
-        else if (currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.right) != null && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.right).GetDirectionFacing() != Vector2Int.left)
+        else if (currentState.IsTLOfTypeAtPos<TLShears>(curPos + Vector2Int.right) && currentState.GetTLOfTypeAtPos<TLShears>(curPos + Vector2Int.right).GetDirectionFacing() != Vector2Int.left)
+            grabDirection = Vector2Int.right;
+        // trimmers
+        else if (currentState.IsTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.up) && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.up).GetDirectionFacing() != Vector2Int.down
+                 && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.up).GetDirectionFacingAdjacent() != Vector2Int.down)
+            grabDirection = Vector2Int.up;
+        else if (currentState.IsTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.down) && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.down).GetDirectionFacing() != Vector2Int.up
+                 && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.up).GetDirectionFacingAdjacent() != Vector2Int.up)
+            grabDirection = Vector2Int.down;
+        else if (currentState.IsTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.left) && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.left).GetDirectionFacing() != Vector2Int.right
+                 && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.up).GetDirectionFacingAdjacent() != Vector2Int.right)
+            grabDirection = Vector2Int.left;
+        else if (currentState.IsTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.right) && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.right).GetDirectionFacing() != Vector2Int.left
+                 && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.right).GetDirectionFacingAdjacent() != Vector2Int.left)
             grabDirection = Vector2Int.right;
         else
         {
@@ -119,8 +133,7 @@ public class MovementManager : MonoBehaviour
         // If one of the checks passed to pick up an object
         if (grabDirection != Vector2Int.zero)
         {
-            //player.objectHeld = currentState.GetShearsAtPos(curPos + grabDirection);
-            player.PickupObject(currentState.GetTLOfTypeAtPos<TLShears>(curPos + grabDirection));
+            player.PickupObject(currentState.GetTLOfTypeAtPos<TLHoldableObject>(curPos + grabDirection));
             Debug.Log("Player Holding: " + player.GetObjectHeld());
         }
 
@@ -167,7 +180,7 @@ public class MovementManager : MonoBehaviour
     }
 
     // A turn from right to up would have a starting Dir of Vector2Int.right and a ending dir of Vector2Int.up
-    private void TurnHoldingShear(bool clockwise, Vector2Int startingDir, Vector2Int endingDir)
+    private void TurnHoldingObject(bool clockwise, Vector2Int startingDir, Vector2Int endingDir)
     {
         Debug.Log("BEGIN TURN");
         print(GameManager.Inst.currentState.ToString());
@@ -219,6 +232,8 @@ public class MovementManager : MonoBehaviour
         {
             if (currentState.IsTLOfTypeAtPos<TLShears>(desiredPlantGrowth) && currentState.GetTLOfTypeAtPos<TLShears>(desiredPlantGrowth).GetDirectionFacing() != -1 * moveDir)
                 return GrowPlant(desiredPlantGrowth + moveDir, moveDir); // Grow through shears that aren't poking
+            if (currentState.IsTLOfTypeAtPos<TLTrimmers>(desiredPlantGrowth))
+                return GrowPlant(desiredPlantGrowth + moveDir, moveDir); // Grow through trimmers
 
             TLPlant plant = new TLPlant(desiredPlantGrowth, true);
             currentState.AddObject(plant);

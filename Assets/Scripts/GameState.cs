@@ -232,19 +232,9 @@ public class GameState
 
         foreach (var obj in objectsToMove)
         {
-            if (obj is TLPlant)
-            {
-                ((TLMoveableObject)obj).Move(pusher, pullDir);
-                return;
-            }
-        }
-
-        foreach (var obj in objectsToMove)
-        {
             if (obj is TLMoveableObject && obj is not TLPlayer)
             {
                 ((TLMoveableObject)obj).Move(pusher, pullDir);
-                return;
             }
         }
     }

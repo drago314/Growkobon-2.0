@@ -146,6 +146,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 TlObjectList.Add(new TLDoor(pos, (DoorSignature) TLSig));
             if (TLSig is ShearSignature)
                 TlObjectList.Add(new TLShears(pos, (ShearSignature)TLSig));
+            if (TLSig is TrimmerSignature)
+                TlObjectList.Add(new TLTrimmers(pos, (TrimmerSignature)TLSig));
         }
 
         currentState = new GameState();
