@@ -187,6 +187,18 @@ public class GameState
         return null;
     }
 
+    public List<T> GetTLListOfTypeAtPos<T>(Vector2Int pos) where T : TLObject
+    {
+        List<T> objects = new List<T>();
+
+        foreach (var TLObj in GetTLObjectsAtPos(pos))
+        {
+            if (TLObj is T)
+                objects.Add((T)TLObj);
+        }
+        return objects;
+    }
+
     public bool CanPush(TLObject pusher, Vector2Int moveDir)
     {
         if (!IsTLObjectAtPos(pusher.GetPosition() + moveDir))

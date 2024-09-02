@@ -77,6 +77,8 @@ public class TLShears : TLHoldableObject
     {
         GameState currentState = GameManager.Inst.currentState;
 
+        if (pusher is TLTrimmers && ((TLTrimmers)pusher).IsHeld())
+            return true;
         if (pusher is TLPlayer && pusher.GetPosition() == GetPosition() + GetDirectionFacing() && GetDirectionFacing() == -1 * moveDir && !IsPlantSkewered() && !cornerSpinning && !finalSpinning)
             return false;
         if (!IsPlantSkewered() && currentState.IsTLOfTypeAtPos<TLPlayer>(curPos + moveDir))
@@ -103,6 +105,11 @@ public class TLShears : TLHoldableObject
         Debug.Log("Move Shears Called By " + pusher.GetName() + ": " + pusher.GetPosition());
 
         GameState currentState = GameManager.Inst.currentState;
+
+        if (pusher is TLTrimmers && ((TLTrimmers)pusher).IsHeld())
+        {
+            return;
+        }
 
         if (pusher is TLPlant && IsPlantSkewered() && pusher == GetPlantSkewered()) // If we are be moved inside a moving plant block
         {

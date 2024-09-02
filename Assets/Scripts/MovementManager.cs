@@ -96,8 +96,11 @@ public class MovementManager : MonoBehaviour
         
         if (player.IsObjectHeld())
         {
-            //player.objectHeld.SetHeld(false);
-            //player.objectHeld = null;
+            if (player.GetObjectHeld() is TLTrimmers && currentState.GetTLListOfTypeAtPos<TLMoveableObject>(player.GetObjectHeld().GetPosition()).Count > 1)
+            {
+                EndMove(false);
+                return;
+            }
             player.ReleaseObject();
         }
         // shears
@@ -114,10 +117,10 @@ public class MovementManager : MonoBehaviour
                  && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.up).GetDirectionFacingAdjacent() != Vector2Int.down)
             grabDirection = Vector2Int.up;
         else if (currentState.IsTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.down) && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.down).GetDirectionFacing() != Vector2Int.up
-                 && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.up).GetDirectionFacingAdjacent() != Vector2Int.up)
+                 && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.down).GetDirectionFacingAdjacent() != Vector2Int.up)
             grabDirection = Vector2Int.down;
         else if (currentState.IsTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.left) && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.left).GetDirectionFacing() != Vector2Int.right
-                 && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.up).GetDirectionFacingAdjacent() != Vector2Int.right)
+                 && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.left).GetDirectionFacingAdjacent() != Vector2Int.right)
             grabDirection = Vector2Int.left;
         else if (currentState.IsTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.right) && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.right).GetDirectionFacing() != Vector2Int.left
                  && currentState.GetTLOfTypeAtPos<TLTrimmers>(curPos + Vector2Int.right).GetDirectionFacingAdjacent() != Vector2Int.left)
