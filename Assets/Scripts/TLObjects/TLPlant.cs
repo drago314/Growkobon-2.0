@@ -284,7 +284,7 @@ public class TLPlant : TLMoveableObject
 
     public override bool Equals(TLObject obj)
     {
-        return base.Equals(obj) && obj is TLPlant && IsAlive() == ((TLPlant)obj).IsAlive() && IsSkewered() == ((TLPlant)obj).IsAlive();
+        return base.Equals(obj) && obj is TLPlant && IsAlive() == ((TLPlant)obj).IsAlive() && IsSkewered() == ((TLPlant)obj).IsSkewered();
     }
     public override TLObject Copy()
     {

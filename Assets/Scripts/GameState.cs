@@ -329,7 +329,10 @@ public class GameState
                 }
             }
             if (found == false)
+            {
+                Debug.Log("DIFFERENT: " + TLObj.GetName() + ", " + TLObj.GetPosition());
                 return false;
+            }
         }
 
         foreach (var TLObj in state.GetAllTLObjects())
@@ -344,7 +347,10 @@ public class GameState
                 }
             }
             if (found == false)
+            {
+                Debug.Log(TLObj.GetName());
                 return false;
+            }
         }
 
         return true;
