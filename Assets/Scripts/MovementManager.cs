@@ -18,6 +18,8 @@ public class MovementManager : MonoBehaviour
     public event Action OnLevelCompleted;
     public event Action<GrowAction> OnPlantGrow;
 
+    private GameState beginningMoveState;
+
     private void Start()
     {
         moveUp.action.performed += MoveUp;
@@ -284,13 +286,14 @@ public class MovementManager : MonoBehaviour
     private void BeginMove()
     {
         OnMoveBegin?.Invoke();
+        beginningMoveState = GameManager.Inst.currentState.Copy();
     }
 
     public void EndMove(bool somethingChanged)
     {
         GameState currentState = GameManager.Inst.currentState;
 
-        if (!somethingChanged)
+        if (beginningMoveState.Equals(currentState))
         {
             currentState.EndMove(false);
             return;

@@ -173,4 +173,14 @@ public class TLTrimmers : TLHoldableObject
         string result = "Trimmers facing " + GetDirectionFacing() + " + " + GetDirectionFacingAdjacent();
         return result;
     }
+
+    public override bool Equals(TLObject obj)
+    {
+        return base.Equals(obj) && obj is TLTrimmers && IsHeld() == ((TLTrimmers)obj).IsHeld() && GetDirectionFacing() == ((TLTrimmers)obj).GetDirectionFacing();
+    }
+
+    public override TLObject Copy()
+    {
+        return new TLTrimmers(this);
+    }
 }

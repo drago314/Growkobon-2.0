@@ -16,6 +16,11 @@ public class TLLevel : TLObject
         levelName = sig.levelName;
         this.isCompleted = isCompleted;
     }
+    public TLLevel(TLLevel level) : base(level.GetPosition())
+    {
+        levelName = level.levelName;
+        isCompleted = level.isCompleted;
+    }
     
     public string GetLevelName() { return levelName; }
 
@@ -40,5 +45,14 @@ public class TLLevel : TLObject
         if (IsCompleted())
             result += " Completed";
         return result; 
+    }
+
+    public override bool Equals(TLObject obj)
+    {
+        return base.Equals(obj) && obj is TLLevel && levelName == ((TLLevel) obj).GetLevelName();
+    }
+    public override TLObject Copy()
+    {
+        return new TLLevel(this);
     }
 }

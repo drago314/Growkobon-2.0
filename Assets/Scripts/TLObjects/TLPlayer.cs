@@ -222,4 +222,18 @@ public class TLPlayer : TLMoveableObject
         }
         Debug.Log(result);
     }
+
+    public override bool Equals(TLObject obj)
+    {
+        if (obj is TLPlayer && IsObjectHeld() && ((TLPlayer)obj).IsObjectHeld())
+            return base.Equals(obj) && GetObjectHeld().Equals(((TLPlayer)obj).GetObjectHeld());
+        else if (obj is TLPlayer && !IsObjectHeld() && !((TLPlayer)obj).IsObjectHeld())
+            return base.Equals(obj);
+        else
+            return false;
+    }
+    public override TLObject Copy()
+    {
+        return new TLPlayer(this);
+    }
 }

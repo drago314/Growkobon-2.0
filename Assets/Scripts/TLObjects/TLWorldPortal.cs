@@ -12,6 +12,11 @@ public class TLWorldPortal : TLObject
         worldToTravelTo = sig.worldToTravelTo;
         posToTravelTo = sig.posToTravelTo;
     }
+    public TLWorldPortal(TLWorldPortal portal) : base(portal)
+    {
+        worldToTravelTo = portal.worldToTravelTo;
+        posToTravelTo = portal.posToTravelTo;
+    }
 
     public string GetWorldToTravelTo() { return worldToTravelTo; }
     public Vector2Int GetPosToTravelTo() { return posToTravelTo; }
@@ -22,4 +27,13 @@ public class TLWorldPortal : TLObject
     }
 
     public override string GetName() { return worldToTravelTo; }
+
+    public override bool Equals(TLObject obj)
+    {
+        return base.Equals(obj) && obj is TLWorldPortal && GetWorldToTravelTo() == ((TLWorldPortal)obj).GetWorldToTravelTo() && GetPosToTravelTo() == ((TLWorldPortal)obj).GetPosToTravelTo();
+    }
+    public override TLObject Copy()
+    {
+        return new TLWorldPortal(this);
+    }
 }

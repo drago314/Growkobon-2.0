@@ -10,6 +10,10 @@ public class TLWorldDoor : TLObject
     {
         levelsRequired = doorSig.levelsRequired;
     }
+    public TLWorldDoor(TLWorldDoor door) : base(door.GetPosition())
+    {
+        levelsRequired = door.levelsRequired;
+    }
 
     public int GetLevelsRequired() { return levelsRequired; }
 
@@ -34,4 +38,12 @@ public class TLWorldDoor : TLObject
     }
 
     public override string GetName() { return "World Door"; }
+    public override bool Equals(TLObject obj)
+    {
+        return base.Equals(obj) && obj is TLWorldDoor;
+    }
+    public override TLObject Copy()
+    {
+        return new TLWorldDoor(this);
+    }
 }

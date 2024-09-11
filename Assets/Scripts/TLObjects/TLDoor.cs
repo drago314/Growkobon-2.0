@@ -14,6 +14,12 @@ public class TLDoor : TLObject
         usesMultiPot = doorSig.usesMultiPots;
     }
 
+    public TLDoor(TLDoor door) : base(door.GetPosition())
+    {
+        potsRequired = door.potsRequired;
+        usesMultiPot = door.usesMultiPot;
+    }
+
     public bool IsOpen()
     {
         var pots = GameManager.Inst.currentState.GetAllOfTLType<TLPot>();
@@ -49,4 +55,13 @@ public class TLDoor : TLObject
     public int GetPotsRequired() { return potsRequired; }
 
     public override string GetName() { return "Door";  }
+    public override bool Equals(TLObject obj)
+    {
+        return base.Equals(obj) && obj is TLDoor;
+    }
+
+    public override TLObject Copy()
+    {
+        return new TLDoor(this);
+    }
 }

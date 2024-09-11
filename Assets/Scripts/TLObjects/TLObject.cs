@@ -21,9 +21,10 @@ public abstract class TLObject
 
     public virtual bool Equals(TLObject obj)
     {
-        return obj.GetName().Equals(this.GetName()) && obj.curPos.Equals(this.curPos);
+        return obj.curPos.Equals(this.curPos);
     }
 
     public abstract string GetName();
     public abstract bool CanMove(TLObject pusher, Vector2Int moveDir);
+    public abstract TLObject Copy();
 }

@@ -19,4 +19,12 @@ public class TLWall : TLObject
     }
 
     public override string GetName() { return "Wall"; }
+    public override bool Equals(TLObject obj)
+    {
+        return base.Equals(obj) && obj is TLWall;
+    }
+    public override TLObject Copy()
+    {
+        return new TLWall(this);
+    }
 }

@@ -303,12 +303,39 @@ public class GameState
         //GameManager.Inst.DEBUG("FINAL " + obj.gameObject.name + ": " + GetPosOf(obj).x + " " + GetPosOf(obj).y);
     }
 
+    public GameState Copy()
+    {
+        GameState state = new GameState();
+
+        foreach (var TLObj in GetAllTLObjects())
+        {
+            state.AddObject(TLObj.Copy());
+        }
+
+        return state;
+    }
+
     public bool Equals(GameState state)
     {
         foreach (var TLObj in GetAllTLObjects())
         {
             bool found = false;
             foreach (var TLObj2 in state.GetAllTLObjects())
+            {
+                if (TLObj.Equals(TLObj2))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (found == false)
+                return false;
+        }
+
+        foreach (var TLObj in state.GetAllTLObjects())
+        {
+            bool found = false;
+            foreach (var TLObj2 in GetAllTLObjects())
             {
                 if (TLObj.Equals(TLObj2))
                 {

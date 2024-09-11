@@ -284,4 +284,20 @@ public class TLShears : TLHoldableObject
             result += " Skewering Plant";
         return result;
     }
+
+
+    public override bool Equals(TLObject obj)
+    {
+        if (obj is TLShears && IsPlantSkewered() && ((TLShears)obj).IsPlantSkewered())
+            return base.Equals(obj) && GetPlantSkewered().Equals(((TLShears)obj).GetPlantSkewered()) && GetDirectionFacing() == ((TLShears)obj).GetDirectionFacing();
+        else if (obj is TLShears && !IsPlantSkewered() && !((TLShears)obj).IsPlantSkewered())
+            return base.Equals(obj) && GetDirectionFacing() == ((TLShears)obj).GetDirectionFacing();
+        else
+            return false;
+    }
+
+    public override TLObject Copy()
+    {
+        return new TLShears(this);
+    }
 }

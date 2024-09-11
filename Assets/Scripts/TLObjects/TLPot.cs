@@ -10,6 +10,10 @@ public class TLPot : TLObject
     {
         potNumber = potNum;
     }
+    public TLPot(TLPot pot) : base(pot.GetPosition())
+    {
+        potNumber = pot.potNumber;
+    }
 
     public int GetPotNumber() { return potNumber; }
 
@@ -27,4 +31,8 @@ public class TLPot : TLObject
     }
 
     public override string GetName() { return "Pot"; }
+    public override TLObject Copy()
+    {
+        return new TLPot(this);
+    }
 }
